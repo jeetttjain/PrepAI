@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#a2eeff",
+                    "primary-container": "#4d8eff",
+                    "on-secondary-fixed-variant": "#6900b3",
+                    "secondary-container": "#6f00be",
+                    "background": "#0b1326",
+                    "on-tertiary": "#00363e",
+                    "secondary-fixed-dim": "#ddb7ff",
+                    "on-primary-container": "#00285d",
+                    "surface-dim": "#0b1326",
+                    "tertiary-fixed-dim": "#2fd9f4",
+                    "on-tertiary-fixed-variant": "#004e5a",
+                    "on-tertiary-container": "#002f36",
+                    "tertiary-container": "#009fb4",
+                    "outline": "#8c909f",
+                    "secondary-fixed": "#f0dbff",
+                    "primary-fixed": "#d8e2ff",
+                    "primary-fixed-dim": "#adc6ff",
+                    "surface-variant": "#2d3449",
+                    "outline-variant": "#424754",
+                    "on-surface": "#dae2fd",
+                    "surface-container": "#171f33",
+                    "secondary": "#ddb7ff",
+                    "surface-container-low": "#131b2e",
+                    "surface-container-high": "#222a3d",
+                    "inverse-surface": "#dae2fd",
+                    "on-error-container": "#ffdad6",
+                    "error-container": "#93000a",
+                    "surface-tint": "#adc6ff",
+                    "on-background": "#dae2fd",
+                    "surface": "#0b1326",
+                    "surface-container-lowest": "#060e20",
+                    "on-primary": "#002e6a",
+                    "surface-container-highest": "#2d3449",
+                    "on-secondary-container": "#d6a9ff",
+                    "inverse-primary": "#005ac2",
+                    "primary": "#adc6ff",
+                    "on-error": "#690005",
+                    "surface-bright": "#31394d",
+                    "inverse-on-surface": "#283044",
+                    "on-secondary": "#490080",
+                    "on-secondary-fixed": "#2c0051",
+                    "on-surface-variant": "#c2c6d6",
+                    "error": "#ffb4ab",
+                    "on-tertiary-fixed": "#001f25",
+                    "on-primary-fixed-variant": "#004395",
+                    "on-primary-fixed": "#001a42",
+                    "tertiary": "#2fd9f4"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "40px",
+                    "gutter": "24px",
+                    "unit": "8px",
+                    "margin-mobile": "16px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "label-caps": ["Geist"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "mono-data": ["Geist"],
+                    "headline-xl": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                    "mono-data": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-level-1 {
+            background: rgba(11, 19, 38, 0.6);
+            backdrop-filter: blur(32px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-level-2 {
+            background: rgba(11, 19, 38, 0.8);
+            backdrop-filter: blur(64px);
+            border: 1.5px solid transparent;
+            background-clip: padding-box, border-box;
+            background-origin: padding-box, border-box;
+            background-image: linear-gradient(rgba(11, 19, 38, 0.8), rgba(11, 19, 38, 0.8)), linear-gradient(to right, #adc6ff, #ddb7ff);
+        }
+        .ai-pulse {
+            position: relative;
+        }
+        .ai-pulse::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(90deg, #adc6ff, #2fd9f4, #ddb7ff, #adc6ff);
+            background-size: 300% 100%;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            -webkit-mask-composite: destination-out;
+            animation: pulse-border 4s linear infinite;
+        }
+        @keyframes pulse-border {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        .bioluminescent-glow {
+            background: radial-gradient(circle, rgba(173, 198, 255, 0.08) 0%, rgba(11, 19, 38, 0) 70%);
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #2d3449 25%, #424754 50%, #2d3449 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite linear;
+        }
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- Sidebar Navigation Shell -->
+<aside class="fixed left-0 h-full w-64 z-40 bg-surface-container/60 backdrop-blur-2xl border-r border-white/10 flex flex-col h-full p-unit gap-gutter hidden md:flex" id="side-nav">
+<div class="px-4 py-6">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">PrepAI</h1>
+<p class="font-label-caps text-label-caps text-on-surface-variant opacity-70">Interview Ready</p>
+</div>
+<nav class="flex-1 flex flex-col gap-2 px-2">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-all active:translate-x-1 font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">quiz</span> Generate Questions
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-all active:translate-x-1 font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">auto_stories</span> Saved Interviews
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-all active:translate-x-1 font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">person</span> Profile
+            </a>
+</nav>
+<div class="mt-auto px-4 py-4">
+<button class="w-full bg-gradient-to-r from-primary to-secondary text-on-primary-container font-bold py-3 rounded-xl transition-transform active:scale-95 shadow-lg">
+                Upgrade Pro
+            </button>
+</div>
+<div class="px-2 pb-6">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 rounded-lg transition-all font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">logout</span> Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 min-h-screen relative p-margin-mobile md:p-margin-desktop">
+<!-- Ambient Glows -->
+<div class="fixed top-0 right-0 w-[500px] h-[500px] bioluminescent-glow -z-10 pointer-events-none"></div>
+<div class="fixed bottom-0 left-0 w-[600px] h-[600px] bioluminescent-glow -z-10 pointer-events-none opacity-50"></div>
+<div class="max-w-4xl mx-auto space-y-12">
+<!-- Header Section -->
+<header class="space-y-4">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-sm">colors_spark</span> AI-Powered Generation
+                </div>
+<h2 class="font-headline-xl text-headline-xl tracking-tight">Design Your <span class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Perfect Practice</span></h2>
+<p class="text-on-surface-variant font-body-md text-body-md max-w-xl">Configure your interview parameters and let PrepAI's neural models synthesize industry-standard technical and behavioral challenges.</p>
+</header>
+<!-- Step 1: Configuration Form -->
+<section class="glass-level-1 p-8 rounded-3xl space-y-8 relative overflow-hidden" id="config-section">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-primary uppercase tracking-widest px-1">Target Role</label>
+<div class="relative group">
+<select class="w-full bg-surface-container-low border border-white/10 rounded-xl px-4 py-4 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary appearance-none transition-all cursor-pointer">
+<option>Software Engineer</option>
+<option>Senior Product Designer</option>
+<option>Marketing Strategist</option>
+<option>Data Scientist</option>
+<option>Technical Project Manager</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">expand_more</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-primary uppercase tracking-widest px-1">Experience Level</label>
+<div class="relative group">
+<select class="w-full bg-surface-container-low border border-white/10 rounded-xl px-4 py-4 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary appearance-none transition-all cursor-pointer">
+<option>Junior (0-2 years)</option>
+<option>Mid-Level (3-5 years)</option>
+<option>Senior (6-10 years)</option>
+<option>Staff / Principal (10+ years)</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">expand_more</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-primary uppercase tracking-widest px-1">Interview Type</label>
+<div class="grid grid-cols-2 gap-4">
+<label class="flex items-center justify-center gap-2 p-4 rounded-xl border border-white/10 bg-surface-container-low cursor-pointer hover:bg-white/5 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10 group">
+<input checked="" class="hidden" name="type" type="radio"/>
+<span class="material-symbols-outlined group-has-[:checked]:text-primary">terminal</span>
+<span class="font-body-sm text-body-sm">Technical</span>
+</label>
+<label class="flex items-center justify-center gap-2 p-4 rounded-xl border border-white/10 bg-surface-container-low cursor-pointer hover:bg-white/5 transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/10 group">
+<input class="hidden" name="type" type="radio"/>
+<span class="material-symbols-outlined group-has-[:checked]:text-primary">groups</span>
+<span class="font-body-sm text-body-sm">HR/Culture</span>
+</label>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-primary uppercase tracking-widest px-1">Question Volume</label>
+<div class="flex items-center gap-4 bg-surface-container-low border border-white/10 rounded-xl px-4 py-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/5 text-primary"><span class="material-symbols-outlined">remove</span></button>
+<input class="bg-transparent border-none text-center w-full focus:ring-0 font-mono-data text-mono-data" readonly="" type="text" value="5"/>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/5 text-primary"><span class="material-symbols-outlined">add</span></button>
+</div>
+</div>
+</div>
+<div class="pt-4">
+<button class="w-full md:w-auto px-12 py-5 rounded-2xl bg-gradient-to-r from-primary to-secondary text-on-primary-container font-bold text-headline-lg-mobile transition-all hover:scale-[1.02] active:scale-95 shadow-xl flex items-center justify-center gap-3" onclick="startGeneration()">
+<span class="material-symbols-outlined">bolt</span> Generate Questions
+                    </button>
+</div>
+</section>
+<!-- Loading State -->
+<section class="hidden space-y-gutter" id="loading-state">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<div class="w-6 h-6 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+<p class="font-label-caps text-label-caps animate-pulse">Synthesizing interview scenarios...</p>
+</div>
+<div class="grid gap-gutter">
+<div class="glass-level-1 p-8 rounded-3xl space-y-4">
+<div class="h-4 w-1/4 skeleton rounded-full"></div>
+<div class="h-8 w-3/4 skeleton rounded-full"></div>
+<div class="h-20 w-full skeleton rounded-xl"></div>
+</div>
+<div class="glass-level-1 p-8 rounded-3xl space-y-4 opacity-50">
+<div class="h-4 w-1/5 skeleton rounded-full"></div>
+<div class="h-8 w-2/3 skeleton rounded-full"></div>
+<div class="h-20 w-full skeleton rounded-xl"></div>
+</div>
+</div>
+</section>
+<!-- Step 2: Question List -->
+<section class="hidden space-y-gutter" id="results-section">
+<div class="flex justify-between items-end pb-4 border-b border-white/5">
+<h3 class="font-headline-lg text-headline-lg">Interview Session #412</h3>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-sm">download</span> Export PDF
+                        </button>
+</div>
+</div>
+<!-- Bento Style Card 1 -->
+<article class="ai-pulse glass-level-2 p-8 rounded-3xl flex flex-col md:flex-row gap-8">
+<div class="flex-1 space-y-4">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-tertiary-container/20 text-tertiary font-mono-data text-xs uppercase">Question 01</span>
+<span class="px-2 py-0.5 rounded bg-white/5 text-on-surface-variant font-mono-data text-xs uppercase">Hard</span>
+</div>
+<h4 class="font-headline-lg-mobile text-headline-lg-mobile leading-tight">Explain the differences between optimistic and pessimistic locking in a high-concurrency environment.</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Focus on performance implications, potential for deadlocks, and specific database implementation examples.</p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-on-primary font-bold font-body-sm text-body-sm transition-all hover:brightness-110 active:scale-95">
+<span class="material-symbols-outlined">auto_awesome</span> Show AI Answer
+                            </button>
+<button class="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">bookmark</span> <span class="font-body-sm text-body-sm">Save</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">content_copy</span> <span class="font-body-sm text-body-sm">Copy</span>
+</button>
+</div>
+</div>
+<div class="w-full md:w-64 h-48 md:h-auto rounded-2xl overflow-hidden shrink-0">
+<img class="w-full h-full object-cover grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-700" data-alt="A futuristic abstract visualization of data streams clashing and merging, representing high-concurrency computing. The scene is illuminated with bioluminescent cyan and violet pulses against a deep navy background. The style is sleek, digital, and professional, reflecting the high-stakes technological nature of the interview question." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAr_-vDYKKxI4p5VAsFUESoQ5dA6R6e5Z_d9wzfmWBEEkFpmGT1kTffS3994UrsMhrk7yyY07TrR5u06TAM2GwcWm4-XG5mNkTyHP4DQbwKIqXR5ufwCeYOFEZnz1Tn_kKKx-J4693izDYt-qjPDg4SW5eoOa7Xsgej_NOa3h9IIEwAe3bDPRqaTJt67dJQ3w2tWnp0ctqABT1CEhGDubz2V-dBzJRqx8TrnOmiaviGKN70kbnHXdkepqOGR43IHNLmKoAa5hQNghc"/>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="glass-level-1 p-8 rounded-3xl space-y-4 hover:border-primary/30 transition-colors">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-tertiary-container/20 text-tertiary font-mono-data text-xs uppercase">Question 02</span>
+<span class="px-2 py-0.5 rounded bg-white/5 text-on-surface-variant font-mono-data text-xs uppercase">Medium</span>
+</div>
+<h4 class="font-headline-lg-mobile text-headline-lg-mobile leading-tight">Walk through the lifecycle of a request in a Microservices architecture.</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Discuss API Gateway roles, authentication propagation, and circuit breaker patterns.</p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 text-on-surface font-bold font-body-sm text-body-sm hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined">auto_awesome</span> Show AI Answer
+                        </button>
+<button class="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">bookmark</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">content_copy</span>
+</button>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="glass-level-1 p-8 rounded-3xl space-y-4 hover:border-primary/30 transition-colors">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-tertiary-container/20 text-tertiary font-mono-data text-xs uppercase">Question 03</span>
+<span class="px-2 py-0.5 rounded bg-white/5 text-on-surface-variant font-mono-data text-xs uppercase">Medium</span>
+</div>
+<h4 class="font-headline-lg-mobile text-headline-lg-mobile leading-tight">How do you handle a conflict with a peer about a technical design decision?</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Demonstrate emotional intelligence and commitment to the best outcome for the project.</p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 text-on-surface font-bold font-body-sm text-body-sm hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined">auto_awesome</span> Show AI Answer
+                        </button>
+<button class="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">bookmark</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined">content_copy</span>
+</button>
+</div>
+</article>
+</section>
+</div>
+<!-- Footer -->
+<footer class="mt-24 w-full py-12 flex flex-col items-center justify-center gap-4 px-margin-desktop border-t border-white/5">
+<h5 class="font-headline-lg text-headline-lg text-primary">PrepAI</h5>
+<p class="font-body-sm text-body-sm text-on-surface-variant">© 2024 PrepAI. Empowering careers with AI.</p>
+<div class="flex gap-6">
+<a class="text-on-surface-variant hover:text-secondary transition-colors font-body-sm text-body-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors font-body-sm text-body-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors font-body-sm text-body-sm" href="#">Contact Us</a>
+</div>
+</footer>
+</main>
+<script>
+        function startGeneration() {
+            const config = document.getElementById('config-section');
+            const loading = document.getElementById('loading-state');
+            const results = document.getElementById('results-section');
+
+            config.classList.add('opacity-50', 'pointer-events-none');
+            loading.classList.remove('hidden');
+            
+            // Simulate AI delay
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                config.classList.add('hidden');
+                results.classList.remove('hidden');
+                results.scrollIntoView({ behavior: 'smooth' });
+            }, 2500);
+        }
+
+        // Dropdown micro-interaction
+        document.querySelectorAll('select').forEach(select => {
+            select.addEventListener('focus', () => {
+                select.parentElement.classList.add('scale-[1.01]');
+            });
+            select.addEventListener('blur', () => {
+                select.parentElement.classList.remove('scale-[1.01]');
+            });
+        });
+    </script>
+</body></html>

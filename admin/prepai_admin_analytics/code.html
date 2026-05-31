@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PrepAI Admin - System Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=JetBrains+Mono:wght@100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "tertiary-fixed": "#acedff",
+                "outline-variant": "#464554",
+                "surface-container-low": "#131b2e",
+                "on-tertiary-container": "#002f38",
+                "on-primary-container": "#0d0096",
+                "outline": "#908fa0",
+                "on-surface": "#dae2fd",
+                "on-secondary-fixed": "#2c0051",
+                "on-primary-fixed": "#07006c",
+                "inverse-primary": "#494bd6",
+                "on-primary-fixed-variant": "#2f2ebe",
+                "error": "#ffb4ab",
+                "on-tertiary-fixed-variant": "#004e5c",
+                "secondary-container": "#6f00be",
+                "surface-dim": "#0b1326",
+                "on-secondary": "#490080",
+                "background": "#0b1326",
+                "primary-fixed": "#e1e0ff",
+                "on-background": "#dae2fd",
+                "secondary": "#ddb7ff",
+                "on-secondary-fixed-variant": "#6900b3",
+                "on-secondary-container": "#d6a9ff",
+                "on-tertiary": "#003640",
+                "on-surface-variant": "#c7c4d7",
+                "surface-tint": "#c0c1ff",
+                "error-container": "#93000a",
+                "primary-fixed-dim": "#c0c1ff",
+                "primary-container": "#8083ff",
+                "tertiary-fixed-dim": "#4cd7f6",
+                "primary": "#c0c1ff",
+                "inverse-on-surface": "#283044",
+                "tertiary-container": "#009eb9",
+                "surface-container": "#171f33",
+                "surface": "#0b1326",
+                "on-primary": "#1000a9",
+                "on-error": "#690005",
+                "surface-bright": "#31394d",
+                "tertiary": "#4cd7f6",
+                "on-error-container": "#ffdad6",
+                "surface-container-highest": "#2d3449",
+                "inverse-surface": "#dae2fd",
+                "secondary-fixed-dim": "#ddb7ff",
+                "surface-container-high": "#222a3d",
+                "secondary-fixed": "#f0dbff",
+                "on-tertiary-fixed": "#001f26",
+                "surface-container-lowest": "#060e20",
+                "surface-variant": "#2d3449"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "spacing": {
+                "gutter": "1.5rem",
+                "stack-sm": "0.5rem",
+                "stack-xs": "0.25rem",
+                "stack-lg": "2rem",
+                "container-max": "1440px",
+                "stack-md": "1rem",
+                "margin-x": "2rem"
+            },
+            "fontFamily": {
+                "body-md": ["Geist"],
+                "table-header": ["Geist"],
+                "body-sm": ["Geist"],
+                "headline-sm": ["Geist"],
+                "display-lg": ["Geist"],
+                "label-mono": ["JetBrains Mono"],
+                "headline-md": ["Geist"]
+            },
+            "fontSize": {
+                "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "table-header": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0b1326;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(192, 193, 255, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(221, 183, 255, 0.05) 0px, transparent 50%);
+            min-height: 100vh;
+            color: #dae2fd;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .status-pulse {
+            animation: pulse-glow 2s infinite;
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(76, 215, 246, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(76, 215, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 215, 246, 0); }
+        }
+        .scroll-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="font-body-md overflow-x-hidden">
+<!-- SideNavBar (The Anchor) -->
+<aside class="h-screen w-60 fixed left-0 top-0 flex flex-col py-stack-lg px-stack-sm backdrop-blur-xl border-r border-outline-variant/15 bg-surface-container-lowest/80 z-50">
+<div class="mb-stack-lg px-stack-sm">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">PrepAI Admin</h1>
+<p class="text-[10px] uppercase tracking-widest text-outline-variant font-bold mt-1">Command Center</p>
+</div>
+<nav class="flex-1 space-y-stack-xs">
+<a class="flex items-center gap-3 px-stack-md py-stack-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md">Users</span>
+</a>
+<a class="flex items-center gap-3 px-stack-md py-stack-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">neurology</span>
+<span class="font-body-md">Models</span>
+</a>
+<a class="flex items-center gap-3 px-stack-md py-stack-sm bg-primary-container text-on-primary-container rounded-lg font-bold active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-body-md">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-stack-md py-stack-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-stack-sm space-y-stack-sm">
+<div class="p-stack-sm glass-card rounded-lg mb-stack-md">
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-tertiary status-pulse"></div>
+<span class="text-[10px] font-bold text-tertiary">SYSTEM HEALTH</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[98%]"></div>
+</div>
+</div>
+<a class="flex items-center gap-3 px-stack-md py-stack-sm text-on-surface-variant hover:text-on-surface" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-md">Support</span>
+</a>
+<a class="flex items-center gap-3 px-stack-md py-stack-sm text-on-surface-variant hover:text-on-surface" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] z-40 flex justify-between items-center h-16 px-gutter backdrop-blur-md border-b border-outline-variant/10 bg-surface-container-low/60">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full bg-surface-container-lowest border-outline-variant/20 rounded-lg pl-10 pr-4 py-2 font-body-sm text-on-surface focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all" placeholder="Search analytics metrics..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-stack-md ml-stack-lg">
+<div class="flex items-center gap-4 px-4 py-2 bg-surface-container-highest/30 rounded-full border border-outline-variant/10">
+<span class="material-symbols-outlined text-[20px] text-tertiary">calendar_today</span>
+<span class="font-label-mono text-on-surface">OCT 01 - OCT 31, 2023</span>
+<span class="material-symbols-outlined text-[16px] text-outline-variant cursor-pointer">expand_more</span>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications_active</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">dns</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center cursor-pointer active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-on-primary">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-60 pt-24 px-gutter pb-gutter max-w-[1440px] mx-auto">
+<!-- Dashboard Header -->
+<div class="flex justify-between items-end mb-stack-lg">
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">System Performance</h2>
+<p class="font-body-md text-on-surface-variant">Real-time business health and usage metrics.</p>
+</div>
+<div class="flex gap-stack-sm">
+<button class="px-4 py-2 rounded-lg border border-outline-variant/30 font-body-sm text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">file_download</span> Export Report
+                </button>
+<button class="px-4 py-2 rounded-lg bg-gradient-to-r from-primary-container to-secondary-container text-on-primary-container font-bold font-body-sm flex items-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">refresh</span> Refresh Live
+                </button>
+</div>
+</div>
+<!-- High Level Metrics Bento -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-stack-md mb-stack-lg">
+<!-- MRR Card -->
+<div class="glass-card p-stack-md rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 rounded-lg bg-primary-container/20 text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<span class="flex items-center gap-1 text-[12px] font-bold text-tertiary">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +12.5%
+                    </span>
+</div>
+<p class="font-body-sm text-on-surface-variant">Monthly Recurring Revenue</p>
+<h3 class="font-display-lg text-[32px] leading-tight font-bold text-on-surface">$142,580</h3>
+<div class="mt-4 h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4"></div>
+</div>
+</div>
+<!-- Churn Card -->
+<div class="glass-card p-stack-md rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 rounded-lg bg-secondary-container/20 text-secondary">
+<span class="material-symbols-outlined">person_remove</span>
+</div>
+<span class="flex items-center gap-1 text-[12px] font-bold text-error">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> 0.2%
+                    </span>
+</div>
+<p class="font-body-sm text-on-surface-variant">Subscription Churn</p>
+<h3 class="font-display-lg text-[32px] leading-tight font-bold text-on-surface">2.4%</h3>
+<div class="mt-4 flex gap-1">
+<div class="h-1 flex-1 bg-secondary/40 rounded-full"></div>
+<div class="h-1 flex-1 bg-secondary/40 rounded-full"></div>
+<div class="h-1 flex-1 bg-surface-container-highest rounded-full"></div>
+</div>
+</div>
+<!-- User Retention Graph -->
+<div class="glass-card p-stack-md rounded-xl md:col-span-2 relative overflow-hidden">
+<div class="flex justify-between items-center mb-4 relative z-10">
+<div>
+<p class="font-body-sm text-on-surface-variant">User Retention Rate</p>
+<h3 class="font-headline-sm text-on-surface">84.2% <span class="text-tertiary text-body-sm font-normal">Average</span></h3>
+</div>
+<div class="flex gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+</div>
+<!-- Mock Chart Visualization -->
+<div class="h-24 w-full flex items-end gap-1 mt-2">
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors h-[70%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors h-[75%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors h-[68%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors h-[82%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors h-[79%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/40 h-[84%] rounded-t-sm relative">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-surface px-2 py-1 rounded text-[10px] font-label-mono border border-outline-variant/30">CURRENT</div>
+</div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors h-[77%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors h-[80%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors h-[85%] rounded-t-sm"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors h-[82%] rounded-t-sm"></div>
+</div>
+</div>
+</div>
+<!-- Secondary Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-stack-md">
+<!-- Heatmap Section -->
+<div class="lg:col-span-2 glass-card rounded-xl overflow-hidden flex flex-col">
+<div class="p-stack-md border-b border-outline-variant/10 flex justify-between items-center">
+<h3 class="font-headline-sm text-on-surface">Global User Distribution</h3>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary/80"></span>
+<span class="text-[12px] font-label-mono">High Density</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary/20"></span>
+<span class="text-[12px] font-label-mono">Emerging</span>
+</div>
+</div>
+</div>
+<div class="relative flex-1 bg-surface-container-lowest overflow-hidden h-[400px]">
+<img class="w-full h-full object-cover opacity-60" data-alt="A stylized, high-contrast digital world map in a dark aesthetic. The continents are rendered in deep navy with glowing neon blue dots and heat maps indicating user density across major global hubs. The lighting is low-key, emphasizing the luminescent primary blue gradients and sophisticated glassmorphism interface elements surrounding the map. The mood is professional, high-tech, and globally expansive." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXqcPdKn02ExMl-1ngC0SBEJJ1CxCncdubhEqsRso9jUqY3ysnMAgHOEqi0ssQseC_FPd-ROA-gGkWSBxQ3J7ZnEyp7iVobJzRkgu5aooj-k43NMtSCU_hNzBL5NdJ_ZK7PgC_zwbuhzCdFkXvWx6HQlY_HLRi7jWDu2FbyMhNa6Dvo4ome0CQ5nY7QX6J770ThYHVMCCk44wN0EEur9ZnN_U9hG5Jw2tpGWV-MVjNoG5z2GlLH_a7Vn6HVobChLDqNnS6uyM-9lc"/>
+<!-- Floating Stat Overlay -->
+<div class="absolute bottom-4 left-4 p-4 glass-card rounded-lg flex gap-8">
+<div>
+<p class="text-[10px] text-outline-variant font-bold uppercase">North America</p>
+<p class="font-headline-sm text-primary">42.8%</p>
+</div>
+<div class="border-l border-outline-variant/20 pl-8">
+<p class="text-[10px] text-outline-variant font-bold uppercase">Europe</p>
+<p class="font-headline-sm text-secondary">31.2%</p>
+</div>
+<div class="border-l border-outline-variant/20 pl-8">
+<p class="text-[10px] text-outline-variant font-bold uppercase">Asia Pacific</p>
+<p class="font-headline-sm text-tertiary">19.5%</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Feature Usage Breakdown -->
+<div class="glass-card rounded-xl flex flex-col">
+<div class="p-stack-md border-b border-outline-variant/10">
+<h3 class="font-headline-sm text-on-surface">Feature Usage</h3>
+<p class="text-body-sm text-on-surface-variant">Relative activity per toolset</p>
+</div>
+<div class="p-stack-md flex-1 space-y-6">
+<!-- Feature Item -->
+<div class="space-y-2">
+<div class="flex justify-between items-center font-body-sm">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">description</span> Cheat Sheets</span>
+<span class="font-label-mono">48,291 uses</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full">
+<div class="h-full bg-primary rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center font-body-sm">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[18px]">route</span> Roadmaps</span>
+<span class="font-label-mono">31,044 uses</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full">
+<div class="h-full bg-secondary rounded-full" style="width: 62%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center font-body-sm">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-tertiary text-[18px]">forum</span> Interview Prep</span>
+<span class="font-label-mono">22,189 uses</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full">
+<div class="h-full bg-tertiary rounded-full" style="width: 44%"></div>
+</div>
+</div>
+<!-- Usage Trend Mini-Graph -->
+<div class="mt-stack-lg pt-stack-lg border-t border-outline-variant/10">
+<p class="font-table-header text-outline-variant uppercase tracking-widest mb-4">Inference Load Distribution</p>
+<div class="flex items-end justify-between h-32 gap-2">
+<div class="w-full bg-gradient-to-t from-primary/20 to-primary h-[40%] rounded-lg"></div>
+<div class="w-full bg-gradient-to-t from-primary/20 to-primary h-[65%] rounded-lg"></div>
+<div class="w-full bg-gradient-to-t from-primary/20 to-primary h-[55%] rounded-lg"></div>
+<div class="w-full bg-gradient-to-t from-primary/20 to-primary h-[90%] rounded-lg"></div>
+<div class="w-full bg-gradient-to-t from-primary/20 to-primary h-[75%] rounded-lg"></div>
+<div class="w-full bg-gradient-to-t from-primary/20 to-primary h-[60%] rounded-lg"></div>
+<div class="w-full bg-gradient-to-t from-primary/20 to-primary h-[85%] rounded-lg"></div>
+</div>
+<div class="flex justify-between mt-2 font-label-mono text-[10px] text-on-surface-variant">
+<span>MON</span>
+<span>WED</span>
+<span>FRI</span>
+<span>SUN</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Data Table: Recent Account Activities -->
+<div class="mt-stack-lg glass-card rounded-xl overflow-hidden">
+<div class="p-stack-md border-b border-outline-variant/10 flex justify-between items-center">
+<h3 class="font-headline-sm text-on-surface">Recent Premium Conversions</h3>
+<div class="flex items-center gap-2">
+<span class="text-body-sm text-on-surface-variant">Showing last 24h</span>
+<button class="material-symbols-outlined text-[20px] text-outline hover:text-on-surface transition-colors">filter_list</button>
+</div>
+</div>
+<div class="overflow-x-auto scroll-hide">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-high/30">
+<tr>
+<th class="px-6 py-4 font-table-header text-on-surface-variant uppercase tracking-wider">User Account</th>
+<th class="px-6 py-4 font-table-header text-on-surface-variant uppercase tracking-wider">Plan</th>
+<th class="px-6 py-4 font-table-header text-on-surface-variant uppercase tracking-wider">Region</th>
+<th class="px-6 py-4 font-table-header text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 font-table-header text-on-surface-variant uppercase tracking-wider text-right">Value</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface-container-high/20 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full border-2 border-primary/30 p-[2px]">
+<img class="w-full h-full rounded-full object-cover" data-alt="A professional studio portrait of a young male professional with a friendly expression. He is wearing a minimalist dark shirt, and the background is a soft, out-of-focus office environment with cool blue tones. The image style is crisp and modern, fitting into a high-end tech dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQVWLYm_3ViVJ1VIk2K16S0Y7MyEhMHIKw9Hb_DVqLV0aX2wGWQsW6_Z-bacFq7lyQOe1ku1_6pxw1WbskTimt2fctlsqJoChx3yPZd2Mx6A5V60_-a-84Z_eRkPqEWLUBJwq1NBc2CKdHARTaxyiNrgw57-y571uJQgWhKVfB5-4d4pRI17Dmxlm1REw1cihbtG8szSYWoPAH06e4Z0Pbsa1SDvyb8yy9I6RYhinm6aT7NZg2nWz5VuBvALsKzAfSdyGrFWct238"/>
+</div>
+<div>
+<p class="font-body-md text-on-surface font-bold">alex.morgan@tech.io</p>
+<p class="text-[11px] text-outline-variant font-label-mono">ID: PREP-4921</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm text-on-surface">Pro Annual</td>
+<td class="px-6 py-4 font-body-sm text-on-surface">United States</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-full bg-tertiary/10 text-tertiary text-[10px] font-bold border border-tertiary/20">SUCCESS</span>
+</td>
+<td class="px-6 py-4 text-right font-label-mono text-on-surface">$199.00</td>
+</tr>
+<tr class="hover:bg-surface-container-high/20 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full border-2 border-secondary/30 p-[2px]">
+<img class="w-full h-full rounded-full object-cover" data-alt="A professional close-up of a woman in business attire. The lighting is bright and clean with a sophisticated corporate aesthetic. Her expression is confident. The overall color palette is neutral with soft blue undertones to match the dashboard's design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3TfPPP_cfa2frKmecTa_HSxpqPN5hb_8LjoDcTVG4BMjcz9S6IoiQatw2XGBVFvw_TUMooqhKdpV1w4CHXpDwAJ0z3t_9lnEzn2OymFte3T2AS8azLKg2g2isZuw2c3NoSv_raWqaQIATWJAwp0hwsRr8CroOZo9GsAJYfuOY8HCTAmHrGKE9KRN2bSV_e_S242E5dSIwSixg__Ga8Uh4fXJsjEMgEX1IgnglC4FQa5nsZ5Q1I2zU2v6c4rSStQXmRVBxtiMLo1k"/>
+</div>
+<div>
+<p class="font-body-md text-on-surface font-bold">sarah_dev@frontend.com</p>
+<p class="text-[11px] text-outline-variant font-label-mono">ID: PREP-5021</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm text-on-surface">Enterprise Seat</td>
+<td class="px-6 py-4 font-body-sm text-on-surface">United Kingdom</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-full bg-tertiary/10 text-tertiary text-[10px] font-bold border border-tertiary/20">SUCCESS</span>
+</td>
+<td class="px-6 py-4 text-right font-label-mono text-on-surface">$49.00</td>
+</tr>
+<tr class="hover:bg-surface-container-high/20 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full border-2 border-outline-variant/30 p-[2px]">
+<img class="w-full h-full rounded-full object-cover" data-alt="A high-quality portrait of a creative professional in a modern workspace. The lighting is warm and directional, creating a premium feel. The subject has a visionary look, representing a typical user of advanced AI tools. The background shows hints of a high-tech lab." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkM41x_qiBhQY2R5K7x6HS87yrTF9tWbuQYsal30EvQXakQ5xA-Qpt2mYvhfs920VGqSlkNdAiuQtl5kYgncb0C7IvS95hMC17N-AxrBcm2UBO6kmbyseXuBcPZw-28Tl8JBam4UuwWQT87qw39gh5ty90CV8bi-mVyMsRXK7joVWv1ZDHvqtFGXYtLv-wLNItReYwgcv-e75B6BL_tY-7SD0ewV3T8wo0VoYVsdEbaTzZjH7HraS2Z0s9XtAxZdIq_suQWjP0IjU"/>
+</div>
+<div>
+<p class="font-body-md text-on-surface font-bold">chen.y@data-labs.sg</p>
+<p class="text-[11px] text-outline-variant font-label-mono">ID: PREP-5103</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm text-on-surface">Pro Monthly</td>
+<td class="px-6 py-4 font-body-sm text-on-surface">Singapore</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded-full bg-error-container text-error text-[10px] font-bold border border-error/20">PENDING</span>
+</td>
+<td class="px-6 py-4 text-right font-label-mono text-on-surface">$19.99</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+<!-- Background Decoration Elements -->
+<div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[150px] rounded-full -z-10 pointer-events-none"></div>
+<div class="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 blur-[150px] rounded-full -z-10 pointer-events-none"></div>
+<script>
+        // Simple Interaction logic
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const ripple = document.createElement('span');
+                ripple.className = 'absolute bg-white/10 rounded-full animate-ping';
+                ripple.style.width = '20px';
+                ripple.style.height = '20px';
+                ripple.style.left = e.clientX - el.offsetLeft + 'px';
+                ripple.style.top = e.clientY - el.offsetTop + 'px';
+                el.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 500);
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PrepAI Admin | Mission Control</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=JetBrains+Mono:wght@100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .pulse-glow-success {
+            animation: pulse-success 2s infinite;
+        }
+        @keyframes pulse-success {
+            0% { box-shadow: 0 0 0 0 rgba(76, 215, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 215, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 215, 246, 0); }
+        }
+        body {
+            background: radial-gradient(circle at 0% 0%, #131b2e 0%, #0b1326 100%);
+            min-height: 100vh;
+        }
+        .chart-gradient {
+            background: linear-gradient(to top, rgba(192, 193, 255, 0.1), transparent);
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#acedff",
+                    "outline-variant": "#464554",
+                    "surface-container-low": "#131b2e",
+                    "on-tertiary-container": "#002f38",
+                    "on-primary-container": "#0d0096",
+                    "outline": "#908fa0",
+                    "on-surface": "#dae2fd",
+                    "on-secondary-fixed": "#2c0051",
+                    "on-primary-fixed": "#07006c",
+                    "inverse-primary": "#494bd6",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "error": "#ffb4ab",
+                    "on-tertiary-fixed-variant": "#004e5c",
+                    "secondary-container": "#6f00be",
+                    "surface-dim": "#0b1326",
+                    "on-secondary": "#490080",
+                    "background": "#0b1326",
+                    "primary-fixed": "#e1e0ff",
+                    "on-background": "#dae2fd",
+                    "secondary": "#ddb7ff",
+                    "on-secondary-fixed-variant": "#6900b3",
+                    "on-secondary-container": "#d6a9ff",
+                    "on-tertiary": "#003640",
+                    "on-surface-variant": "#c7c4d7",
+                    "surface-tint": "#c0c1ff",
+                    "error-container": "#93000a",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "primary-container": "#8083ff",
+                    "tertiary-fixed-dim": "#4cd7f6",
+                    "primary": "#c0c1ff",
+                    "inverse-on-surface": "#283044",
+                    "tertiary-container": "#009eb9",
+                    "surface-container": "#171f33",
+                    "surface": "#0b1326",
+                    "on-primary": "#1000a9",
+                    "on-error": "#690005",
+                    "surface-bright": "#31394d",
+                    "tertiary": "#4cd7f6",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-highest": "#2d3449",
+                    "inverse-surface": "#dae2fd",
+                    "secondary-fixed-dim": "#ddb7ff",
+                    "surface-container-high": "#222a3d",
+                    "secondary-fixed": "#f0dbff",
+                    "on-tertiary-fixed": "#001f26",
+                    "surface-container-lowest": "#060e20",
+                    "surface-variant": "#2d3449"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "1.5rem",
+                    "stack-sm": "0.5rem",
+                    "stack-xs": "0.25rem",
+                    "stack-lg": "2rem",
+                    "container-max": "1440px",
+                    "stack-md": "1rem",
+                    "margin-x": "2rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Geist"],
+                    "table-header": ["Geist"],
+                    "body-sm": ["Geist"],
+                    "headline-sm": ["Geist"],
+                    "display-lg": ["Geist"],
+                    "label-mono": ["JetBrains Mono"],
+                    "headline-md": ["Geist"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "table-header": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-body-md text-on-surface antialiased overflow-x-hidden">
+<!-- Sidebar (Rail) -->
+<aside class="h-screen w-60 fixed left-0 top-0 flex flex-col py-stack-lg px-stack-sm backdrop-blur-xl border-r border-outline-variant/15 bg-surface-container-lowest/80 z-50">
+<div class="px-stack-sm mb-stack-lg">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">PrepAI Admin</h1>
+<p class="text-[10px] uppercase tracking-widest text-outline">Command Center</p>
+</div>
+<nav class="flex-1 space-y-stack-xs">
+<a class="flex items-center gap-stack-sm py-2.5 px-stack-sm bg-primary-container text-on-primary-container rounded-lg font-bold transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body-md">Users</span>
+</a>
+<a class="flex items-center gap-stack-sm py-2.5 px-stack-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="neurology">neurology</span>
+<span class="font-body-md">Models</span>
+</a>
+<a class="flex items-center gap-stack-sm py-2.5 px-stack-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="font-body-md">Analytics</span>
+</a>
+<a class="flex items-center gap-stack-sm py-2.5 px-stack-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto space-y-stack-xs">
+<button class="w-full flex items-center justify-center gap-2 py-2 mb-4 bg-gradient-to-r from-primary to-secondary text-on-primary rounded-lg font-bold text-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="bolt">bolt</span>
+                System Health
+            </button>
+<a class="flex items-center gap-stack-sm py-2 px-stack-sm text-on-surface-variant hover:text-on-surface transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-body-md">Support</span>
+</a>
+<a class="flex items-center gap-stack-sm py-2 px-stack-sm text-on-surface-variant hover:text-on-surface transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] z-40 flex justify-between items-center h-16 px-gutter backdrop-blur-md border-b border-outline-variant/10 bg-surface-container-low/60 shadow-sm">
+<div class="flex items-center gap-gutter flex-1">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-primary/50 rounded-lg overflow-hidden transition-all">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant" data-icon="search">search</span>
+<input class="w-full bg-surface-container-highest/30 border-none pl-10 pr-4 py-2 text-body-sm focus:ring-0 placeholder:text-outline-variant" placeholder="Search logs, models, or users..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-stack-md">
+<button class="p-2 text-on-surface-variant hover:text-on-surface transition-opacity relative">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-on-surface transition-opacity">
+<span class="material-symbols-outlined" data-icon="dns">dns</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="Admin User Avatar" class="w-full h-full object-cover" data-alt="A professional high-resolution close-up portrait of a tech-savvy systems administrator in a dimly lit server room environment. The individual has a focused expression, subtly illuminated by the cool blue and purple glow of server racks. The image reflects a high-tech mission control aesthetic with soft background bokeh, maintaining a clean and modern professional profile style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYDo53ga2fGZQOw0ego0Z09eRTMI3kTuYekxENQ4p9eb2mamOmxjimTgdTujF1OFikgsXEA3FQL6K90_U0jXprSOCeFK8YUl00J3GK67MSIqSfPUDXSYkQvCIuMjRlocTg8rMiiW0hwdBFRmXCBdwG6GA9VBlMf2EAcK5zs4pDru6bCvnCzwrMlBjPg3iqjLLue7-ZQiMMnr2LQrB1aeDSwTm0O6jk5CBG8tERrVEoLMvzrTXktb6EAzvIcM34Eq48vKnM1tW6mtc"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-60 pt-16 min-h-screen">
+<div class="max-w-[1440px] mx-auto p-gutter">
+<!-- Hero Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-stack-md mb-stack-lg">
+<!-- Total Active Users -->
+<div class="glass-card p-stack-md rounded-xl">
+<div class="flex items-start justify-between mb-2">
+<span class="text-label-mono font-label-mono text-outline-variant uppercase">Total Active Users</span>
+<span class="material-symbols-outlined text-primary" data-icon="person_play">person_play</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-md font-headline-md">14,282</span>
+<span class="text-xs text-tertiary-fixed font-bold">+12% ↑</span>
+</div>
+<div class="w-full bg-surface-variant/30 h-1 mt-4 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[72%]"></div>
+</div>
+</div>
+<!-- AI Queries Today -->
+<div class="glass-card p-stack-md rounded-xl">
+<div class="flex items-start justify-between mb-2">
+<span class="text-label-mono font-label-mono text-outline-variant uppercase">AI Queries Today</span>
+<span class="material-symbols-outlined text-secondary" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-md font-headline-md">1.24M</span>
+<span class="text-xs text-tertiary-fixed font-bold">+5.4% ↑</span>
+</div>
+<div class="w-full bg-surface-variant/30 h-1 mt-4 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[85%]"></div>
+</div>
+</div>
+<!-- System Latency -->
+<div class="glass-card p-stack-md rounded-xl">
+<div class="flex items-start justify-between mb-2">
+<span class="text-label-mono font-label-mono text-outline-variant uppercase">System Latency</span>
+<span class="material-symbols-outlined text-tertiary" data-icon="speed">speed</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-md font-headline-md">42 <span class="text-body-sm font-normal text-outline">ms</span></span>
+<span class="text-xs text-error font-bold">+2ms ↓</span>
+</div>
+<div class="w-full bg-surface-variant/30 h-1 mt-4 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[24%]"></div>
+</div>
+</div>
+<!-- Model Health Score -->
+<div class="glass-card p-stack-md rounded-xl">
+<div class="flex items-start justify-between mb-2">
+<span class="text-label-mono font-label-mono text-outline-variant uppercase">Health Score</span>
+<div class="h-2 w-2 rounded-full bg-tertiary-fixed pulse-glow-success"></div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-md font-headline-md">99.8<span class="text-body-sm font-normal text-outline">%</span></span>
+<span class="text-xs text-tertiary-fixed font-bold">Stable</span>
+</div>
+<div class="w-full bg-surface-variant/30 h-1 mt-4 rounded-full overflow-hidden">
+<div class="bg-tertiary-fixed h-full w-[99.8%]"></div>
+</div>
+</div>
+</div>
+<!-- Dashboard Body: Asymmetric Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Main Section: System Health Chart -->
+<div class="col-span-12 lg:col-span-8">
+<div class="glass-card rounded-xl h-[400px] flex flex-col overflow-hidden">
+<div class="p-stack-md flex justify-between items-center border-b border-outline-variant/10">
+<div>
+<h3 class="font-headline-sm text-headline-sm">System Health</h3>
+<p class="text-body-sm text-outline-variant">Real-time inference request volume across all clusters</p>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1 text-xs font-label-mono border border-outline-variant/30 rounded bg-primary/10 text-primary">Live</button>
+<button class="px-3 py-1 text-xs font-label-mono border border-outline-variant/30 rounded text-outline-variant hover:text-on-surface">1H</button>
+<button class="px-3 py-1 text-xs font-label-mono border border-outline-variant/30 rounded text-outline-variant hover:text-on-surface">24H</button>
+</div>
+</div>
+<div class="flex-1 relative p-stack-lg flex flex-col justify-end">
+<!-- Simulated Chart Visual -->
+<div class="absolute inset-x-0 bottom-0 h-48 chart-gradient opacity-30"></div>
+<div class="relative w-full h-full flex items-end gap-1">
+<!-- Chart Bars (Visual Representation) -->
+<script>
+                                    const bars = 40;
+                                    for(let i=0; i<bars; i++) {
+                                        const h = Math.floor(Math.random() * 80) + 20;
+                                        document.write(`<div class="flex-1 bg-primary/40 rounded-t-sm transition-all duration-500 hover:bg-primary" style="height: ${h}%"></div>`);
+                                    }
+                                </script>
+</div>
+<div class="flex justify-between mt-4 text-[10px] font-label-mono text-outline uppercase tracking-wider">
+<span>08:00 AM</span>
+<span>10:00 AM</span>
+<span>12:00 PM</span>
+<span>02:00 PM</span>
+<span>04:00 PM</span>
+<span>Current</span>
+</div>
+</div>
+</div>
+<!-- Top Active Models Table -->
+<div class="glass-card rounded-xl mt-gutter overflow-hidden">
+<div class="p-stack-md border-b border-outline-variant/10">
+<h3 class="font-headline-sm text-headline-sm">Top Active Models</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-high/40 text-table-header font-table-header text-outline uppercase tracking-wider">
+<tr>
+<th class="px-gutter py-3">Model Name</th>
+<th class="px-gutter py-3">Version</th>
+<th class="px-gutter py-3">Uptime</th>
+<th class="px-gutter py-3">Req/sec</th>
+<th class="px-gutter py-3 text-right">Status</th>
+</tr>
+</thead>
+<tbody class="text-body-sm divide-y divide-outline-variant/5">
+<tr class="hover:bg-surface-container-high/30 transition-colors group">
+<td class="px-gutter py-4 font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="model_training">model_training</span>
+                                            GPT-4-Turbo
+                                        </td>
+<td class="px-gutter py-4 font-label-mono text-xs">v2.1.0-stable</td>
+<td class="px-gutter py-4 text-outline">14d 02h 11m</td>
+<td class="px-gutter py-4">428.4</td>
+<td class="px-gutter py-4 text-right">
+<span class="bg-tertiary/10 text-tertiary-fixed px-2 py-0.5 rounded text-[11px] font-bold">ACTIVE</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high/30 transition-colors group">
+<td class="px-gutter py-4 font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="neurology">neurology</span>
+                                            Llama-3-70B
+                                        </td>
+<td class="px-gutter py-4 font-label-mono text-xs">v1.4.2-patch</td>
+<td class="px-gutter py-4 text-outline">08d 14h 22m</td>
+<td class="px-gutter py-4">120.1</td>
+<td class="px-gutter py-4 text-right">
+<span class="bg-tertiary/10 text-tertiary-fixed px-2 py-0.5 rounded text-[11px] font-bold">ACTIVE</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high/30 transition-colors group">
+<td class="px-gutter py-4 font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="psychology">psychology</span>
+                                            Claude-3-Opus
+                                        </td>
+<td class="px-gutter py-4 font-label-mono text-xs">v3.0.0-dist</td>
+<td class="px-gutter py-4 text-outline">02d 20h 05m</td>
+<td class="px-gutter py-4">84.9</td>
+<td class="px-gutter py-4 text-right">
+<span class="bg-secondary-container/20 text-secondary px-2 py-0.5 rounded text-[11px] font-bold">WARMING</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high/30 transition-colors group">
+<td class="px-gutter py-4 font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-outline-variant text-[18px]" data-icon="memory">memory</span>
+                                            Mistral-7B-v0.3
+                                        </td>
+<td class="px-gutter py-4 font-label-mono text-xs">v0.3.1-legacy</td>
+<td class="px-gutter py-4 text-outline">--</td>
+<td class="px-gutter py-4">0.0</td>
+<td class="px-gutter py-4 text-right">
+<span class="bg-outline-variant/20 text-outline px-2 py-0.5 rounded text-[11px] font-bold">IDLE</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Sidebar Section: Recent Logs / Security Alerts -->
+<div class="col-span-12 lg:col-span-4 space-y-gutter">
+<!-- Security Alerts Feed -->
+<div class="glass-card rounded-xl p-stack-md border-error/20 bg-error/5">
+<div class="flex items-center justify-between mb-4">
+<h4 class="font-headline-sm text-[16px] text-error flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+                                Critical Alerts
+                            </h4>
+<span class="text-[10px] font-label-mono text-error/60">Live Feed</span>
+</div>
+<div class="space-y-3">
+<div class="p-3 bg-error-container/20 rounded border border-error/10">
+<div class="flex justify-between items-start mb-1">
+<span class="text-xs font-bold text-error">Rate Limit Exceeded</span>
+<span class="text-[10px] text-outline-variant">2m ago</span>
+</div>
+<p class="text-xs text-on-surface-variant">IP 192.168.1.104 attempted 500+ calls/sec to Llama-3 cluster.</p>
+</div>
+<div class="p-3 bg-surface-container-highest/40 rounded border border-outline-variant/10">
+<div class="flex justify-between items-start mb-1">
+<span class="text-xs font-bold text-secondary">Model Rotation Complete</span>
+<span class="text-[10px] text-outline-variant">14m ago</span>
+</div>
+<p class="text-xs text-on-surface-variant">Primary inference engine successfully migrated to Cluster-Beta-04.</p>
+</div>
+</div>
+<button class="w-full mt-4 py-2 text-xs font-bold text-error hover:underline transition-all">View All Security Logs</button>
+</div>
+<!-- Recent Logs Feed -->
+<div class="glass-card rounded-xl flex flex-col h-[500px]">
+<div class="p-stack-md border-b border-outline-variant/10">
+<h4 class="font-headline-sm text-[16px]">Real-time Event Stream</h4>
+</div>
+<div class="flex-1 overflow-y-auto p-stack-md space-y-4 font-label-mono text-[11px]">
+<div class="flex gap-3">
+<span class="text-outline shrink-0">16:42:01</span>
+<span class="text-tertiary">[INFO]</span>
+<span class="text-on-surface-variant">Inference request processed: UUID-8291-X</span>
+</div>
+<div class="flex gap-3">
+<span class="text-outline shrink-0">16:41:58</span>
+<span class="text-primary">[AUTH]</span>
+<span class="text-on-surface-variant">User "JohnD_Admin" authenticated from SF-CA</span>
+</div>
+<div class="flex gap-3">
+<span class="text-outline shrink-0">16:41:44</span>
+<span class="text-error">[WARN]</span>
+<span class="text-error">Latency spike detected in Region: EU-Central-1</span>
+</div>
+<div class="flex gap-3">
+<span class="text-outline shrink-0">16:41:30</span>
+<span class="text-tertiary">[INFO]</span>
+<span class="text-on-surface-variant">Token buffer flushed for Model: Claude-3-Opus</span>
+</div>
+<div class="flex gap-3">
+<span class="text-outline shrink-0">16:41:12</span>
+<span class="text-outline-variant">[SYS]</span>
+<span class="text-on-surface-variant">Node health check: 142/142 healthy</span>
+</div>
+<div class="flex gap-3">
+<span class="text-outline shrink-0">16:41:05</span>
+<span class="text-tertiary">[INFO]</span>
+<span class="text-on-surface-variant">Auto-scaling group expanded: +2 nodes</span>
+</div>
+<!-- Repeat logs for scroll demonstration -->
+<div class="flex gap-3">
+<span class="text-outline shrink-0">16:40:55</span>
+<span class="text-tertiary">[INFO]</span>
+<span class="text-on-surface-variant">Database cleanup routine completed</span>
+</div>
+</div>
+<div class="p-stack-sm bg-surface-container-lowest border-t border-outline-variant/10 text-center">
+<span class="text-[10px] text-outline-variant uppercase tracking-widest">Auto-updating every 5s</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB (Hidden on Dashboard based on rule, but here for completeness if needed) -->
+<!-- Suppressing based on "Contextual FAB Suppression" rule for Admin/Dashboard screens -->
+<script>
+        // Micro-interactions for the real-time effect
+        const updateLogs = () => {
+            const stream = document.querySelector('.overflow-y-auto.p-stack-md');
+            if (!stream) return;
+            
+            const times = ["16:45:12", "16:45:15", "16:45:18"];
+            const types = ["[INFO]", "[SYS]", "[AUTH]"];
+            const messages = ["Cluster handshake verified", "Load balancer re-indexed", "Cache miss resolved: 0.1ms"];
+            const colors = ["text-tertiary", "text-outline-variant", "text-primary"];
+
+            const log = document.createElement('div');
+            log.className = 'flex gap-3 opacity-0 translate-y-2 transition-all duration-500';
+            const idx = Math.floor(Math.random() * 3);
+            log.innerHTML = `
+                <span class="text-outline shrink-0">${new Date().toLocaleTimeString('en-GB', { hour12: false })}</span>
+                <span class="${colors[idx]}">${types[idx]}</span>
+                <span class="text-on-surface-variant">${messages[idx]}</span>
+            `;
+            
+            stream.prepend(log);
+            setTimeout(() => {
+                log.classList.remove('opacity-0', 'translate-y-2');
+            }, 100);
+
+            // Maintain max logs
+            if (stream.children.length > 20) {
+                stream.removeChild(stream.lastElementChild);
+            }
+        };
+
+        setInterval(updateLogs, 4000);
+    </script>
+</body></html>

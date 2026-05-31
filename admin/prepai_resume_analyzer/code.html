@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Resume Analyzer | PrepAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(11, 19, 38, 0.6);
+            backdrop-filter: blur(32px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-modal {
+            background: rgba(11, 19, 38, 0.8);
+            backdrop-filter: blur(64px);
+            border: 1.5px solid;
+            border-image: linear-gradient(to bottom right, #adc6ff, #6f00be) 1;
+        }
+        .glow-pulse {
+            position: relative;
+        }
+        .glow-pulse::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(45deg, #adc6ff, #2fd9f4, #adc6ff);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            animation: pulse-glow 3s infinite linear;
+        }
+        @keyframes pulse-glow {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .radial-gradient-bg {
+            background: radial-gradient(circle at 50% 50%, rgba(173, 198, 255, 0.05) 0%, transparent 70%);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#dae2fd",
+                        "inverse-surface": "#dae2fd",
+                        "tertiary-fixed": "#a2eeff",
+                        "on-tertiary-fixed": "#001f25",
+                        "surface-tint": "#adc6ff",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#2fd9f4",
+                        "on-surface-variant": "#c2c6d6",
+                        "tertiary-container": "#009fb4",
+                        "on-secondary-fixed": "#2c0051",
+                        "on-tertiary-fixed-variant": "#004e5a",
+                        "on-secondary": "#490080",
+                        "background": "#0b1326",
+                        "primary": "#adc6ff",
+                        "on-background": "#dae2fd",
+                        "error-container": "#93000a",
+                        "primary-fixed-dim": "#adc6ff",
+                        "surface-bright": "#31394d",
+                        "outline": "#8c909f",
+                        "on-primary": "#002e6a",
+                        "on-tertiary": "#00363e",
+                        "primary-fixed": "#d8e2ff",
+                        "outline-variant": "#424754",
+                        "surface-container-high": "#222a3d",
+                        "on-secondary-fixed-variant": "#6900b3",
+                        "on-primary-fixed": "#001a42",
+                        "surface-container": "#171f33",
+                        "primary-container": "#4d8eff",
+                        "surface-variant": "#2d3449",
+                        "surface-dim": "#0b1326",
+                        "secondary-fixed-dim": "#ddb7ff",
+                        "on-primary-container": "#00285d",
+                        "error": "#ffb4ab",
+                        "inverse-on-surface": "#283044",
+                        "secondary-container": "#6f00be",
+                        "surface-container-highest": "#2d3449",
+                        "on-error": "#690005",
+                        "surface": "#0b1326",
+                        "inverse-primary": "#005ac2",
+                        "on-tertiary-container": "#002f36",
+                        "on-primary-fixed-variant": "#004395",
+                        "surface-container-low": "#131b2e",
+                        "secondary": "#ddb7ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "container-max": "1280px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Geist"],
+                        "body-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "mono-data": ["Geist"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                        "mono-data": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="flex flex-col h-screen fixed left-0 top-0 py-gutter bg-surface-container/60 backdrop-blur-32 border-r border-white/10 w-64 hidden md:flex z-50">
+<div class="px-6 mb-10">
+<h1 class="font-headline-lg text-headline-lg text-primary font-bold">PrepAI</h1>
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mt-1">Mission Control</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<!-- Navigation Items Mapping from JSON -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">quiz</span> Generate Questions
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">description</span> Cheat Sheets
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">auto_awesome</span> AI File Assistant
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary border-r-2 border-primary bg-primary/10 transition-transform font-label-caps text-label-caps scale-[0.98]" href="#">
+<span class="material-symbols-outlined">analytics</span> Resume Analyzer
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">map</span> Roadmap Generator
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">history</span> Saved Interviews
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">person</span> Profile
+            </a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full py-4 bg-gradient-to-r from-primary to-secondary-container text-on-primary font-bold rounded-xl shadow-lg hover:opacity-90 transition-all">
+                Upgrade to Pro
+            </button>
+</div>
+</aside>
+<!-- Top Navigation (Mobile & Desktop Header) -->
+<header class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full fixed top-0 left-0 md:pl-[280px] bg-surface/60 backdrop-blur-32 border-b border-white/10 z-40">
+<div class="flex items-center gap-4">
+<span class="md:hidden material-symbols-outlined text-primary text-2xl">menu</span>
+<h2 class="font-headline-lg text-headline-lg md:font-headline-lg md:text-headline-lg font-bold text-primary">Resume Analyzer</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center bg-surface-container px-4 py-2 rounded-full border border-white/5">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-48 text-on-surface" placeholder="Search resources..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">settings</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-primary/30">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a young adult with a confident expression, set against a blurred urban background. The lighting is soft and natural, emphasizing clean skin textures. The overall aesthetic is modern, professional, and high-fidelity, aligning with a premium AI SaaS platform's user profile imagery." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYzehkVjldw50frDKGGL-DmCjfck6DhX97AO7LhjBjCdJQySUNyb7-JQq4lKi3-nB3V8GtQ5lXCctcZO1C4i6pjhRFH8TN4be6zBL8SQfa48pHHc_hR39hHHUYBQxjlBZP-MRCJU7txSvzU87Ye7ofgTse4IUffurJZMMfWkIjT1gYLu-UhCFDFD9Yr43a1eo1bflD8PXczK8_V82q5tinvsa4l6q_K1G62cTamAkR1NeUI7N9DC4vJL2V9XuvRH6JKT71Ue2O8eM"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-24 md:pl-64 min-h-screen">
+<div class="p-margin-mobile md:p-margin-desktop max-w-container-max mx-auto space-y-gutter">
+<!-- Hero / Upload Section -->
+<section class="relative">
+<div class="absolute -top-24 -left-24 w-64 h-64 bg-primary/10 rounded-full blur-[120px]"></div>
+<div class="absolute -bottom-24 -right-24 w-64 h-64 bg-secondary/10 rounded-full blur-[120px]"></div>
+<div class="glass-panel p-8 md:p-12 rounded-[2rem] border-white/10 flex flex-col items-center text-center space-y-6">
+<div class="w-20 h-20 rounded-2xl bg-primary-container/20 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary text-4xl">cloud_upload</span>
+</div>
+<div class="max-w-2xl">
+<h3 class="font-headline-lg text-headline-lg text-on-surface mb-2">Upload your resume to get started</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Our AI will scan your document against 500+ industry standards to provide actionable improvements and ATS optimization.</p>
+</div>
+<div class="w-full max-w-md border-2 border-dashed border-outline-variant hover:border-primary transition-colors rounded-2xl p-10 cursor-pointer group flex flex-col items-center">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-5xl mb-4">upload_file</span>
+<p class="font-body-md text-body-md font-bold text-on-surface">Drag &amp; drop your PDF or DOCX</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Maximum file size: 10MB</p>
+</div>
+<button class="px-8 py-3 bg-gradient-to-r from-primary-container to-secondary-container rounded-full font-bold text-on-primary-container shadow-xl hover:scale-105 transition-transform">
+                        Analyze Resume
+                    </button>
+</div>
+</section>
+<!-- Analysis Results Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- ATS Score Card (Left Column) -->
+<div class="lg:col-span-4 flex flex-col gap-gutter">
+<div class="glass-panel p-8 rounded-3xl flex flex-col items-center justify-center text-center glow-pulse h-full min-h-[400px]">
+<p class="font-label-caps text-label-caps text-primary tracking-widest mb-8 uppercase">ATS Compatibility Score</p>
+<div class="relative w-48 h-48 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-variant" cx="96" cy="96" fill="transparent" r="88" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-primary" cx="96" cy="96" fill="transparent" r="88" stroke="currentColor" stroke-dasharray="552.92" stroke-dashoffset="138.23" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-headline-xl text-headline-xl text-on-surface">75%</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Optimal</span>
+</div>
+</div>
+<p class="mt-8 font-body-sm text-body-sm text-on-surface-variant px-4">Your resume is performing better than 82% of applicants in the tech sector.</p>
+</div>
+</div>
+<!-- AI Summary & Suggestions (Right Column) -->
+<div class="lg:col-span-8 space-y-gutter">
+<!-- AI Summary -->
+<div class="glass-panel p-8 rounded-3xl">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h4 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">AI Professional Summary</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                            Experienced Full-Stack Developer with over 5 years of expertise in building scalable cloud-native applications. Strong proficiency in React, Node.js, and AWS, with a proven track record of reducing latency by 40% in previous roles. Demonstrated ability to lead cross-functional teams and deliver high-impact features in fast-paced startup environments.
+                        </p>
+</div>
+<!-- Skills Match Bento -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="glass-panel p-6 rounded-3xl bg-surface-container-low/40">
+<h5 class="font-label-caps text-label-caps text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">check_circle</span> IDENTIFIED SKILLS
+                            </h5>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-mono-data text-mono-data">React.js</span>
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-mono-data text-mono-data">TypeScript</span>
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-mono-data text-mono-data">Node.js</span>
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-mono-data text-mono-data">PostgreSQL</span>
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-mono-data text-mono-data">AWS (S3, EC2)</span>
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full font-mono-data text-mono-data">Docker</span>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-3xl bg-surface-container-low/40">
+<h5 class="font-label-caps text-label-caps text-error mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">warning</span> MISSING SKILLS
+                            </h5>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-error/10 text-error border border-error/20 rounded-full font-mono-data text-mono-data">GraphQL</span>
+<span class="px-3 py-1 bg-error/10 text-error border border-error/20 rounded-full font-mono-data text-mono-data">Kubernetes</span>
+<span class="px-3 py-1 bg-error/10 text-error border border-error/20 rounded-full font-mono-data text-mono-data">Unit Testing</span>
+<span class="px-3 py-1 bg-error/10 text-error border border-error/20 rounded-full font-mono-data text-mono-data">System Design</span>
+</div>
+</div>
+</div>
+<!-- Actionable Tips -->
+<div class="glass-panel p-8 rounded-3xl border-l-4 border-l-tertiary">
+<h4 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-6">Improvement Suggestions</h4>
+<ul class="space-y-4">
+<li class="flex items-start gap-4">
+<div class="w-6 h-6 rounded-full bg-tertiary/20 flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-tertiary text-xs">trending_up</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-semibold">Quantify your achievements</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Instead of "Improved app performance," use "Reduced loading time by 30% for over 1M monthly active users."</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="w-6 h-6 rounded-full bg-tertiary/20 flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-tertiary text-xs">trending_up</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-semibold">Optimize for 'GraphQL' keywords</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">The job description mentions GraphQL frequently. Highlight any experience with Apollo or Relay.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="w-6 h-6 rounded-full bg-tertiary/20 flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-tertiary text-xs">trending_up</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-semibold">Simplify document formatting</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Your multi-column layout may confuse older ATS software. Consider a single-column hybrid layout.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Visual Graphic Section -->
+<section class="glass-panel rounded-[2rem] overflow-hidden relative min-h-[300px] flex items-center px-12 py-16">
+<div class="relative z-10 max-w-lg">
+<h3 class="font-headline-lg text-headline-lg text-white mb-4">Elevate Your Story</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Our AI doesn't just scan; it understands your professional narrative and helps you frame it for maximum impact.</p>
+<button class="bg-white/10 hover:bg-white/20 border border-white/20 px-6 py-2 rounded-full font-label-caps text-label-caps transition-all">
+                        Learn how AI scoring works
+                    </button>
+</div>
+<div class="absolute right-0 top-0 h-full w-1/2 hidden md:block">
+<img alt="Abstract AI Interface" class="h-full w-full object-cover opacity-60" data-alt="A futuristic, abstract visualization of artificial intelligence processing data. Glowing neon blue and purple threads of light weave through a dark, deep space, forming complex neural network patterns. The scene is cinematic and high-tech, with a shallow depth of field and a focus on shimmering light particles that evoke a sense of deep machine learning and sophisticated computation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCKWwQjy8oI4_tAAqgDPUhulPLJVNh2EgvxBWSKscTQFpDWnMd2CBlhi1wgdat08zuwdo2EohhSRInaoh_ezmxNOzVFCBky7TCQZC1ftXMNpuUog9weZkgIJqEsNc2qsYnJ_P7pwr_Y0L2etHOvHbJHjM70svRYUQrrqfv6j7f8NU8DgqIUfEUyHCJtL8kjN7rEYYuCllHtJfT-xPKcQw1D6OmdgUxMKCeqlhunuIcWGoDeqhYL7iHMYhoiVhFfZbtGUnmRnyXmcY"/>
+<div class="absolute inset-0 bg-gradient-to-l from-transparent to-background"></div>
+</div>
+</section>
+</div>
+</main>
+<!-- Navigation for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container/80 backdrop-blur-32 flex justify-around items-center py-3 border-t border-white/5 z-50">
+<button class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-label-caps">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="text-[10px] font-label-caps">Analyze</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined">description</span>
+<span class="text-[10px] font-label-caps">Sheets</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-label-caps">Profile</span>
+</button>
+</nav>
+<script>
+        // Simple micro-interaction for the radial SVG score animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const circle = document.querySelector('circle.text-primary');
+            if (circle) {
+                const radius = 88;
+                const circumference = 2 * Math.PI * radius;
+                circle.style.strokeDasharray = circumference;
+                
+                const score = 75; // The actual score
+                const offset = circumference - (score / 100) * circumference;
+                
+                // Trigger animation after a brief delay
+                setTimeout(() => {
+                    circle.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1)';
+                    circle.style.strokeDashoffset = offset;
+                }, 500);
+            }
+        });
+    </script>
+</body></html>

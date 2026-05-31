@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrepAI Secure Admin Workspace</title>
+  <!-- Google Fonts & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="dark-mode">
+
+  <!-- Background glow flares -->
+  <div class="glow-flare flare-1"></div>
+  <div class="glow-flare flare-2"></div>
+
+  <!-- MAIN SECURITY LOGIN LOCK GATE -->
+  <div id="login-gate" class="screen-wrapper active">
+    <div class="login-container">
+      
+      <!-- Logo header -->
+      <div class="login-header">
+        <div class="logo-badge">
+          <i data-lucide="shield-check" class="logo-icon"></i>
+        </div>
+        <h2>PrepAI Admin Vault</h2>
+        <p>Input your credentials and active 2FA dynamic verification code</p>
+      </div>
+
+      <!-- Combined card containing form + authenticator emulator side-by-side -->
+      <div class="lock-card glass-panel">
+        
+        <!-- Left: Form inputs -->
+        <form id="login-form" class="login-form">
+          <div class="form-title">
+            <i data-lucide="key-round"></i>
+            <span>Vault Authentication</span>
+          </div>
+
+          <!-- Admin ID input -->
+          <div class="input-group">
+            <label for="admin-id">Admin ID</label>
+            <div class="input-wrapper">
+              <i data-lucide="user" class="input-icon"></i>
+              <input type="text" id="admin-id" placeholder="admin.secure" required>
+            </div>
+            <p class="input-tip">Default ID: <code class="mono-code">admin.secure</code></p>
+          </div>
+
+          <!-- Master password input -->
+          <div class="input-group">
+            <label for="master-password">Master Password</label>
+            <div class="input-wrapper">
+              <i data-lucide="lock" class="input-icon"></i>
+              <input type="password" id="master-password" placeholder="secure147" required>
+            </div>
+            <p class="input-tip">Default secret: <code class="mono-code">secure147</code></p>
+          </div>
+
+          <!-- OTP input -->
+          <div class="input-group">
+            <label for="otp-passcode">2-Factor OTP Passcode</label>
+            <div class="input-wrapper">
+              <i data-lucide="smartphone" class="input-icon"></i>
+              <input type="text" id="otp-passcode" placeholder="000000" maxlength="6" autocomplete="off" required>
+            </div>
+            <p class="input-tip">Input the 6-digit rolling code from the virtual authenticator</p>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <span>Unlock Vault Console</span>
+            <i data-lucide="arrow-right"></i>
+          </button>
+        </form>
+
+        <!-- Vertical divider line -->
+        <div class="card-divider"></div>
+
+        <!-- Right: Virtal Authenticator Emulator -->
+        <div class="authenticator-widget">
+          <div class="widget-header">
+            <div class="phone-badge">
+              <i data-lucide="smartphone" class="phone-icon animate-pulse"></i>
+            </div>
+            <div>
+              <h3>2FA Authenticator</h3>
+              <p>Simulating Google Authenticator app</p>
+            </div>
+          </div>
+
+          <div class="otp-display-card">
+            <span class="otp-account">admin@prepai.ai</span>
+            
+            <div class="otp-code-row">
+              <span id="rolling-otp" class="otp-code">000 000</span>
+              <button type="button" id="copy-otp-btn" class="copy-btn" title="Copy dynamic code to clipboard">
+                <i data-lucide="copy" class="copy-icon"></i>
+              </button>
+            </div>
+
+            <!-- Rolling countdown progress circle -->
+            <div class="countdown-row">
+              <div class="progress-circle-container">
+                <svg class="progress-circle-svg" viewBox="0 0 36 36">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path id="progress-circle-bar" class="circle-bar" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <span id="countdown-text" class="countdown-num">30</span>
+              </div>
+              <span class="countdown-label">Seconds until next rolling code refresh</span>
+            </div>
+          </div>
+          
+          <div class="widget-footer">
+            <i data-lucide="info"></i>
+            <span>TOTP dynamic passcode algorithm is verified locally.</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- MAIN POWERHOUSE WORKSPACE DASHBOARD -->
+  <div id="admin-workspace" class="screen-wrapper">
+    <div class="workspace-container">
+      
+      <!-- Top header bar -->
+      <header class="workspace-header glass-panel">
+        <div class="header-left">
+          <div class="shield-badge">
+            <i data-lucide="shield-check"></i>
+          </div>
+          <div>
+            <h1>PrepAI Root Admin Control</h1>
+            <p>Standalone Developer Systems Command Center • v1.4.0</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <!-- Theme toggle button -->
+          <button id="theme-switch" class="control-btn" title="Toggle slate-light and dark oled theme presets">
+            <i id="theme-icon" data-lucide="sun"></i>
+          </button>
+          <button id="logout-btn" class="logout-btn">
+            <i data-lucide="log-out"></i>
+            <span>Lock Console</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main bento grid -->
+      <div class="bento-grid">
+        
+        <!-- COLUMN 1: User & Auth overrides -->
+        <div class="bento-card glass-panel col-span-4">
+          <div class="card-header border-bottom">
+            <i data-lucide="user" class="header-icon primary"></i>
+            <div>
+              <h3>User & Auth Overrides</h3>
+              <p>Sync profile settings directly inside AuthContext</p>
+            </div>
+          </div>
+
+          <form id="profile-form" class="card-body form-spacing">
+            <!-- Avatar picture preview -->
+            <div class="avatar-selector">
+              <label>Profile Avatar Picture</label>
+              <div class="avatar-row">
+                <div class="avatar-preview-wrapper" id="avatar-trigger">
+                  <img id="avatar-preview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar">
+                  <div class="avatar-overlay">
+                    <i data-lucide="camera"></i>
+                  </div>
+                </div>
+                <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
+                <div class="avatar-presets">
+                  <button type="button" class="preset-btn" data-url="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80">Architect</button>
+                  <button type="button" class="preset-btn" data-url="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=150&q=80">Dev Lead</button>
+                  <button type="button" class="preset-btn" data-url="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80">AI Specialist</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Text inputs -->
+            <div class="form-group">
+              <label for="user-name">Full Name</label>
+              <input type="text" id="user-name" required>
+            </div>
+
+            <div class="form-group">
+              <label for="user-email">Email Address</label>
+              <input type="email" id="user-email" required>
+            </div>
+
+            <div class="form-group">
+              <label for="user-role">Target Role</label>
+              <input type="text" id="user-role" required>
+            </div>
+
+            <!-- Tier subscription override -->
+            <div class="form-group">
+              <label for="user-tier">Subscription Tier Plan</label>
+              <select id="user-tier">
+                <option>Starter Free Tier</option>
+                <option>Pro Accelerator Tier</option>
+                <option>Enterprise Hub Tier</option>
+              </select>
+            </div>
+
+            <button type="submit" class="primary-btn">
+              <i data-lucide="check-circle-2"></i>
+              <span>Override User Session</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- COLUMN 2: ATS slider & seed triggers -->
+        <div class="bento-card glass-panel col-span-4">
+          <div class="card-header border-bottom">
+            <i data-lucide="sliders" class="header-icon secondary"></i>
+            <div>
+              <h3>ATS & Database Injections</h3>
+              <p>Simulate parser outputs, files, and roadmaps</p>
+            </div>
+          </div>
+
+          <div class="card-body section-spacing">
+            
+            <!-- ATS slider card -->
+            <div class="slider-box">
+              <div class="slider-header">
+                <span>Set ATS Score Matcher</span>
+                <span id="ats-score-badge" class="badge">85%</span>
+              </div>
+              <input type="range" id="ats-score-range" min="0" max="100" value="85">
+              
+              <div class="form-group mt-2">
+                <label for="ats-summary-text">Analysis Summary</label>
+                <textarea id="ats-summary-text" rows="2"></textarea>
+              </div>
+              
+              <div class="skills-manager">
+                <div class="skills-col">
+                  <span>Identified Skills</span>
+                  <div class="skills-list" id="strength-skills-list"></div>
+                </div>
+                <div class="skills-col">
+                  <span>Deficient Gaps</span>
+                  <div class="skills-list" id="gap-skills-list"></div>
+                </div>
+              </div>
+              
+              <div class="skills-input-row">
+                <input type="text" id="new-skill-input" placeholder="Add skill...">
+                <button type="button" id="add-strength-btn" class="small-btn">+ Strength</button>
+                <button type="button" id="add-gap-btn" class="small-btn outline-red">+ Gap</button>
+              </div>
+
+              <button type="button" id="apply-ats-btn" class="secondary-btn w-full mt-3">
+                <span>Apply Resume Override</span>
+              </button>
+            </div>
+
+            <!-- Sync indicators -->
+            <div class="injectors-matrix">
+              <span>Programmatic Object Injections</span>
+              <div class="injectors-row">
+                <button type="button" id="inject-interview-btn" class="action-btn">
+                  <i data-lucide="help-circle"></i>
+                  <span>Inject Quiz</span>
+                </button>
+                <button type="button" id="inject-roadmap-btn" class="action-btn">
+                  <i data-lucide="map"></i>
+                  <span>Inject Roadmap</span>
+                </button>
+                <button type="button" id="inject-cheatsheet-btn" class="action-btn">
+                  <i data-lucide="file-text"></i>
+                  <span>Inject Cheatsheet</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- COLUMN 3: Outage toggle, presets loader & clean sweep -->
+        <div class="bento-card glass-panel col-span-4">
+          <div class="card-header border-bottom">
+            <i data-lucide="database" class="header-icon tertiary"></i>
+            <div>
+              <h3>Outages & Data Packs</h3>
+              <p>Trigger simulator outages or seed profiles</p>
+            </div>
+          </div>
+
+          <div class="card-body section-spacing">
+            
+            <!-- Outage control box -->
+            <div class="outage-box">
+              <div class="outage-info">
+                <h4 id="outage-title">Network Outage Simulator</h4>
+                <p>Issues system-wide online/offline windows events</p>
+              </div>
+              <button type="button" id="simulate-outage-btn" class="outage-toggle-btn">
+                <span>Simulate Outage</span>
+              </button>
+            </div>
+
+            <!-- Loader data packs -->
+            <div class="data-packs-box">
+              <span>Dynamic Data Presets Loader</span>
+              
+              <div class="pack-card">
+                <div>
+                  <h5>Lead Full Stack Pack</h5>
+                  <p>Director profile, Redis clustering, 98% ATS</p>
+                </div>
+                <button type="button" id="load-fs-pack-btn" class="pack-load-btn">
+                  <i data-lucide="zap"></i>
+                  <span>Load</span>
+                </button>
+              </div>
+
+              <div class="pack-card">
+                <div>
+                  <h5>AI Research Specialist</h5>
+                  <p>Principal AI profile, RAG indexing, 95% ATS</p>
+                </div>
+                <button type="button" id="load-ai-pack-btn" class="pack-load-btn">
+                  <i data-lucide="cpu"></i>
+                  <span>Load</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Factory clean sweep -->
+            <div class="reset-box">
+              <div class="reset-info">
+                <h4>Factory Clean Sandbox Reset</h4>
+                <p>Wipes localStorage and resets contexts to blank</p>
+              </div>
+              <button type="button" id="factory-reset-btn" class="reset-btn">
+                <span>Factory Reset</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- File Assistant documents manager -->
+        <div class="bento-card glass-panel col-span-12">
+          <div class="card-header border-bottom">
+            <i data-lucide="folder-open" class="header-icon info"></i>
+            <div class="flex-row-between w-full">
+              <div>
+                <h3>AI Assistant Document Manager</h3>
+                <p>Check, audit, and wipe parsed index workspace files</p>
+              </div>
+              <button type="button" id="clear-files-btn" class="delete-link hidden">
+                <i data-lucide="trash-2"></i>
+                <span>Wipe Document Cache</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div id="empty-files-placeholder" class="empty-placeholder">
+              <i data-lucide="file-warning"></i>
+              <p>No documents uploaded in the workspace database. File indexes will populate dynamically here when uploaded.</p>
+            </div>
+            <div id="files-grid-view" class="files-grid hidden"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

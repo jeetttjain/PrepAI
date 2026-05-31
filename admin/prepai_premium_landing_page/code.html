@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AetherCareer AI | Master Your Career</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&amp;family=Inter:wght@400;500;700&amp;family=Jetbrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-primary-fixed": "#3b3054", "surface-container-lowest": "#000000", "surface-variant": "#27242d", "secondary-fixed": "#e8def8", "surface-container-low": "#141218", "on-primary": "#453a5f", "surface-container": "#1b181f", "primary-container": "#574c72", "tertiary-container": "#ccd6fe", "inverse-primary": "#64597f", surface: "#0f0d12", "on-tertiary-fixed": "#2d3756", "on-background": "#eae3ef", "on-tertiary-fixed-variant": "#495374", "on-primary-container": "#eadeff", background: "#0f0d12", "on-secondary-fixed": "#423c50", "on-secondary-container": "#c5bbd4", "surface-container-highest": "#27242d", "tertiary-fixed": "#ccd6fe", "primary-fixed": "#dccdfa", "on-surface-variant": "#afa9b4", "primary-fixed-dim": "#cec0ec", error: "#f97386", "surface-container-high": "#211e26", "on-error-container": "#ff97a3", "surface-bright": "#2e2b34", "on-surface": "#eae3ef", "outline-variant": "#4a4650", "on-secondary": "#433d51", "surface-tint": "#cec0ec", "on-secondary-fixed-variant": "#5f586d", "inverse-surface": "#fdf7fe", "inverse-on-surface": "#575459", tertiary: "#dfe4ff", "tertiary-fixed-dim": "#bec8ef", "secondary-container": "#3e384c", "error-container": "#871c34", "on-primary-fixed-variant": "#584c72", "surface-dim": "#0f0d12", "on-tertiary": "#485273", "on-tertiary-container": "#404a6a", secondary: "#ccc2db", outline: "#78737e", primary: "#cec0ec", "secondary-fixed-dim": "#dad0ea", "on-error": "#490013", "error-dim": "#c44b5f", "tertiary-dim": "#bec8ef", "primary-dim": "#c0b2de", "secondary-dim": "#beb5cd"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {unit: "8px", "container-max": "1280px", gutter: "24px", "section-padding-desktop": "120px", "section-padding-mobile": "64px"}, fontFamily: {"body-lg": ["Inter"], "headline-lg-mobile": ["Plus Jakarta Sans"], "display-xl": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "label-mono": ["JetBrains Mono"], "display-lg": ["Plus Jakarta Sans"], "body-md": ["Inter"], "headline-md": ["Plus Jakarta Sans"], headline: ["Plus Jakarta Sans"], display: ["Plus Jakarta Sans"], body: ["Inter"], label: ["Jetbrains Mono"]}, fontSize: {"body-lg": ["20px", {lineHeight: "1.7", letterSpacing: "0em", fontWeight: "400"}], "headline-lg-mobile": ["36px", {lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "700"}], "display-xl": ["72px", {lineHeight: "1.1", letterSpacing: "-0.04em", fontWeight: "800"}], "headline-lg": ["48px", {lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "700"}], "label-mono": ["14px", {lineHeight: "1.2", letterSpacing: "0.05em", fontWeight: "500"}], "display-lg": ["60px", {lineHeight: "1.1", letterSpacing: "-0.04em", fontWeight: "800"}], "body-md": ["16px", {lineHeight: "1.6", letterSpacing: "0em", fontWeight: "400"}], "headline-md": ["32px", {lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "700"}]}}}};</script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
+        }
+        .glow-violet { box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
+        .glow-cyan { box-shadow: 0 0 20px rgba(76, 215, 246, 0.4); }
+        
+        .floating-blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            filter: blur(120px);
+            z-index: -1;
+            opacity: 0.15;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .animate-float {
+            animation: float 12s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-40px) scale(1.05); }
+        }
+
+        .scroll-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-x-hidden">
+<!-- Global Background Elements -->
+<div class="floating-blob bg-primary top-[-100px] left-[-100px] animate-float"></div>
+<div class="floating-blob bg-secondary bottom-[20%] right-[-100px] animate-float" style="animation-delay: -3s;"></div>
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/30 dark:bg-surface/30 backdrop-blur-xl border-b border-white/10 shadow-2xl">
+<div class="flex justify-between items-center px-gutter py-4 max-w-container-max mx-auto">
+<div class="font-display-lg text-[32px] font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+                AetherCareer
+            </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md text-body-md" href="#">Pathways</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-white/5 font-body-md text-body-md px-2 py-1 rounded-lg" href="#">Simulations</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-white/5 font-body-md text-body-md px-2 py-1 rounded-lg" href="#">Expertise</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-white/5 font-body-md text-body-md px-2 py-1 rounded-lg" href="#">Network</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden sm:block text-on-surface font-medium hover:text-primary transition-colors font-body-md text-body-md px-4 py-2">Sign In</button>
+<button class="bg-gradient-to-r from-primary to-secondary text-on-primary-fixed font-bold px-6 py-2.5 rounded-full active:scale-95 transition-all shadow-lg glow-violet font-body-md text-body-md">Get Started</button>
+</div>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="relative pt-[180px] pb-section-padding-desktop px-gutter max-w-container-max mx-auto text-center overflow-visible">
+<div class="inline-flex items-center gap-2 px-4 py-1 rounded-full glass-card mb-8">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-mono text-label-mono uppercase tracking-widest text-secondary">Synthetic Intelligence 2.0 Now Live</span>
+</div>
+<h1 class="font-display-xl text-display-xl lg:text-[84px] mb-8 leading-[1.05] max-w-4xl mx-auto">
+                Master Your Career with <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_auto] animate-[gradient_8s_linear_infinite]">Synthetic Intelligence</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-12">
+                Bridge the gap between ambition and reality. Experience ultra-realistic AI-simulated interviews, real-time tactical feedback, and hyper-personalized career growth roadmaps.
+            </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-6 mb-20">
+<button class="w-full sm:w-auto px-10 py-5 rounded-full bg-primary text-on-primary font-bold text-body-lg shadow-[0_0_40px_rgba(208,188,255,0.3)] hover:scale-105 transition-transform">
+                    Start Free Trial
+                </button>
+<button class="w-full sm:w-auto px-10 py-5 rounded-full glass-card text-on-surface font-bold text-body-lg flex items-center justify-center gap-2 group">
+                    View Demo <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">play_circle</span>
+</button>
+</div>
+<!-- Dashboard Preview -->
+<div class="relative max-w-5xl mx-auto">
+<div class="absolute -top-10 -left-10 w-40 h-40 bg-primary/20 blur-3xl rounded-full"></div>
+<div class="absolute -bottom-10 -right-10 w-60 h-60 bg-secondary/20 blur-3xl rounded-full"></div>
+<div class="glass-card rounded-[2rem] p-4 p-1 shadow-2xl relative overflow-hidden">
+<img alt="AetherCareer Dashboard Preview" class="w-full rounded-[1.5rem] shadow-inner" data-alt="A futuristic and sleek software dashboard interface displayed on a high-end monitor. The UI features semi-transparent glassmorphic panels, glowing data visualizations in shades of electric violet and cyan, and high-contrast typography. The background is a deep, atmospheric dark blue with subtle light streaks, conveying a sense of cutting-edge artificial intelligence technology and professional career management." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-KPaMEp7A874Bpev_dZb-dgHEDh77G2a-kBBso05ZQPRAj1IIxrSsvRoJ5Uf2e1LqGv4NkMso-p8fvm8IUwGsIGr_a_k3lXUEasaRQK_o62GsKH3QK9sYYjtlbNTg5TkDf98fT8R6gEJ5GXajBwiUAHJETq5posbj_nUJAfxVPl0542HSj31AIksCnS0H8V7f7Vghuz8iOHqd8QWxqJdEhtTaYh-0ol-fhZsk_rwI-fMezKxN60BM4OLsXyvRNBOI2jljztBwlJI"/>
+</div>
+</div>
+</section>
+<!-- Value Prop Bento Grid -->
+<section class="py-section-padding-desktop px-gutter max-w-container-max mx-auto">
+<div class="text-center mb-20">
+<h2 class="font-headline-lg text-headline-lg mb-4">Precision Engineering for Professionals</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">The most advanced career acceleration engine ever built.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Large Card -->
+<div class="md:col-span-8 glass-card rounded-[2.5rem] p-10 flex flex-col justify-between overflow-hidden relative group">
+<div class="relative z-10">
+<div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 glow-violet">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="neurology" style="font-variation-settings: 'FILL' 1;">neurology</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4">AI-Generated Simulations</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md">Our neural network generates bespoke interview scenarios based on your specific target company, role, and seniority level.</p>
+</div>
+<div class="mt-12 opacity-50 group-hover:opacity-80 transition-opacity">
+<div class="h-1 w-full bg-gradient-to-r from-primary to-transparent rounded-full mb-2"></div>
+<div class="h-1 w-2/3 bg-gradient-to-r from-secondary to-transparent rounded-full mb-2"></div>
+</div>
+</div>
+<!-- Small Card 1 -->
+<div class="md:col-span-4 glass-card rounded-[2.5rem] p-10 flex flex-col">
+<div class="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center mb-6 glow-cyan">
+<span class="material-symbols-outlined text-secondary text-4xl" data-icon="monitoring">monitoring</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4">Real-time Feedback</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Instant, tactical analysis of your sentiment, word choice, and body language using advanced computer vision.</p>
+</div>
+<!-- Small Card 2 -->
+<div class="md:col-span-4 glass-card rounded-[2.5rem] p-10 flex flex-col">
+<div class="w-16 h-16 rounded-2xl bg-tertiary-container/10 flex items-center justify-center mb-6" style="box-shadow: 0 0 20px rgba(227, 100, 167, 0.2);">
+<span class="material-symbols-outlined text-tertiary text-4xl" data-icon="alt_route">alt_route</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4">Career Roadmap</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">A dynamic, living document that adapts as you grow, identifying skills gaps and bridge-opportunities.</p>
+</div>
+<!-- Medium Card -->
+<div class="md:col-span-8 glass-card rounded-[2.5rem] p-10 bg-gradient-to-br from-primary/5 to-transparent flex items-center gap-10">
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md mb-4">Network Intelligence</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Tap into a synthetic database of successful interview patterns from top-tier executives at Fortune 500 companies.</p>
+</div>
+<div class="hidden lg:block w-48 h-48 bg-surface-container rounded-full border border-white/10 flex items-center justify-center relative">
+<div class="absolute inset-0 animate-spin-slow border-t-2 border-primary rounded-full"></div>
+<span class="material-symbols-outlined text-primary text-6xl" data-icon="hub">hub</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Preview -->
+<section class="py-section-padding-desktop bg-surface-container-low/50 relative overflow-hidden">
+<div class="max-w-container-max mx-auto px-gutter grid lg:grid-cols-2 gap-20 items-center">
+<div>
+<h2 class="font-headline-lg text-headline-lg mb-8">Experience the Future of Prep</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 leading-relaxed">
+                        Engage with our "Neural Interviewer"—a life-like AI persona that challenges you with technical rigor while providing empathetic guidance.
+                    </p>
+<ul class="space-y-6">
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<span class="block font-bold text-on-surface">Micro-expression Analysis</span>
+<span class="text-on-surface-variant">Tracks 40+ facial muscles to refine your confidence levels.</span>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<span class="block font-bold text-on-surface">Live Transcription &amp; Analysis</span>
+<span class="text-on-surface-variant">See your impact metrics in real-time as you speak.</span>
+</div>
+</li>
+</ul>
+</div>
+<div class="relative">
+<!-- Interview UI Snippet -->
+<div class="glass-card rounded-3xl overflow-hidden shadow-2xl">
+<div class="bg-surface-container-high px-6 py-4 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 bg-error rounded-full animate-pulse"></div>
+<span class="font-label-mono text-label-mono uppercase tracking-widest">Live Session: Senior PM Role</span>
+</div>
+<div class="flex gap-2">
+<div class="w-2 h-2 rounded-full bg-white/20"></div>
+<div class="w-2 h-2 rounded-full bg-white/20"></div>
+<div class="w-2 h-2 rounded-full bg-white/20"></div>
+</div>
+</div>
+<div class="p-8 space-y-8">
+<!-- AI Avatar Side -->
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-primary">
+<img alt="AI Interviewer" class="w-full h-full object-cover" data-alt="A close-up portrait of a highly realistic, professional AI avatar woman with a thoughtful and encouraging expression. She has sleek, dark hair and is wearing a minimalist dark blazer. The lighting is soft and corporate-modern, with a subtle violet glow in the background. This image represents the 'Neural Interviewer' interface of a futuristic career coaching platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgGiEVXFdvQIe9A-Hsfrt_zHedNvy4wMwMt-gJoaOkfUoshZqNRcUPN7LN3zDcIXO5hKrdwwI6VXEi5tEtG198T1_Zkhxb_Njv7oo_RVLi2Kns1GKUJjxgT0UPDfp7S4VePVZ6VbYOtKsIIIOidEMIf1eI1mXy0SPxKKK57MjVtsVqfOflkD0nqBDh4zTWIvQsMddykS-VYfQBcTnKahBlKDMhmJ92omw1e-e2shXJEx536H3WpBxKm5RVS8Z-F0gmOP91g7TAkTg"/>
+</div>
+<div class="bg-primary/10 p-4 rounded-2xl rounded-tl-none max-w-[80%]">
+<p class="text-body-md text-on-surface italic">"Great answer. Now, let's dive into how you'd handle a conflict between engineering velocity and product quality..."</p>
+</div>
+</div>
+<!-- User Side -->
+<div class="flex gap-4 flex-row-reverse">
+<div class="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center flex-shrink-0 border-2 border-secondary">
+<span class="material-symbols-outlined text-secondary" data-icon="person">person</span>
+</div>
+<div class="space-y-3 max-w-[80%]">
+<div class="bg-white/5 p-4 rounded-2xl rounded-tr-none">
+<p class="text-body-md">"I'd first establish a clear matrix for prioritization based on business impact..."</p>
+</div>
+<div class="flex gap-2 flex-wrap">
+<span class="bg-secondary/10 text-secondary text-[10px] font-bold px-2 py-1 rounded border border-secondary/30 uppercase tracking-tighter">Confidence: 94%</span>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded border border-primary/30 uppercase tracking-tighter">Impact Score: 8.5</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Social Proof Ticker -->
+<section class="py-20 border-y border-white/5 bg-surface">
+<div class="max-w-container-max mx-auto px-gutter">
+<p class="text-center font-label-mono text-label-mono text-on-surface-variant mb-12 uppercase tracking-[0.2em]">Trusted by 50,000+ Professionals at</p>
+<div class="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale">
+<span class="font-display-lg text-[24px] font-bold">TECHCORP</span>
+<span class="font-display-lg text-[24px] font-bold">SYNERGY</span>
+<span class="font-display-lg text-[24px] font-bold">VELOCITY</span>
+<span class="font-display-lg text-[24px] font-bold">ZENITH</span>
+<span class="font-display-lg text-[24px] font-bold">AETHER</span>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="py-section-padding-desktop px-gutter relative">
+<div class="absolute inset-0 bg-primary/5 rounded-[4rem] mx-gutter -z-10"></div>
+<div class="max-w-4xl mx-auto text-center">
+<h2 class="font-display-lg text-display-lg mb-8">Ready to outpace the competition?</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-12">
+                    Join the top 1% of candidates using Synthetic Intelligence to land their dream roles. Your next career move starts today.
+                </p>
+<div class="flex flex-col sm:flex-row justify-center gap-6">
+<button class="px-12 py-6 rounded-full bg-gradient-to-r from-primary to-secondary text-on-primary-fixed font-extrabold text-body-lg shadow-2xl glow-violet active:scale-95 transition-all">
+                        Get Unlimited Access Now
+                    </button>
+</div>
+<p class="mt-8 font-label-mono text-label-mono text-on-surface-variant">No credit card required. Cancel anytime.</p>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-lowest w-full py-section-padding-desktop border-t border-white/5">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter px-gutter max-w-container-max mx-auto">
+<div class="col-span-2 md:col-span-1">
+<div class="font-display-lg text-2xl font-bold text-on-surface mb-6">AetherCareer</div>
+<p class="text-on-surface-variant text-body-md pr-8">© 2024 AetherCareer AI. Engineering the next generation of talent.</p>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-6">Platform</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md" href="#">AI Simulations</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md" href="#">Feedback Engine</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md" href="#">Roadmaps</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-6">Resources</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md" href="#">Blog</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md" href="#">Career Guide</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md" href="#">Community</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-6">Company</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md" href="#">About</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md" href="#">Privacy</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors font-body-md" href="#">Terms</a></li>
+</ul>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for hover effects and scroll parallax
+        document.addEventListener('mousemove', (e) => {
+            const blobs = document.querySelectorAll('.floating-blob');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            blobs.forEach((blob, index) => {
+                const speed = (index + 1) * 20;
+                const x = (mouseX * speed);
+                const y = (mouseY * speed);
+                blob.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        // Intersection Observer for scroll reveal
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            section.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10');
+            observer.observe(section);
+        });
+    </script>
+</body></html>

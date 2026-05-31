@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PrepAI | AI Cheat Sheet Generator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(11, 19, 38, 0.6);
+            backdrop-filter: blur(32px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-panel-elevation-2 {
+            background: rgba(11, 19, 38, 0.8);
+            backdrop-filter: blur(64px);
+            border: 1.5px solid;
+            border-image: linear-gradient(to bottom right, #adc6ff, #6f00be) 1;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #adc6ff 0%, #2fd9f4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-button {
+            background: linear-gradient(135deg, #4d8eff 0%, #6f00be 100%);
+            transition: all 0.3s ease;
+        }
+        .gradient-button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(77, 142, 255, 0.3);
+        }
+        .blob {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(173, 198, 255, 0.15) 0%, rgba(111, 0, 190, 0) 70%);
+            filter: blur(80px);
+            z-index: -1;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+        @keyframes float {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 50px); }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(173, 198, 255, 0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(173, 198, 255, 0.4); }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#dae2fd",
+                        "inverse-surface": "#dae2fd",
+                        "tertiary-fixed": "#a2eeff",
+                        "on-tertiary-fixed": "#001f25",
+                        "surface-tint": "#adc6ff",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#2fd9f4",
+                        "on-surface-variant": "#c2c6d6",
+                        "tertiary-container": "#009fb4",
+                        "on-secondary-fixed": "#2c0051",
+                        "on-tertiary-fixed-variant": "#004e5a",
+                        "on-secondary": "#490080",
+                        "background": "#0b1326",
+                        "primary": "#adc6ff",
+                        "on-background": "#dae2fd",
+                        "error-container": "#93000a",
+                        "primary-fixed-dim": "#adc6ff",
+                        "surface-bright": "#31394d",
+                        "outline": "#8c909f",
+                        "on-primary": "#002e6a",
+                        "on-tertiary": "#00363e",
+                        "primary-fixed": "#d8e2ff",
+                        "outline-variant": "#424754",
+                        "surface-container-high": "#222a3d",
+                        "on-secondary-fixed-variant": "#6900b3",
+                        "on-primary-fixed": "#001a42",
+                        "surface-container": "#171f33",
+                        "primary-container": "#4d8eff",
+                        "surface-variant": "#2d3449",
+                        "surface-dim": "#0b1326",
+                        "secondary-fixed-dim": "#ddb7ff",
+                        "on-primary-container": "#00285d",
+                        "error": "#ffb4ab",
+                        "inverse-on-surface": "#283044",
+                        "secondary-container": "#6f00be",
+                        "surface-container-highest": "#2d3449",
+                        "on-error": "#690005",
+                        "surface": "#0b1326",
+                        "inverse-primary": "#005ac2",
+                        "on-tertiary-container": "#002f36",
+                        "on-primary-fixed-variant": "#004395",
+                        "surface-container-lowest": "#060e20",
+                        "tertiary": "#2fd9f4",
+                        "secondary-fixed": "#f0dbff",
+                        "on-secondary-container": "#d6a9ff",
+                        "surface-container-low": "#131b2e",
+                        "secondary": "#ddb7ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "container-max": "1280px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Geist"],
+                        "body-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "mono-data": ["Geist"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                        "mono-data": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Background Blobs -->
+<div class="blob top-[-100px] left-[-100px]"></div>
+<div class="blob bottom-[100px] right-[-100px]" style="background: radial-gradient(circle, rgba(47, 217, 244, 0.1) 0%, rgba(111, 0, 190, 0) 70%);"></div>
+<!-- Side Navigation Shell -->
+<aside class="flex flex-col h-screen fixed left-0 top-0 py-gutter docked left-0 h-full w-64 bg-surface-container/60 backdrop-blur-32 border-r border-white/10 z-50 hidden md:flex">
+<div class="px-6 mb-10">
+<h1 class="font-headline-lg text-headline-lg text-primary font-bold">PrepAI</h1>
+<p class="font-label-caps text-[10px] tracking-widest text-on-surface-variant opacity-60">MISSION CONTROL</p>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">quiz</span> Generate Questions
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary border-r-2 border-primary bg-primary/10 transition-all font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">description</span> Cheat Sheets
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">auto_awesome</span> AI File Assistant
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">analytics</span> Resume Analyzer
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">map</span> Roadmap Generator
+            </a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full py-3 rounded-xl font-bold font-label-caps text-label-caps gradient-button text-white">
+                Upgrade to Pro
+            </button>
+<div class="mt-8 flex items-center gap-3 pb-4">
+<img class="w-10 h-10 rounded-full object-cover border border-white/20" data-alt="A professional headshot of a young software engineer with a confident smile, set against a dark architectural background with subtle blue rim lighting. The style is cinematic and high-fidelity, matching a modern tech aesthetic with deep shadows and vibrant highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI3zdPwDhhDhH9XFJ1yvVOj0YrXYqeFrNCqWbowDIP-K7gOM_j2tSXZfp7nngPtc6HcmlQGi0K8O776Yb__9_LUD8kKufNrixqdWwIdeY2ruyzVssZAZoPbooQnSulGIV9Yiik_Z7JzP9tl6vMrRh1-Zm8STnY2CAFzr_iSL5h6xS-JDKnY6rNv1BLh5mZm3asgs7MC0TuG6RFnT0DqcW2SF72R4p_gf8G7h5WdzD_opevtqjiGt6jx4GcK6__5rCqUiuQfObYon8"/>
+<div class="overflow-hidden">
+<p class="text-sm font-bold truncate">Alex Rivera</p>
+<p class="text-xs text-on-surface-variant truncate">Lead Developer</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 min-h-screen">
+<!-- Top Navigation -->
+<header class="flex justify-between items-center px-margin-desktop py-4 w-full bg-surface/60 backdrop-blur-32 border-b border-white/10 sticky top-0 z-40">
+<div class="md:hidden font-headline-lg text-headline-lg font-bold text-primary">PrepAI</div>
+<div class="flex-1 max-w-xl mx-8 hidden lg:block">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container/50 border border-white/10 rounded-full py-2 pl-12 pr-4 focus:outline-none focus:border-primary/50 text-sm" placeholder="Search resources..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">settings</span>
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+<span class="material-symbols-outlined text-primary text-sm">person</span>
+</div>
+</div>
+</header>
+<div class="max-w-container-max mx-auto p-margin-mobile md:p-margin-desktop">
+<!-- Hero Header -->
+<section class="mb-12">
+<h2 class="font-headline-xl text-headline-xl mb-2 gradient-text">AI Cheat Sheet Generator</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Master any technology in minutes. Our AI synthesizes complex documentation into concise, actionable guides tailored to your experience level.</p>
+</section>
+<!-- Input Glass Panel -->
+<section class="mb-16">
+<div class="glass-panel p-8 rounded-2xl relative overflow-hidden">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
+<div class="md:col-span-6 space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant px-1">Enter Role / Technology</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary opacity-50 group-focus-within:opacity-100 transition-opacity">code</span>
+<input class="w-full bg-surface-container-lowest border-b-2 border-white/5 focus:border-primary transition-all py-4 pl-12 pr-4 outline-none font-body-md text-body-md" placeholder="e.g. React.js Hooks, MERN Stack, Docker" type="text"/>
+</div>
+</div>
+<div class="md:col-span-3 space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant px-1">Difficulty</label>
+<select class="w-full bg-surface-container-lowest border-b-2 border-white/5 focus:border-primary transition-all py-4 px-4 outline-none font-body-md text-body-md appearance-none">
+<option>Beginner</option>
+<option selected="">Intermediate</option>
+<option>Advanced</option>
+</select>
+</div>
+<div class="md:col-span-3">
+<button class="w-full py-4 rounded-xl font-bold font-label-caps text-label-caps gradient-button text-white flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">auto_fix_high</span> Generate Cheat Sheet
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Results Section (Bento Grid Style) -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Quick Reference Panel -->
+<div class="md:col-span-8 glass-panel p-gutter rounded-2xl">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-lg text-headline-lg flex items-center gap-3">
+<span class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</span>
+                            React Hooks Reference
+                        </h3>
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary border border-tertiary/30 rounded-full font-label-caps text-[10px]">LATEST v18.2</span>
+</div>
+<div class="space-y-6">
+<div class="space-y-3">
+<p class="font-body-sm text-on-surface-variant">Essential syntax for state management and side effects.</p>
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-white/5 font-mono-data text-mono-data overflow-x-auto">
+<div class="flex gap-4 mb-2 opacity-50"><span class="text-primary">// useState Hook</span></div>
+<code class="text-tertiary-fixed-dim">const [state, setState] = useState(initialValue);</code>
+<div class="flex gap-4 mt-4 mb-2 opacity-50"><span class="text-primary">// useEffect Hook</span></div>
+<code class="text-tertiary-fixed-dim">useEffect(() =&gt; {<br/>  console.log('Effect Running');<br/>  return () =&gt; cleanup();<br/>}, [dependencies]);</code>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="p-4 rounded-xl bg-white/5 border border-white/5">
+<h4 class="font-bold text-sm text-primary mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-xs">check_circle</span> Use Cases
+                                </h4>
+<ul class="text-body-sm text-on-surface-variant space-y-2 list-disc ml-4">
+<li>Fetching API data</li>
+<li>Updating the DOM</li>
+<li>Setting up subscriptions</li>
+</ul>
+</div>
+<div class="p-4 rounded-xl bg-white/5 border border-white/5">
+<h4 class="font-bold text-sm text-secondary mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-xs">warning</span> Best Practices
+                                </h4>
+<ul class="text-body-sm text-on-surface-variant space-y-2 list-disc ml-4">
+<li>Hooks only at Top Level</li>
+<li>Hooks only in React Functions</li>
+<li>Use ESLint Plugin</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Insights Sidebar -->
+<div class="md:col-span-4 space-y-gutter">
+<!-- Concept Card -->
+<div class="glass-panel p-6 rounded-2xl border-l-4 border-l-primary relative">
+<h4 class="font-label-caps text-label-caps text-primary mb-4">AI PRO TIP</h4>
+<p class="font-body-md text-on-surface leading-relaxed">
+                            "When using <span class="text-primary">useEffect</span>, always define your dependency array. Leaving it empty runs once on mount, omitting it runs on every render, which often leads to performance bottlenecks."
+                        </p>
+</div>
+<!-- Resource Card -->
+<div class="glass-panel p-6 rounded-2xl group cursor-pointer hover:bg-white/10 transition-colors">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-secondary">import_contacts</span>
+<span class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-opacity">open_in_new</span>
+</div>
+<h4 class="font-bold mb-1">Deep Dive: Memoization</h4>
+<p class="text-xs text-on-surface-variant">Master useMemo and useCallback for high-performance React applications.</p>
+</div>
+<!-- Promo Card -->
+<div class="relative rounded-2xl overflow-hidden aspect-square">
+<img class="w-full h-full object-cover" data-alt="A mesmerizing 3D abstract render featuring flowing iridescent silk ribbons in shades of deep violet, neon cyan, and electric blue. The ribbons twist through a dark, foggy void illuminated by a soft, ethereal glow. The overall atmosphere is futuristic, premium, and calm, reflecting advanced AI capabilities." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDagxsqhSQ1Fh7sxgB3oFvAOqxgCKJxV5PSLrYUUtlPSJn6r6IDqiYYC_x_mfw03ww1QdLv1-JutAe5WpzVgJx8qpRewNi_5wgtfFG7qocPeK_VONIhnpDd1by6Gl16_dA24xahWh9dNyyeVZcZt8p25qtPjBuwwFH2cxCBsaTXHAPeRw_G7BoA54RIFAvpGlret8PE-1GoMQHdEquXzPQTAU0oZhvwC9fXG5to-PoA5Vpc1vl3XrvDscG9YZIvNzw6BY2fNrWHzrQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent flex flex-col justify-end p-6">
+<p class="font-label-caps text-label-caps text-tertiary mb-1">PREMIUM CONTENT</p>
+<h4 class="font-bold text-lg leading-tight">Interactive Code Playgrounds</h4>
+<p class="text-xs text-on-surface-variant mt-2">Test your cheat sheet snippets in real-time with our built-in IDE.</p>
+</div>
+</div>
+</div>
+<!-- Footer List Section -->
+<div class="md:col-span-12 glass-panel p-gutter rounded-2xl">
+<h3 class="font-bold text-lg mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">list_alt</span>
+                        Complete Cheat Sheet Catalog
+                    </h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low border border-white/5 hover:border-primary/30 transition-all group">
+<div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</div>
+<div>
+<p class="text-sm font-bold">Git Commands</p>
+<p class="text-[10px] text-on-surface-variant">52 Snippets</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low border border-white/5 hover:border-primary/30 transition-all group">
+<div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dataset</span>
+</div>
+<div>
+<p class="text-sm font-bold">SQL Queries</p>
+<p class="text-[10px] text-on-surface-variant">38 Snippets</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low border border-white/5 hover:border-primary/30 transition-all group">
+<div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">cloud_queue</span>
+</div>
+<div>
+<p class="text-sm font-bold">AWS Lambda</p>
+<p class="text-[10px] text-on-surface-variant">24 Snippets</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low border border-white/5 hover:border-primary/30 transition-all group">
+<div class="w-10 h-10 rounded bg-white/5 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<div>
+<p class="text-sm font-bold">OWASP Security</p>
+<p class="text-[10px] text-on-surface-variant">15 Best Practices</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Floating Action Buttons -->
+<div class="fixed bottom-8 right-8 flex flex-col gap-4 z-50">
+<button class="w-14 h-14 rounded-full glass-panel-elevation-2 flex items-center justify-center shadow-2xl group relative" title="Download PDF">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">picture_as_pdf</span>
+<span class="absolute right-16 bg-surface-container px-3 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Download PDF</span>
+</button>
+<button class="w-14 h-14 rounded-full glass-panel-elevation-2 flex items-center justify-center shadow-2xl group relative" title="Copy to Clipboard">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">content_copy</span>
+<span class="absolute right-16 bg-surface-container px-3 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Copy All</span>
+</button>
+<button class="w-14 h-14 rounded-full glass-panel-elevation-2 flex items-center justify-center shadow-2xl group relative" title="Save to Profile">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">bookmark</span>
+<span class="absolute right-16 bg-surface-container px-3 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Save Sheet</span>
+</button>
+</div>
+<!-- Mobile Navigation Shell (Bottom Bar) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface/80 backdrop-blur-xl border-t border-white/10 flex justify-around py-4 px-6 z-50">
+<a class="text-on-surface-variant hover:text-primary" href="#"><span class="material-symbols-outlined">dashboard</span></a>
+<a class="text-on-surface-variant hover:text-primary" href="#"><span class="material-symbols-outlined">quiz</span></a>
+<a class="text-primary" href="#"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span></a>
+<a class="text-on-surface-variant hover:text-primary" href="#"><span class="material-symbols-outlined">person</span></a>
+</nav>
+<script>
+        // Simple Interaction logic
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.classList.add('scale-[0.98]');
+                setTimeout(() => btn.classList.remove('scale-[0.98]'), 100);
+            });
+        });
+
+        // Add subtle mouse movement parallax to blobs
+        document.addEventListener('mousemove', (e) => {
+            const blobs = document.querySelectorAll('.blob');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            blobs.forEach((blob, index) => {
+                const speed = (index + 1) * 20;
+                blob.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+    </script>
+</body></html>

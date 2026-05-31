@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PrepAI | Ace Your Next Interview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(23, 31, 51, 0.6);
+            backdrop-filter: blur(32px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-modal {
+            background: rgba(11, 19, 38, 0.8);
+            backdrop-filter: blur(64px);
+            border: 1.5px solid;
+            border-image: linear-gradient(to right, #4d8eff, #6f00be) 1;
+        }
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        .animate-float {
+            animation: float 20s infinite ease-in-out;
+        }
+        .mesh-gradient {
+            background-color: #0b1326;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(77, 142, 255, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(111, 0, 190, 0.15) 0px, transparent 50%);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed": "#a2eeff",
+                      "primary-container": "#4d8eff",
+                      "on-secondary-fixed-variant": "#6900b3",
+                      "secondary-container": "#6f00be",
+                      "background": "#0b1326",
+                      "on-tertiary": "#00363e",
+                      "secondary-fixed-dim": "#ddb7ff",
+                      "on-primary-container": "#00285d",
+                      "surface-dim": "#0b1326",
+                      "tertiary-fixed-dim": "#2fd9f4",
+                      "on-tertiary-fixed-variant": "#004e5a",
+                      "on-tertiary-container": "#002f36",
+                      "tertiary-container": "#009fb4",
+                      "outline": "#8c909f",
+                      "secondary-fixed": "#f0dbff",
+                      "primary-fixed": "#d8e2ff",
+                      "primary-fixed-dim": "#adc6ff",
+                      "surface-variant": "#2d3449",
+                      "outline-variant": "#424754",
+                      "on-surface": "#dae2fd",
+                      "surface-container": "#171f33",
+                      "secondary": "#ddb7ff",
+                      "surface-container-low": "#131b2e",
+                      "surface-container-high": "#222a3d",
+                      "inverse-surface": "#dae2fd",
+                      "on-error-container": "#ffdad6",
+                      "error-container": "#93000a",
+                      "surface-tint": "#adc6ff",
+                      "on-background": "#dae2fd",
+                      "surface": "#0b1326",
+                      "surface-container-lowest": "#060e20",
+                      "on-primary": "#002e6a",
+                      "surface-container-highest": "#2d3449",
+                      "on-secondary-container": "#d6a9ff",
+                      "inverse-primary": "#005ac2",
+                      "primary": "#adc6ff",
+                      "on-error": "#690005",
+                      "surface-bright": "#31394d",
+                      "inverse-on-surface": "#283044",
+                      "on-secondary": "#490080",
+                      "on-secondary-fixed": "#2c0051",
+                      "on-surface-variant": "#c2c6d6",
+                      "error": "#ffb4ab",
+                      "on-tertiary-fixed": "#001f25",
+                      "on-primary-fixed-variant": "#004395",
+                      "on-primary-fixed": "#001a42",
+                      "tertiary": "#2fd9f4"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "40px",
+                      "gutter": "24px",
+                      "unit": "8px",
+                      "margin-mobile": "16px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "label-caps": ["Geist"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "mono-data": ["Geist"],
+                      "headline-xl": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                      "mono-data": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background mesh-gradient min-h-screen selection:bg-primary/30 selection:text-primary overflow-x-hidden">
+<!-- Atmospheric Blobs -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+<div class="absolute top-[10%] left-[5%] w-96 h-96 bg-primary/10 rounded-full blur-[120px] animate-float"></div>
+<div class="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] bg-secondary-container/10 rounded-full blur-[150px] animate-float" style="animation-delay: -5s;"></div>
+</div>
+<!-- Navigation -->
+<header class="fixed top-0 w-full z-50 bg-background/60 backdrop-blur-xl border-b border-white/10 shadow-xl">
+<div class="flex justify-between items-center px-margin-desktop py-4 w-full max-w-container-max mx-auto">
+<div class="font-headline-lg text-headline-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                PrepAI
+            </div>
+<nav class="hidden md:flex items-center gap-gutter font-body-md text-body-md">
+<a class="text-primary font-bold border-b-2 border-primary pb-1" href="#">Features</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Pricing</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors font-body-md">Login</button>
+<button class="bg-gradient-to-r from-primary-container to-secondary-container text-on-primary-container px-6 py-2 rounded-lg font-bold active:scale-95 transition-transform">
+                    Get Started
+                </button>
+</div>
+</div>
+</header>
+<main class="relative z-10 pt-32">
+<!-- Hero Section -->
+<section class="px-margin-desktop max-w-container-max mx-auto text-center py-20 lg:py-32">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 mb-8">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-label-caps text-label-caps text-tertiary uppercase tracking-widest">Next-Gen Interview Simulation</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl lg:text-7xl mb-6 max-w-4xl mx-auto leading-tight">
+                Ace Your Next Interview with <span class="bg-gradient-to-r from-primary via-tertiary to-secondary bg-clip-text text-transparent">Advanced AI</span>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto mb-12 text-lg lg:text-xl">
+                Master the art of the interview through high-fidelity simulations, personalized feedback loops, and data-driven career insights.
+            </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+<button class="glass-card hover:bg-white/5 transition-all duration-300 px-8 py-4 rounded-xl font-bold text-lg flex items-center gap-3 group active:scale-95">
+                    Start Free Session
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<div class="flex -space-x-3">
+<img alt="User" class="w-10 h-10 rounded-full border-2 border-background" data-alt="A professional close-up headshot of a diverse male professional in a modern office setting. The image uses soft studio lighting and a shallow depth of field, adhering to a high-fidelity tech aesthetic with cool navy and purple tones in the background. The mood is confident and clean." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_tEzP0joFP2VZGy-MyC2UUXdZ__3Ch8KjM1KaB6JVtj_t9z-vu34OXKB4-w_uFvLU7dr6HaSDQUctb2E3EetAyafRvoqH_NmX1tjl77R8GWzobrVpQGuq2mBHuwfDCtiFNafUWTnKSrc1zsENC_hLLuG6BQ_HFV2qSz96PtgYBKtf1hqG0R-Aj5j-8goOXTRyH6bjkIjsfwBx6INtXuwkEjqinSBX4vUav80MeA_yWaEN7Ekqqw4hg62ySBAvIo-vOSWS_aKN-5I"/>
+<img alt="User" class="w-10 h-10 rounded-full border-2 border-background" data-alt="A professional headshot of a young woman with glasses, smiling warmly. The photograph is set against a blurred futuristic workspace with hints of bioluminescent blue and deep violet. The lighting is crisp and highlights a polished, corporate yet innovative personality in line with a premium AI service." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQ6Ohflp4R0QvgC2B70AJaP645atkGtkO-pk2Ptivhapas9MCAQ0zDnNWOGiyxH0KpNWne-1VlsmcyxMKuH08_ruAovepDBc7_tRzj4sYygzoIIIErZLI1VXtXpSZsf177-C3gTa7kAze7RL4SKFl0iX_JnTOF_Nbbhxlnn2S8wSIWOiS7zZz2Es82_FyKUsLpSxYeLdoLnjfzoxRqPxwsrpuHcE4ohFAZUWkubI4QblcDsBOREqsWPILMGMEI8hJ4ZwYyN3LKf3M"/>
+<img alt="User" class="w-10 h-10 rounded-full border-2 border-background" data-alt="A high-quality portrait of a focused professional looking slightly away from the camera. The setting is a minimalist tech hub with sleek glass partitions and soft purple ambient light. The image style is sharp, modern, and fits seamlessly into a high-end dark-themed UI design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD32Bh2Kt-6bdAeBomBM_wV725DbXo_4gUm8CRk5H_NvYDDntT4aTPcj0IJj7BDD-sHEhvVI98quQ5bMX0RSTfrwCWwJowsTdO2eyDRm2NhOPB41NlRl7Qh5DKt0O2oW5ccT_JWOIQu6cJoLvI-KUGsCCHhYlIB-9AB3ASYmM-RiJ7qJXVlbN_7O_9ICbyKq2eQDY1Y7iB_1IpO5BIYMWAMs6ej5ySWBMPSNUnUYJpAl-WGal0_y7UG1tZsZpYlLz6YYvTen9ltzKs"/>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Joined by 10k+ professionals</p>
+</div>
+<!-- Hero Mockup -->
+<div class="mt-24 relative">
+<div class="absolute -inset-4 bg-gradient-to-b from-primary/20 to-transparent blur-3xl -z-10"></div>
+<div class="glass-card rounded-2xl overflow-hidden shadow-2xl border border-white/10 p-2">
+<img alt="AI Dashboard" class="w-full h-auto rounded-xl" data-alt="A high-fidelity digital dashboard interface displayed on a premium monitor. The UI features sleek dark glassmorphism cards, glowing cyan progress charts, and a spectral purple-to-blue AI feedback graph. The environment is a dark, sophisticated home office with soft ambient neon lighting reflecting on polished surfaces. The overall aesthetic is futuristic, functional, and deeply immersive." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtHlVZ1IccFI64jX8BvAzH48IwAHN2z5ucAxOSdRsbQUL9QRKzQbSKLv1i1f2TPs-n9Dpy7Q5Swsny2xNPEo99B26T_1n2wboB7JPqGGKSDFAZiNUM6H3RPFEzqo-87VmA4juYDyXcEG0a6G2svO2uSsHL3--p2SRSjILL0HugdXkBKZm_Hay4u7ONjSrB5Bzqpi9eKw13T3p2CLH97iCA7i2NZPJZw3PMbdBsUESlLg1EvvN-5RcJnskd4GU-YHi93FKhR2rBZ-8"/>
+</div>
+</div>
+</section>
+<!-- Bento Features Section -->
+<section class="px-margin-desktop max-w-container-max mx-auto py-32">
+<div class="mb-16">
+<h2 class="font-headline-lg text-headline-lg mb-4">Precision-Engineered Prep</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">The tools you need to outshine the competition.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Large Feature -->
+<div class="md:col-span-8 glass-card p-8 rounded-3xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-20 -mt-20 group-hover:bg-primary/20 transition-colors"></div>
+<div class="relative z-10 flex flex-col h-full">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg mb-4">AI Generation</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-md">
+                            Our proprietary LLMs analyze your target job description to generate high-probability questions tailored to specific industries and seniority levels.
+                        </p>
+<div class="mt-auto pt-8 border-t border-white/5">
+<img alt="AI Graph" class="w-full h-48 object-cover rounded-xl" data-alt="An abstract visualization of neural network pathways glowing in vibrant neon cyan and deep violet. The nodes are connected by delicate light filaments that pulse against a dark navy background. The style is clean, 3D generative art, representing high-speed intelligence and data connectivity. The mood is sophisticated and technologically superior." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj2lFmhPiEAWvicPKvYHR3ZQ1U_kQvYVM1ok_3Qfw-9r16ZGvprw31HlJxNXQcNz7GuMUXluqnw10BzYmJ7KESFSC3hGo-PC4GLd5RZAV430qqTDNPcJC8SkeaArxlqLc6SGCTVHqE-sb-PIZ46pfyVc2CmEJkasWpESkVWOsXWJQkT6rmTK0_Ubo-VnYKPUxhcpH_3nxsTejHoGEDlcQuC3OWjOrChvbwpv8MdpCIL3pzFvCLy96Tj1vvDTxAa9EhsH5lBrrfKfQ"/>
+</div>
+</div>
+</div>
+<!-- Small Feature 1 -->
+<div class="md:col-span-4 glass-card p-8 rounded-3xl flex flex-col group">
+<div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary mb-6">
+<span class="material-symbols-outlined" data-icon="video_chat">video_chat</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg-mobile mb-4">Realistic Scenarios</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Engage with ultra-realistic AI avatars that simulate real stress environments and dynamic follow-up questions.
+                    </p>
+<div class="mt-8 flex-grow bg-white/5 rounded-2xl border border-white/5 p-4 flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant/30">videocam_off</span>
+</div>
+</div>
+<!-- Small Feature 2 -->
+<div class="md:col-span-4 glass-card p-8 rounded-3xl flex flex-col group">
+<div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary mb-6">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg-mobile mb-4">Detailed Feedback</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Receive millisecond-precise analysis of your body language, tone, and semantic content with actionable advice.
+                    </p>
+<div class="mt-8 h-32 flex items-end gap-2">
+<div class="flex-1 bg-secondary/20 h-[40%] rounded-t-lg"></div>
+<div class="flex-1 bg-secondary/40 h-[70%] rounded-t-lg"></div>
+<div class="flex-1 bg-secondary h-[100%] rounded-t-lg shadow-[0_0_20px_rgba(221,183,255,0.3)]"></div>
+<div class="flex-1 bg-secondary/60 h-[85%] rounded-t-lg"></div>
+</div>
+</div>
+<!-- Content Feature -->
+<div class="md:col-span-8 glass-card p-8 rounded-3xl flex flex-col md:flex-row gap-8 items-center overflow-hidden">
+<div class="flex-1">
+<h3 class="font-headline-lg text-headline-lg mb-4">Global Reach</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                            Prepare for interviews in 40+ languages and culturally diverse corporate environments across the globe.
+                        </p>
+<button class="mt-6 font-label-caps text-label-caps text-primary flex items-center gap-2 group">
+                            LEARN MORE
+                            <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">north_east</span>
+</button>
+</div>
+<div class="flex-1 h-full min-h-[200px] w-full relative">
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent"></div>
+<div class="w-full h-full rounded-2xl border border-white/10 overflow-hidden">
+<div class="w-full h-full bg-surface-container-high flex items-center justify-center italic text-on-surface-variant/20" data-location="London" style="">
+<span class="material-symbols-outlined text-6xl">public</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="px-margin-desktop max-w-container-max mx-auto py-32 text-center">
+<div class="glass-modal p-12 lg:p-24 rounded-[40px] relative overflow-hidden">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-radial-gradient from-primary/10 to-transparent opacity-50"></div>
+<div class="relative z-10">
+<h2 class="font-headline-xl text-headline-xl mb-8">Ready to Land Your Dream Job?</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto mb-12">
+                        Join thousands of candidates who used PrepAI to secure roles at top-tier tech companies.
+                    </p>
+<button class="bg-gradient-to-r from-primary-container to-secondary-container text-on-primary-container px-12 py-5 rounded-2xl font-bold text-xl active:scale-95 transition-all shadow-2xl hover:shadow-primary/20">
+                        Get Unlimited Access
+                    </button>
+<p class="mt-8 font-body-sm text-body-sm text-on-surface-variant/60">No credit card required to start.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 bg-surface-container-lowest border-t border-white/5 mt-20">
+<div class="flex flex-col items-center justify-center gap-8 px-margin-desktop w-full max-w-container-max mx-auto">
+<div class="font-headline-lg text-headline-lg text-primary">PrepAI</div>
+<div class="flex flex-wrap justify-center gap-8 font-body-sm text-body-sm">
+<a class="text-on-surface-variant hover:text-secondary transition-colors" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors" href="#">Contact Us</a>
+</div>
+<div class="flex gap-6">
+<a class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-on-surface-variant hover:border-primary hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined text-lg">public</span>
+</a>
+<a class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-on-surface-variant hover:border-primary hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined text-lg">alternate_email</span>
+</a>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant/60 text-center">
+                © 2024 PrepAI. Empowering careers with AI.
+            </p>
+</div>
+</footer>
+<script>
+        // Subtle scroll reveal effect
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section > div').forEach(el => {
+            el.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10');
+            observer.observe(el);
+        });
+    </script>
+</body></html>

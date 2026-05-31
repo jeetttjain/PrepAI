@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PrepAI Admin | Mission Control</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=JetBrains+Mono:wght@100..800&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .pulse-glow-success {
+            animation: pulse-success 2s infinite;
+        }
+        @keyframes pulse-success {
+            0% { box-shadow: 0 0 0 0 rgba(76, 215, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(76, 215, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(76, 215, 246, 0); }
+        }
+        .pulse-glow-danger {
+            animation: pulse-danger 2s infinite;
+        }
+        @keyframes pulse-danger {
+            0% { box-shadow: 0 0 0 0 rgba(255, 180, 171, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 180, 171, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 180, 171, 0); }
+        }
+        body {
+            background: radial-gradient(circle at 0% 0%, #131b2e 0%, #0b1326 100%);
+            min-height: 100vh;
+        }
+        .chart-gradient {
+            background: linear-gradient(to top, rgba(192, 193, 255, 0.1), transparent);
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#acedff",
+                    "outline-variant": "#464554",
+                    "surface-container-low": "#131b2e",
+                    "on-tertiary-container": "#002f38",
+                    "on-primary-container": "#0d0096",
+                    "outline": "#908fa0",
+                    "on-surface": "#dae2fd",
+                    "on-secondary-fixed": "#2c0051",
+                    "on-primary-fixed": "#07006c",
+                    "inverse-primary": "#494bd6",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "error": "#ffb4ab",
+                    "on-tertiary-fixed-variant": "#004e5c",
+                    "secondary-container": "#6f00be",
+                    "surface-dim": "#0b1326",
+                    "on-secondary": "#490080",
+                    "background": "#0b1326",
+                    "primary-fixed": "#e1e0ff",
+                    "on-background": "#dae2fd",
+                    "secondary": "#ddb7ff",
+                    "on-secondary-fixed-variant": "#6900b3",
+                    "on-secondary-container": "#d6a9ff",
+                    "on-tertiary": "#003640",
+                    "on-surface-variant": "#c7c4d7",
+                    "surface-tint": "#c0c1ff",
+                    "error-container": "#93000a",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "primary-container": "#8083ff",
+                    "tertiary-fixed-dim": "#4cd7f6",
+                    "primary": "#c0c1ff",
+                    "inverse-on-surface": "#283044",
+                    "tertiary-container": "#009eb9",
+                    "surface-container": "#171f33",
+                    "surface": "#0b1326",
+                    "on-primary": "#1000a9",
+                    "on-error": "#690005",
+                    "surface-bright": "#31394d",
+                    "tertiary": "#4cd7f6",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-highest": "#2d3449",
+                    "inverse-surface": "#dae2fd",
+                    "secondary-fixed-dim": "#ddb7ff",
+                    "surface-container-high": "#222a3d",
+                    "secondary-fixed": "#f0dbff",
+                    "on-tertiary-fixed": "#001f26",
+                    "surface-container-lowest": "#060e20",
+                    "surface-variant": "#2d3449"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "1.5rem",
+                    "stack-sm": "0.5rem",
+                    "stack-xs": "0.25rem",
+                    "stack-lg": "2rem",
+                    "container-max": "1440px",
+                    "stack-md": "1rem",
+                    "margin-x": "2rem"
+            },
+            "fontFamily": {
+                    "body-md": ["Geist"],
+                    "table-header": ["Geist"],
+                    "body-sm": ["Geist"],
+                    "headline-sm": ["Geist"],
+                    "display-lg": ["Geist"],
+                    "label-mono": ["JetBrains Mono"],
+                    "headline-md": ["Geist"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "table-header": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-body-md text-on-surface antialiased overflow-x-hidden">
+<!-- Sidebar (Rail) -->
+<aside class="h-screen w-60 fixed left-0 top-0 flex flex-col py-stack-lg px-stack-sm backdrop-blur-xl border-r border-outline-variant/15 bg-surface-container-lowest/80 z-50">
+<div class="px-stack-sm mb-stack-lg">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">PrepAI Admin</h1>
+<p class="text-[10px] uppercase tracking-widest text-outline">Command Center</p>
+</div>
+<nav class="flex-1 space-y-stack-xs">
+<a class="flex items-center gap-stack-sm py-2.5 px-stack-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md">Overview</span>
+</a>
+<a class="flex items-center gap-stack-sm py-2.5 px-stack-sm bg-primary-container text-on-primary-container rounded-lg font-bold transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body-md">Users</span>
+</a>
+<a class="flex items-center gap-stack-sm py-2.5 px-stack-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="neurology">neurology</span>
+<span class="font-body-md">Models</span>
+</a>
+<a class="flex items-center gap-stack-sm py-2.5 px-stack-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="font-body-md">Analytics</span>
+</a>
+<a class="flex items-center gap-stack-sm py-2.5 px-stack-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-stack-sm py-2.5 px-stack-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings_input_component">settings_input_component</span>
+<span class="font-body-md">System Settings</span>
+</a>
+</nav>
+<div class="mt-auto space-y-stack-xs">
+<button class="w-full flex items-center justify-center gap-2 py-2 mb-4 bg-gradient-to-r from-primary to-secondary text-on-primary rounded-lg font-bold text-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="bolt">bolt</span>
+                System Health
+            </button>
+<a class="flex items-center gap-stack-sm py-2 px-stack-sm text-on-surface-variant hover:text-on-surface transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-body-md">Support</span>
+</a>
+<a class="flex items-center gap-stack-sm py-2 px-stack-sm text-on-surface-variant hover:text-on-surface transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] z-40 flex justify-between items-center h-16 px-gutter backdrop-blur-md border-b border-outline-variant/10 bg-surface-container-low/60 shadow-sm">
+<div class="flex items-center gap-gutter flex-1">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-primary/50 rounded-lg overflow-hidden transition-all">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant" data-icon="search">search</span>
+<input class="w-full bg-surface-container-highest/30 border-none pl-10 pr-4 py-2 text-body-sm focus:ring-0 placeholder:text-outline-variant" placeholder="Search logs, models, or users..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-stack-md">
+<!-- Global Shutdown Toggle -->
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-error-container/20 border border-error/20 mr-2 group cursor-pointer hover:bg-error/10 transition-colors">
+<span class="text-[10px] font-bold text-error uppercase tracking-wider">Maintenance Mode</span>
+<button class="w-8 h-4 bg-error/20 rounded-full relative transition-colors duration-300">
+<span class="absolute left-0.5 top-0.5 w-3 h-3 bg-error rounded-full shadow-lg transform transition-transform duration-300"></span>
+</button>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-on-surface transition-opacity relative">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-on-surface transition-opacity">
+<span class="material-symbols-outlined" data-icon="dns">dns</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="Admin User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYDo53ga2fGZQOw0ego0Z09eRTMI3kTuYekxENQ4p9eb2mamOmxjimTgdTujF1OFikgsXEA3FQL6K90_U0jXprSOCeFK8YUl00J3GK67MSIqSfPUDXSYkQvCIuMjRlocTg8rMiiW0hwdBFRmXCBdwG6GA9VBlMf2EAcK5zs4pDru6bCvnCzwrMlBjPg3iqjLLue7-ZQiMMnr2LQrB1aeDSwTm0O6jk5CBG8tERrVEoLMvzrTXktb6EAzvIcM34Eq48vKnM1tW6mtc"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-60 pt-16 min-h-screen">
+<div class="max-w-[1440px] mx-auto p-gutter">
+<!-- Hero Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-stack-md mb-stack-lg">
+<!-- Total Active Users -->
+<div class="glass-card p-stack-md rounded-xl">
+<div class="flex items-start justify-between mb-2">
+<span class="text-label-mono font-label-mono text-outline-variant uppercase">Total Active Users</span>
+<span class="material-symbols-outlined text-primary" data-icon="person_play">person_play</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-md font-headline-md">14,282</span>
+<span class="text-xs text-tertiary-fixed font-bold">+12% ↑</span>
+</div>
+<div class="w-full bg-surface-variant/30 h-1 mt-4 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[72%]"></div>
+</div>
+</div>
+<!-- AI Queries Today -->
+<div class="glass-card p-stack-md rounded-xl">
+<div class="flex items-start justify-between mb-2">
+<span class="text-label-mono font-label-mono text-outline-variant uppercase">AI Queries Today</span>
+<span class="material-symbols-outlined text-secondary" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-md font-headline-md">1.24M</span>
+<span class="text-xs text-tertiary-fixed font-bold">+5.4% ↑</span>
+</div>
+<div class="w-full bg-surface-variant/30 h-1 mt-4 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[85%]"></div>
+</div>
+</div>
+<!-- Backend Latency (Updated from System Latency) -->
+<div class="glass-card p-stack-md rounded-xl">
+<div class="flex items-start justify-between mb-2">
+<span class="text-label-mono font-label-mono text-outline-variant uppercase">Backend Latency</span>
+<span class="material-symbols-outlined text-tertiary" data-icon="lan">lan</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-md font-headline-md">18 <span class="text-body-sm font-normal text-outline">ms</span></span>
+<span class="text-xs text-tertiary-fixed font-bold">-4ms ↓</span>
+</div>
+<div class="w-full bg-surface-variant/30 h-1 mt-4 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[15%]"></div>
+</div>
+</div>
+<!-- Database IOPS -->
+<div class="glass-card p-stack-md rounded-xl">
+<div class="flex items-start justify-between mb-2">
+<span class="text-label-mono font-label-mono text-outline-variant uppercase">Database IOPS</span>
+<span class="material-symbols-outlined text-primary" data-icon="database">database</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-md font-headline-md">8.4k</span>
+<span class="text-xs text-error font-bold">+1.2k ↑</span>
+</div>
+<div class="w-full bg-surface-variant/30 h-1 mt-4 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full w-[65%]"></div>
+</div>
+</div>
+</div>
+<!-- Dashboard Body: Asymmetric Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Main Section -->
+<div class="col-span-12 lg:col-span-8 space-y-gutter">
+<!-- Infrastructure Health Widget -->
+<div class="glass-card rounded-xl overflow-hidden border-l-4 border-l-tertiary">
+<div class="p-stack-md flex justify-between items-center border-b border-outline-variant/10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary" data-icon="hub">hub</span>
+<h3 class="font-headline-sm text-[16px]">Infrastructure Health</h3>
+</div>
+<span class="text-[10px] font-label-mono text-tertiary uppercase bg-tertiary/10 px-2 py-0.5 rounded">All Clusters Nominal</span>
+</div>
+<div class="p-stack-md grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="space-y-1">
+<p class="text-[10px] text-outline-variant uppercase tracking-tighter">API Gateway</p>
+<div class="flex items-center gap-2">
+<div class="h-2 w-2 rounded-full bg-tertiary pulse-glow-success"></div>
+<span class="text-body-md font-bold">99.99%</span>
+</div>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] text-outline-variant uppercase tracking-tighter">Auth Cluster</p>
+<div class="flex items-center gap-2">
+<div class="h-2 w-2 rounded-full bg-tertiary pulse-glow-success"></div>
+<span class="text-body-md font-bold">100%</span>
+</div>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] text-outline-variant uppercase tracking-tighter">Redis Cache</p>
+<div class="flex items-center gap-2">
+<div class="h-2 w-2 rounded-full bg-secondary"></div>
+<span class="text-body-md font-bold">94.2%</span>
+</div>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] text-outline-variant uppercase tracking-tighter">Worker Nodes</p>
+<div class="flex items-center gap-2">
+<div class="h-2 w-2 rounded-full bg-tertiary pulse-glow-success"></div>
+<span class="text-body-md font-bold">142/142</span>
+</div>
+</div>
+</div>
+</div>
+<!-- System Health & DB IOPS Charts -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Inference Volume -->
+<div class="glass-card rounded-xl h-[300px] flex flex-col overflow-hidden">
+<div class="p-stack-md flex justify-between items-center border-b border-outline-variant/10">
+<h4 class="text-body-sm font-bold">Inference Volume</h4>
+<span class="text-[10px] font-label-mono text-outline uppercase">Live</span>
+</div>
+<div class="flex-1 relative p-stack-md flex items-end gap-1">
+<div class="absolute inset-0 bg-primary/5"></div>
+<script>
+                                for(let i=0; i<20; i++) {
+                                    const h = Math.floor(Math.random() * 60) + 20;
+                                    document.write(`<div class="flex-1 bg-primary/40 rounded-t-sm" style="height: ${h}%"></div>`);
+                                }
+                            </script>
+</div>
+</div>
+<!-- Database IOPS -->
+<div class="glass-card rounded-xl h-[300px] flex flex-col overflow-hidden">
+<div class="p-stack-md flex justify-between items-center border-b border-outline-variant/10">
+<h4 class="text-body-sm font-bold">Database IOPS</h4>
+<span class="text-[10px] font-label-mono text-outline uppercase">60s</span>
+</div>
+<div class="flex-1 relative p-stack-md flex items-end gap-1">
+<div class="absolute inset-0 bg-secondary/5"></div>
+<script>
+                                for(let i=0; i<20; i++) {
+                                    const h = Math.floor(Math.random() * 50) + 30;
+                                    document.write(`<div class="flex-1 bg-secondary/40 rounded-t-sm" style="height: ${h}%"></div>`);
+                                }
+                            </script>
+</div>
+</div>
+</div>
+<!-- Top Active Models Table -->
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="p-stack-md border-b border-outline-variant/10">
+<h3 class="font-headline-sm text-headline-sm">Top Active Models</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-high/40 text-table-header font-table-header text-outline uppercase tracking-wider">
+<tr>
+<th class="px-gutter py-3">Model Name</th>
+<th class="px-gutter py-3">Version</th>
+<th class="px-gutter py-3">Uptime</th>
+<th class="px-gutter py-3">Req/sec</th>
+<th class="px-gutter py-3 text-right">Status</th>
+</tr>
+</thead>
+<tbody class="text-body-sm divide-y divide-outline-variant/5">
+<tr class="hover:bg-surface-container-high/30 transition-colors group">
+<td class="px-gutter py-4 font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="model_training">model_training</span>
+                                            GPT-4-Turbo
+                                        </td>
+<td class="px-gutter py-4 font-label-mono text-xs">v2.1.0-stable</td>
+<td class="px-gutter py-4 text-outline">14d 02h 11m</td>
+<td class="px-gutter py-4">428.4</td>
+<td class="px-gutter py-4 text-right">
+<span class="bg-tertiary/10 text-tertiary-fixed px-2 py-0.5 rounded text-[11px] font-bold">ACTIVE</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-high/30 transition-colors group">
+<td class="px-gutter py-4 font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="neurology">neurology</span>
+                                            Llama-3-70B
+                                        </td>
+<td class="px-gutter py-4 font-label-mono text-xs">v1.4.2-patch</td>
+<td class="px-gutter py-4 text-outline">08d 14h 22m</td>
+<td class="px-gutter py-4">120.1</td>
+<td class="px-gutter py-4 text-right">
+<span class="bg-tertiary/10 text-tertiary-fixed px-2 py-0.5 rounded text-[11px] font-bold">ACTIVE</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Sidebar Section -->
+<div class="col-span-12 lg:col-span-4 space-y-gutter">
+<!-- Global Emergency Control Card (High Visibility) -->
+<div class="bg-error/10 border-2 border-error/40 rounded-xl p-stack-md relative overflow-hidden">
+<div class="absolute -right-4 -top-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]" data-icon="emergency_home">emergency_home</span>
+</div>
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-error pulse-glow-danger rounded-full p-1" data-icon="warning">warning</span>
+<h4 class="font-headline-sm text-error">Emergency Control</h4>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-6">Immediate global override for all active inference clusters. Use only in case of catastrophic breach or failure.</p>
+<div class="grid grid-cols-1 gap-3">
+<button class="w-full py-3 bg-error text-on-error font-bold rounded-lg flex items-center justify-center gap-2 shadow-lg shadow-error/20 active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined" data-icon="power_settings_new">power_settings_new</span>
+                GLOBAL SHUTDOWN
+            </button>
+<button class="w-full py-2 border border-error/40 text-error font-bold rounded-lg hover:bg-error/10 transition-colors">
+                Enable Maintenance Mode
+            </button>
+</div>
+</div>
+<!-- Service Control Widget -->
+<div class="glass-card rounded-xl p-stack-md">
+<div class="flex items-center justify-between mb-4">
+<h4 class="font-headline-sm text-[16px]">Service Control</h4>
+<span class="material-symbols-outlined text-outline-variant" data-icon="settings_remote">settings_remote</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 bg-surface-container-highest/20 rounded-lg border border-outline-variant/10">
+<div>
+<p class="text-xs font-bold">Inference API</p>
+<p class="text-[10px] text-outline-variant">Routing traffic to v2.1</p>
+</div>
+<button class="px-3 py-1 bg-tertiary/20 text-tertiary-fixed text-[10px] font-bold rounded border border-tertiary/20">RESTART</button>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-highest/20 rounded-lg border border-outline-variant/10">
+<div>
+<p class="text-xs font-bold">Load Balancer</p>
+<p class="text-[10px] text-outline-variant">Distributing to 4 regions</p>
+</div>
+<button class="px-3 py-1 bg-tertiary/20 text-tertiary-fixed text-[10px] font-bold rounded border border-tertiary/20">FLUSH</button>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-highest/20 rounded-lg border border-outline-variant/10">
+<div>
+<p class="text-xs font-bold">Auth Module</p>
+<p class="text-[10px] text-outline-variant">JWKS Caching Active</p>
+</div>
+<button class="px-3 py-1 bg-tertiary/20 text-tertiary-fixed text-[10px] font-bold rounded border border-tertiary/20">RELOAD</button>
+</div>
+</div>
+</div>
+<!-- Recent Logs Feed -->
+<div class="glass-card rounded-xl flex flex-col h-[400px]">
+<div class="p-stack-md border-b border-outline-variant/10 flex justify-between items-center">
+<h4 class="font-headline-sm text-[16px]">Real-time Event Stream</h4>
+<span class="h-2 w-2 rounded-full bg-primary pulse-glow-success"></span>
+</div>
+<div class="flex-1 overflow-y-auto p-stack-md space-y-4 font-label-mono text-[11px]" id="log-stream">
+<div class="flex gap-3">
+<span class="text-outline shrink-0">16:42:01</span>
+<span class="text-tertiary">[INFO]</span>
+<span class="text-on-surface-variant">Inference request processed: UUID-8291-X</span>
+</div>
+<div class="flex gap-3">
+<span class="text-outline shrink-0">16:41:58</span>
+<span class="text-primary">[AUTH]</span>
+<span class="text-on-surface-variant">User "JohnD_Admin" authenticated</span>
+</div>
+<div class="flex gap-3">
+<span class="text-outline shrink-0">16:41:44</span>
+<span class="text-error">[WARN]</span>
+<span class="text-error">Latency spike: EU-Central-1</span>
+</div>
+<div class="flex gap-3">
+<span class="text-outline shrink-0">16:41:12</span>
+<span class="text-outline-variant">[SYS]</span>
+<span class="text-on-surface-variant">Node health check: 142/142 healthy</span>
+</div>
+</div>
+<div class="p-stack-sm bg-surface-container-lowest border-t border-outline-variant/10 text-center">
+<span class="text-[10px] text-outline-variant uppercase tracking-widest">Auto-updating live</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions for the real-time effect
+        const updateLogs = () => {
+            const stream = document.getElementById('log-stream');
+            if (!stream) return;
+            
+            const times = ["16:45:12", "16:45:15", "16:45:18"];
+            const types = ["[INFO]", "[SYS]", "[AUTH]", "[DB]"];
+            const messages = [
+                "Cluster handshake verified", 
+                "Load balancer re-indexed", 
+                "Cache miss resolved: 0.1ms",
+                "DB Write optimized: Partition-04"
+            ];
+            const colors = ["text-tertiary", "text-outline-variant", "text-primary", "text-secondary"];
+
+            const log = document.createElement('div');
+            log.className = 'flex gap-3 opacity-0 translate-y-2 transition-all duration-500';
+            const idx = Math.floor(Math.random() * types.length);
+            log.innerHTML = `
+                <span class="text-outline shrink-0">${new Date().toLocaleTimeString('en-GB', { hour12: false })}</span>
+                <span class="${colors[idx]}">${types[idx]}</span>
+                <span class="text-on-surface-variant">${messages[idx]}</span>
+            `;
+            
+            stream.prepend(log);
+            setTimeout(() => {
+                log.classList.remove('opacity-0', 'translate-y-2');
+            }, 100);
+
+            if (stream.children.length > 20) {
+                stream.removeChild(stream.lastElementChild);
+            }
+        };
+
+        setInterval(updateLogs, 4000);
+    </script>
+</body></html>

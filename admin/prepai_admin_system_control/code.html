@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PrepAI Admin - System Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=JetBrains+Mono:wght@100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#464554",
+                    "surface-container": "#171f33",
+                    "surface-container-low": "#131b2e",
+                    "secondary-fixed": "#f0dbff",
+                    "on-tertiary-fixed-variant": "#004e5c",
+                    "on-secondary-fixed-variant": "#6900b3",
+                    "secondary-fixed-dim": "#ddb7ff",
+                    "inverse-on-surface": "#283044",
+                    "on-surface": "#dae2fd",
+                    "background": "#0b1326",
+                    "surface-container-highest": "#2d3449",
+                    "surface-bright": "#31394d",
+                    "on-background": "#dae2fd",
+                    "secondary": "#ddb7ff",
+                    "surface-dim": "#0b1326",
+                    "primary-fixed": "#e1e0ff",
+                    "inverse-primary": "#494bd6",
+                    "inverse-surface": "#dae2fd",
+                    "surface-container-lowest": "#060e20",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "on-tertiary-fixed": "#001f26",
+                    "primary": "#c0c1ff",
+                    "primary-container": "#8083ff",
+                    "on-secondary-fixed": "#2c0051",
+                    "tertiary-container": "#009eb9",
+                    "surface-variant": "#2d3449",
+                    "surface-container-high": "#222a3d",
+                    "surface": "#0b1326",
+                    "on-primary": "#1000a9",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "tertiary-fixed": "#acedff",
+                    "surface-tint": "#c0c1ff",
+                    "tertiary-fixed-dim": "#4cd7f6",
+                    "on-surface-variant": "#c7c4d7",
+                    "on-error": "#690005",
+                    "on-secondary": "#490080",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-container": "#0d0096",
+                    "error": "#ffb4ab",
+                    "outline": "#908fa0",
+                    "on-secondary-container": "#d6a9ff",
+                    "on-primary-fixed": "#07006c",
+                    "tertiary": "#4cd7f6",
+                    "on-tertiary-container": "#002f38",
+                    "error-container": "#93000a",
+                    "on-tertiary": "#003640",
+                    "secondary-container": "#6f00be"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin-x": "2rem",
+                    "stack-sm": "0.5rem",
+                    "stack-xs": "0.25rem",
+                    "gutter": "1.5rem",
+                    "stack-lg": "2rem",
+                    "stack-md": "1rem",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Geist"],
+                    "table-header": ["Geist"],
+                    "headline-sm": ["Geist"],
+                    "headline-md": ["Geist"],
+                    "label-mono": ["JetBrains Mono"],
+                    "display-lg": ["Geist"],
+                    "body-md": ["Geist"]
+            },
+            "fontSize": {
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "table-header": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0b1326;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(192, 193, 255, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(221, 183, 255, 0.05) 0px, transparent 50%);
+            min-height: 100vh;
+            color: #dae2fd;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .status-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .5; transform: scale(1.2); }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(144, 143, 160, 0.2);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- Side Navigation Rail (Predicted) -->
+<aside class="h-screen w-60 fixed left-0 top-0 flex flex-col py-stack-lg px-stack-sm bg-surface-container-lowest/80 backdrop-blur-xl border-r border-outline-variant/15 z-50">
+<div class="mb-stack-lg px-stack-sm">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">PrepAI Admin</h1>
+<p class="font-body-sm text-on-surface-variant opacity-60">Command Center</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-stack-sm py-2.5 space-x-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md">Users</span>
+</a>
+<a class="flex items-center px-stack-sm py-2.5 space-x-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">neurology</span>
+<span class="font-body-md">Models</span>
+</a>
+<a class="flex items-center px-stack-sm py-2.5 space-x-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-body-md">Analytics</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center px-stack-sm py-2.5 space-x-3 bg-primary-container text-on-primary-container rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-stack-lg border-t border-outline-variant/10">
+<button class="w-full flex items-center justify-center space-x-2 py-3 mb-stack-md bg-tertiary-container text-on-tertiary-container rounded-full font-bold active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">health_and_safety</span>
+<span class="text-body-sm">System Health</span>
+</button>
+<div class="space-y-1">
+<a class="flex items-center px-stack-sm py-2 space-x-3 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="text-body-sm">Support</span>
+</a>
+<a class="flex items-center px-stack-sm py-2 space-x-3 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="text-body-sm">Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Top Navigation Bar (Predicted) -->
+<header class="fixed top-0 right-0 w-[calc(100%-240px)] h-16 px-gutter flex justify-between items-center bg-surface-container-low/60 backdrop-blur-md border-b border-outline-variant/10 z-40">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full focus-within:ring-2 focus-within:ring-primary/50 rounded-lg transition-all">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-highest/30 border-none rounded-lg py-2 pl-10 pr-4 text-body-sm focus:ring-0 text-on-surface placeholder:text-on-surface-variant/50" placeholder="Search system logs, users, or settings..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-gutter">
+<div class="flex items-center space-x-4">
+<button class="text-on-surface-variant hover:text-on-surface relative">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-background"></span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined">dns</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-outline-variant/30"></div>
+<div class="flex items-center space-x-3 group cursor-pointer">
+<div class="text-right">
+<p class="font-body-sm font-bold text-on-surface">Alex Rivera</p>
+<p class="text-[11px] text-on-surface-variant">System Architect</p>
+</div>
+<div class="w-10 h-10 rounded-full border border-primary/30 p-0.5">
+<img alt="Admin Avatar" class="w-full h-full rounded-full bg-surface-container-high" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuCblc1_9HwkVAxwDpT7gD2UsON34EHKxMaypCJdUVlOxLyRP3lUvNmM6cBBqWh8rKHqjntZihtAcLcLRf1h499DVBOYiNMe1lFBNpYhG3JuyEIRAq9bWKpqh_fopQk-ezL_peinbmpD_hXR4TLkHjOEdiWDv-vOGMgqUNUgjcjkRhs6XLN0SS-8eO3fUq7u6v7rgnltRmyIOPdkQT5xeexRstn2NeJCEyVkg-ABKrn8bTpG9vT4ujcl6gN9lpWNjBG3UAX1VHboo"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-24 pl-64 pr-gutter pb-stack-lg max-w-[1600px] mx-auto">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-stack-lg">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1">System Control Panel</h2>
+<div class="flex items-center space-x-3">
+<span class="flex items-center space-x-1.5 px-2 py-0.5 bg-tertiary/10 text-tertiary rounded-full border border-tertiary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary status-pulse"></span>
+<span class="font-label-mono uppercase">System Operational</span>
+</span>
+<span class="text-on-surface-variant font-label-mono">Uptime: 99.98%</span>
+</div>
+</div>
+<div class="flex space-x-stack-sm">
+<button class="px-4 py-2 bg-surface-container-high text-on-surface rounded-lg border border-outline-variant/30 font-body-sm hover:bg-surface-bright transition-colors flex items-center space-x-2">
+<span class="material-symbols-outlined text-[18px]">history</span>
+<span>Action Audit</span>
+</button>
+<button class="px-4 py-2 bg-error-container text-on-error-container rounded-lg font-bold font-body-sm hover:opacity-90 transition-opacity flex items-center space-x-2">
+<span class="material-symbols-outlined text-[18px]">emergency_home</span>
+<span>Emergency Stop</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Frontend Configuration -->
+<div class="col-span-12 lg:col-span-4 glass-card rounded-xl p-stack-md flex flex-col h-full">
+<div class="flex items-center justify-between mb-stack-md">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary">browser_updated</span>
+<h3 class="font-headline-sm text-headline-sm">Frontend Configuration</h3>
+</div>
+<span class="font-label-mono text-[10px] text-on-surface-variant opacity-50">VER: 2.4.0-STABLE</span>
+</div>
+<div class="space-y-4 flex-1">
+<div class="p-3 bg-surface-container-low/40 rounded-lg border border-outline-variant/10">
+<div class="flex justify-between items-center mb-2">
+<span class="text-body-sm font-bold">CDN Status (Edge Runtime)</span>
+<span class="text-[11px] text-tertiary font-label-mono">GLOBAL ACTIVE</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[88%]"></div>
+</div>
+<div class="flex justify-between mt-2 text-[10px] text-on-surface-variant font-label-mono">
+<span>HIT RATE: 94.2%</span>
+<span>LATENCY: 24ms</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="flex flex-col items-center justify-center p-3 bg-surface-container-high/50 rounded-lg border border-outline-variant/20 hover:bg-primary/10 hover:border-primary/30 transition-all group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary mb-1">layers_clear</span>
+<span class="text-[11px] font-bold">Clear Edge Cache</span>
+</button>
+<button class="flex flex-col items-center justify-center p-3 bg-surface-container-high/50 rounded-lg border border-outline-variant/20 hover:bg-secondary/10 hover:border-secondary/30 transition-all group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary mb-1">replay</span>
+<span class="text-[11px] font-bold">Rollback Version</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-3 bg-error-container/5 rounded-lg border border-error/10">
+<div class="flex flex-col">
+<span class="text-body-sm font-bold">Maintenance Mode</span>
+<span class="text-[10px] text-on-surface-variant">Redirect all traffic to static splash</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-error"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Backend Services Monitoring -->
+<div class="col-span-12 lg:col-span-8 glass-card rounded-xl p-stack-md">
+<div class="flex items-center justify-between mb-stack-md">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-secondary">terminal</span>
+<h3 class="font-headline-sm text-headline-sm">Backend Services</h3>
+</div>
+<div class="flex space-x-2">
+<button class="text-body-sm text-primary hover:underline">View All Microservices</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-stack-md">
+<!-- Auth Service -->
+<div class="p-4 bg-surface-container-high/30 border border-outline-variant/10 rounded-lg">
+<div class="flex justify-between items-start mb-2">
+<span class="font-bold text-body-sm">Auth Gateway</span>
+<span class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_rgba(76,215,246,0.5)]"></span>
+</div>
+<div class="space-y-1">
+<p class="text-[11px] text-on-surface-variant">Load: 12%</p>
+<p class="text-[11px] text-on-surface-variant">Requests: 1.2k/min</p>
+</div>
+</div>
+<!-- Interview Engine -->
+<div class="p-4 bg-surface-container-high/30 border border-outline-variant/10 rounded-lg">
+<div class="flex justify-between items-start mb-2">
+<span class="font-bold text-body-sm">Inference Engine</span>
+<span class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_rgba(76,215,246,0.5)]"></span>
+</div>
+<div class="space-y-1">
+<p class="text-[11px] text-on-surface-variant">Load: 68%</p>
+<p class="text-[11px] text-on-surface-variant">Active Seats: 450</p>
+</div>
+</div>
+<!-- PDF Generator -->
+<div class="p-4 bg-surface-container-high/30 border border-outline-variant/10 rounded-lg">
+<div class="flex justify-between items-start mb-2">
+<span class="font-bold text-body-sm">Export/PDF</span>
+<span class="w-2 h-2 rounded-full bg-error shadow-[0_0_8px_rgba(255,180,171,0.5)]"></span>
+</div>
+<div class="space-y-1">
+<p class="text-[11px] text-error">Queue: 89 items</p>
+<p class="text-[11px] text-on-surface-variant">Worker status: Throttled</p>
+</div>
+</div>
+</div>
+<div class="flex items-center space-x-gutter">
+<!-- API Rate Limiting -->
+<div class="flex-1 p-4 bg-surface-container-lowest border border-outline-variant/10 rounded-lg">
+<h4 class="text-body-sm font-bold mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">speed</span>
+                            Global Rate Limiting
+                        </h4>
+<input class="w-full h-1.5 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary mb-2" type="range"/>
+<div class="flex justify-between text-[11px] text-on-surface-variant font-label-mono">
+<span>RELAXED</span>
+<span class="text-on-surface font-bold">500 REQ/SEC</span>
+<span>AGGRESSIVE</span>
+</div>
+</div>
+<!-- Recent Logs -->
+<div class="flex-1 bg-black/40 border border-outline-variant/10 rounded-lg p-3 font-label-mono text-[11px] overflow-hidden">
+<div class="flex justify-between items-center mb-2">
+<span class="text-on-surface-variant">LIVE LOGS [SYSLOG]</span>
+<span class="text-primary status-pulse">●</span>
+</div>
+<div class="space-y-1 text-on-surface-variant/80 max-h-24 overflow-y-auto custom-scrollbar">
+<p><span class="text-secondary">[09:24:12]</span> AUTH_SUCCESS user_8829</p>
+<p><span class="text-secondary">[09:24:15]</span> INF_ENGINE processing job_990</p>
+<p><span class="text-error">[09:24:18]</span> PDF_GEN timeout on worker_v4</p>
+<p><span class="text-secondary">[09:24:19]</span> RATE_LIMIT_RESET global_pool</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Database Management -->
+<div class="col-span-12 lg:col-span-7 glass-card rounded-xl p-stack-md">
+<div class="flex items-center justify-between mb-stack-md">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary-container">database</span>
+<h3 class="font-headline-sm text-headline-sm">Database Clusters</h3>
+</div>
+<div class="flex space-x-2">
+<span class="px-2 py-1 bg-surface-container-high text-[10px] rounded font-label-mono border border-outline-variant/20">POSTGRES 15.4</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-gutter mb-stack-md">
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="text-body-sm text-on-surface-variant">Read Replicas (x4)</span>
+<span class="text-[11px] text-tertiary">99% HEALTH</span>
+</div>
+<div class="p-3 bg-surface-container-high/20 rounded-lg border border-outline-variant/10">
+<div class="flex items-end justify-between">
+<div class="space-y-1">
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Avg Latency</p>
+<p class="text-headline-sm font-bold">12ms</p>
+</div>
+<div class="h-12 w-24 flex items-end space-x-1">
+<div class="bg-primary/40 w-full h-[60%] rounded-t-sm"></div>
+<div class="bg-primary/40 w-full h-[45%] rounded-t-sm"></div>
+<div class="bg-primary/40 w-full h-[70%] rounded-t-sm"></div>
+<div class="bg-primary/40 w-full h-[55%] rounded-t-sm"></div>
+<div class="bg-primary/40 w-full h-[80%] rounded-t-sm"></div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="text-body-sm text-on-surface-variant">Write Master</span>
+<span class="text-[11px] text-on-surface-variant">POOL: 142/200</span>
+</div>
+<div class="p-3 bg-surface-container-high/20 rounded-lg border border-outline-variant/10">
+<div class="flex items-end justify-between">
+<div class="space-y-1">
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">CPU Usage</p>
+<p class="text-headline-sm font-bold text-secondary">34%</p>
+</div>
+<div class="h-12 w-24 flex items-end space-x-1">
+<div class="bg-secondary/40 w-full h-[30%] rounded-t-sm"></div>
+<div class="bg-secondary/40 w-full h-[40%] rounded-t-sm"></div>
+<div class="bg-secondary/40 w-full h-[35%] rounded-t-sm"></div>
+<div class="bg-secondary/40 w-full h-[42%] rounded-t-sm"></div>
+<div class="bg-secondary/40 w-full h-[38%] rounded-t-sm"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant/20 overflow-hidden">
+<div class="px-4 py-2 bg-surface-container-high/50 border-b border-outline-variant/20 flex justify-between items-center">
+<span class="font-label-mono text-[11px] text-on-surface-variant">SQL QUERY CONSOLE</span>
+<div class="flex space-x-3">
+<button class="text-[10px] text-primary hover:text-white uppercase font-bold">Explain</button>
+<button class="text-[10px] text-primary hover:text-white uppercase font-bold">Run</button>
+</div>
+</div>
+<textarea class="w-full bg-transparent border-none focus:ring-0 p-4 font-label-mono text-[12px] text-secondary-fixed min-h-[100px] placeholder:text-outline-variant/40" placeholder="SELECT * FROM interviews WHERE status = 'failed' LIMIT 10;"></textarea>
+</div>
+</div>
+<!-- Security & Access -->
+<div class="col-span-12 lg:col-span-5 glass-card rounded-xl p-stack-md">
+<div class="flex items-center justify-between mb-stack-md">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-error">security</span>
+<h3 class="font-headline-sm text-headline-sm">Security &amp; Access</h3>
+</div>
+<button class="p-1.5 hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+<div class="space-y-gutter">
+<!-- Firewall Control -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<h4 class="text-body-sm font-bold">Intrusion Prevention (IPS)</h4>
+<span class="text-[10px] bg-error/20 text-error px-2 py-0.5 rounded-full font-label-mono border border-error/30">L7 FIREWALL ACTIVE</span>
+</div>
+<div class="flex items-center gap-3 p-3 bg-surface-container-high/30 rounded-lg border border-outline-variant/10">
+<div class="flex-1">
+<p class="text-[11px] text-on-surface-variant mb-1">Last Blocked: 22.190.11.45 (SQL Injection attempt)</p>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-[10px] text-on-surface-variant">Monitoring 4.2k active sockets</span>
+</div>
+</div>
+<button class="text-[11px] font-bold text-primary px-3 py-1.5 border border-primary/30 rounded-lg hover:bg-primary/10">Configure</button>
+</div>
+</div>
+<!-- API Key Management -->
+<div>
+<div class="flex justify-between items-center mb-3">
+<h4 class="text-body-sm font-bold">Global API Keys</h4>
+<button class="text-[11px] text-primary hover:underline">Revoke All</button>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low rounded-lg border border-outline-variant/10">
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">key</span>
+<div>
+<p class="text-[11px] font-bold">Public_Frontend_Production</p>
+<p class="text-[10px] text-on-surface-variant font-label-mono">sk_live_...9f21</p>
+</div>
+</div>
+<span class="text-[10px] text-tertiary uppercase font-label-mono">Active</span>
+</div>
+<div class="flex items-center justify-between p-2.5 bg-surface-container-low rounded-lg border border-outline-variant/10">
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">key</span>
+<div>
+<p class="text-[11px] font-bold">Analytics_Collector_Node</p>
+<p class="text-[10px] text-on-surface-variant font-label-mono">sk_live_...4r62</p>
+</div>
+</div>
+<span class="text-[10px] text-on-surface-variant uppercase font-label-mono opacity-50">Staged</span>
+</div>
+</div>
+</div>
+<!-- Session Termination -->
+<div class="p-3 bg-error/5 border border-error/10 rounded-xl">
+<div class="flex items-start space-x-3">
+<span class="material-symbols-outlined text-error mt-0.5">warning</span>
+<div class="flex-1">
+<p class="text-body-sm font-bold text-on-surface">Force Re-authentication</p>
+<p class="text-[11px] text-on-surface-variant mb-3">Terminate all 12,492 active user sessions globally. Use only in case of compromised secret keys.</p>
+<button class="w-full py-2 bg-error text-on-error rounded-lg font-bold text-body-sm hover:brightness-110 active:scale-[0.98] transition-all">Invalidate Global Sessions</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- System Resource Visualization Footer -->
+<div class="mt-gutter glass-card rounded-xl p-stack-md border-primary/20">
+<div class="flex flex-col md:flex-row items-center justify-between gap-gutter">
+<div class="flex items-center space-x-gutter">
+<div class="flex items-center space-x-3">
+<div class="w-12 h-12 rounded-full border-2 border-primary/20 flex items-center justify-center relative">
+<svg class="absolute inset-0 w-full h-full -rotate-90">
+<circle class="text-primary/10" cx="24" cy="24" fill="none" r="20" stroke="currentColor" stroke-width="3"></circle>
+<circle class="text-primary" cx="24" cy="24" fill="none" r="20" stroke="currentColor" stroke-dasharray="125" stroke-dashoffset="40" stroke-width="3"></circle>
+</svg>
+<span class="text-[11px] font-bold font-label-mono">68%</span>
+</div>
+<div>
+<p class="text-[11px] text-on-surface-variant uppercase font-bold tracking-wider">Overall Load</p>
+<p class="text-body-sm font-bold">Balanced</p>
+</div>
+</div>
+<div class="h-10 w-[1px] bg-outline-variant/30 hidden md:block"></div>
+<div>
+<p class="text-[11px] text-on-surface-variant uppercase font-bold tracking-wider">Storage</p>
+<p class="text-body-sm font-bold">1.2 TB / 4.0 TB</p>
+</div>
+</div>
+<div class="flex space-x-stack-sm w-full md:w-auto">
+<button class="flex-1 md:flex-none px-6 py-2 bg-surface-container-highest text-on-surface rounded-lg font-bold border border-outline-variant/20">System Backup</button>
+<button class="flex-1 md:flex-none px-6 py-2 bg-gradient-to-r from-primary to-secondary text-on-primary rounded-lg font-bold shadow-[0_0_20px_rgba(192,193,255,0.3)]">Deploy to Production</button>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for the pulse and live log feel
+        setInterval(() => {
+            const logs = document.querySelector('.custom-scrollbar');
+            const newLog = document.createElement('p');
+            const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
+            const events = [
+                'CACHE_PURGE_SUCCESS edge_node_12',
+                'DB_POOL_EXPANDED cluster_a',
+                'API_CALL_COMPLETED gateway_prod',
+                'HEALTH_CHECK passed internal_svc'
+            ];
+            const randomEvent = events[Math.floor(Math.random() * events.length)];
+            
+            newLog.innerHTML = `<span class="text-secondary">[${time}]</span> ${randomEvent}`;
+            logs.appendChild(newLog);
+            if (logs.children.length > 8) logs.removeChild(logs.children[0]);
+            logs.scrollTop = logs.scrollHeight;
+        }, 3000);
+    </script>
+</body></html>

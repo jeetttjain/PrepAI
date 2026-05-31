@@ -1,0 +1,315 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>PrepAI | AI File Assistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#dae2fd",
+                    "inverse-surface": "#dae2fd",
+                    "tertiary-fixed": "#a2eeff",
+                    "on-tertiary-fixed": "#001f25",
+                    "surface-tint": "#adc6ff",
+                    "on-error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#2fd9f4",
+                    "on-surface-variant": "#c2c6d6",
+                    "tertiary-container": "#009fb4",
+                    "on-secondary-fixed": "#2c0051",
+                    "on-tertiary-fixed-variant": "#004e5a",
+                    "on-secondary": "#490080",
+                    "background": "#0b1326",
+                    "primary": "#adc6ff",
+                    "on-background": "#dae2fd",
+                    "error-container": "#93000a",
+                    "primary-fixed-dim": "#adc6ff",
+                    "surface-bright": "#31394d",
+                    "outline": "#8c909f",
+                    "on-primary": "#002e6a",
+                    "on-tertiary": "#00363e",
+                    "primary-fixed": "#d8e2ff",
+                    "outline-variant": "#424754",
+                    "surface-container-high": "#222a3d",
+                    "on-secondary-fixed-variant": "#6900b3",
+                    "on-primary-fixed": "#001a42",
+                    "surface-container": "#171f33",
+                    "primary-container": "#4d8eff",
+                    "surface-variant": "#2d3449",
+                    "surface-dim": "#0b1326",
+                    "secondary-fixed-dim": "#ddb7ff",
+                    "on-primary-container": "#00285d",
+                    "error": "#ffb4ab",
+                    "inverse-on-surface": "#283044",
+                    "secondary-container": "#6f00be",
+                    "surface-container-highest": "#2d3449",
+                    "on-error": "#690005",
+                    "surface": "#0b1326",
+                    "inverse-primary": "#005ac2",
+                    "on-tertiary-container": "#002f36",
+                    "on-primary-fixed-variant": "#004395",
+                    "surface-container-lowest": "#060e20",
+                    "tertiary": "#2fd9f4",
+                    "secondary-fixed": "#f0dbff",
+                    "on-secondary-container": "#d6a9ff",
+                    "surface-container-low": "#131b2e",
+                    "secondary": "#ddb7ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "container-max": "1280px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "label-caps": ["Geist"],
+                    "body-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "mono-data": ["Geist"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                    "mono-data": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .backdrop-blur-32 { backdrop-filter: blur(32px); }
+        .backdrop-blur-64 { backdrop-filter: blur(64px); }
+        .glass-card {
+            background: rgba(11, 19, 38, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .ai-pulse-border {
+            position: relative;
+        }
+        .ai-pulse-border::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(90deg, #adc6ff, #2fd9f4, #adc6ff);
+            background-size: 200% auto;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: shimmer 4s linear infinite;
+        }
+        @keyframes shimmer {
+            to { background-position: 200% center; }
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(173, 198, 255, 0.2); border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden h-screen flex">
+<!-- Sidebar Navigation Shell -->
+<aside class="flex flex-col h-screen fixed left-0 top-0 py-gutter bg-surface-container/60 backdrop-blur-32 border-r border-white/10 w-64 z-50">
+<div class="px-6 mb-10 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-[20px] leading-tight text-primary font-bold">PrepAI</h1>
+<p class="font-label-caps text-[10px] text-on-surface-variant opacity-60">Mission Control</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1 px-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span class="font-label-caps text-label-caps">Generate Questions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-caps text-label-caps">Cheat Sheets</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary border-r-2 border-primary bg-primary/10 transition-all scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-caps text-label-caps">AI File Assistant</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Resume Analyzer</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-caps text-label-caps">Roadmap Generator</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-caps text-label-caps">Saved Interviews</span>
+</a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full py-4 rounded-2xl bg-gradient-to-r from-primary to-tertiary text-on-primary font-bold text-label-caps shadow-lg shadow-primary/20 hover:opacity-90 transition-all">
+                Upgrade to Pro
+            </button>
+<div class="mt-6 flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-white/5 cursor-pointer">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</div>
+</div>
+</aside>
+<!-- Main Workspace Content -->
+<main class="ml-64 flex-1 flex flex-col relative h-screen bg-surface-dim">
+<!-- Top Nav -->
+<header class="h-16 flex items-center justify-between px-margin-desktop bg-surface/60 backdrop-blur-32 border-b border-white/10 z-40">
+<h2 class="font-headline-lg text-[22px] font-bold text-primary">AI File Assistant</h2>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined hover:text-primary transition-colors cursor-pointer">notifications</span>
+<span class="material-symbols-outlined hover:text-primary transition-colors cursor-pointer">settings</span>
+</div>
+<img alt="User Avatar" class="w-8 h-8 rounded-full border border-primary/30" data-alt="A professional studio portrait of a young tech professional with short hair, wearing a dark navy blazer. The lighting is dramatic and moody with a subtle blue bioluminescent glow in the background, matching a futuristic command center aesthetic. The overall mood is confident and sophisticated." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsW8lLSt5pfM9JZydTP88PnK_NXTtOCas9RaCFf5Xqs66P5PJcczzKWlngEmBWqWUugGeMtS5cM7GvGe7kvKRoyw5DNHhMIv3HoyWyXKsNDQXi3p-ZyBIF-vxnzP2UN9bp31yQ20wRbYjwq0Av0aVaqhRS9WLmE7eauklinC-a1XOx12HXLbK30FvlsZRCgZJamln_ehAh0jGE-XeiUCcroxVS6D5sZLv6uy8AkQL7yx0Pn4Vs0k8t_zgd7mn-CGWHgxgUkphONTs">
+</div>
+</header>
+<!-- Content Area: 3-Column Layout -->
+<div class="flex-1 flex overflow-hidden p-6 gap-6 relative">
+<!-- Glow Effects -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+<!-- Left Sidebar: File List -->
+<section class="w-72 glass-card rounded-2xl flex flex-col overflow-hidden backdrop-blur-32">
+<div class="p-4 border-b border-white/5 flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-primary">Library</span>
+<span class="text-[10px] text-on-surface-variant bg-white/5 px-2 py-1 rounded">3 Files</span>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-2">
+<!-- File Item -->
+<div class="p-3 rounded-xl bg-primary/5 border border-primary/20 flex items-start gap-3 cursor-pointer group">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">description</span>
+<div class="flex-1 min-w-0">
+<p class="text-body-sm font-medium truncate">SystemDesign_Notes.pdf</p>
+<p class="text-[10px] text-on-surface-variant">2.4 MB • Analyzed</p>
+</div>
+</div>
+<!-- File Item -->
+<div class="p-3 rounded-xl hover:bg-white/5 border border-transparent flex items-start gap-3 cursor-pointer transition-colors group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">description</span>
+<div class="flex-1 min-w-0">
+<p class="text-body-sm font-medium truncate">Frontend_Roadmap.docx</p>
+<p class="text-[10px] text-on-surface-variant">842 KB • Ready</p>
+</div>
+</div>
+<!-- File Item -->
+<div class="p-3 rounded-xl hover:bg-white/5 border border-transparent flex items-start gap-3 cursor-pointer transition-colors group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">description</span>
+<div class="flex-1 min-w-0">
+<p class="text-body-sm font-medium truncate">Behavioral_Prep.pdf</p>
+<p class="text-[10px] text-on-surface-variant">1.1 MB • Ready</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Center Area: Dropzone -->
+<section class="flex-1 flex flex-col gap-6">
+<div class="flex-1 glass-card rounded-3xl border-dashed border-2 border-primary/30 flex flex-col items-center justify-center p-12 text-center group hover:border-primary/60 transition-all cursor-pointer relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6 relative">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">upload_file</span>
+<div class="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping opacity-20"></div>
+</div>
+<h3 class="font-headline-lg text-[24px] mb-2">Drop your knowledge here</h3>
+<p class="text-on-surface-variant max-w-sm mb-8">Upload PDFs or DOCX files. Our AI will dissect them for interview questions and summaries instantly.</p>
+<div class="w-full max-w-md bg-white/5 h-1.5 rounded-full overflow-hidden mb-2">
+<div class="h-full bg-gradient-to-r from-primary to-tertiary w-0 transition-all duration-500 shadow-[0_0_10px_rgba(173,198,255,0.5)]" id="progress-bar" style="width: 100%;"></div>
+</div>
+<span class="text-[12px] font-mono-data text-primary/70" id="progress-text">Analysis Complete</span>
+<button class="mt-8 px-8 py-3 rounded-full border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors font-label-caps text-label-caps">
+                        Select File
+                    </button>
+</div>
+</section>
+<!-- Right Sidebar: AI Chat -->
+<section class="w-96 glass-card rounded-2xl flex flex-col overflow-hidden backdrop-blur-32 ai-pulse-border">
+<!-- Chat Header -->
+<div class="p-4 border-b border-white/10 flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<span class="font-label-caps text-label-caps">Document Insight AI</span>
+</div>
+<!-- Chat History -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6" id="chat-container">
+<!-- AI Message -->
+<div class="flex flex-col gap-2 max-w-[85%]">
+<div class="p-3 bg-surface-variant/40 rounded-2xl rounded-tl-none border border-white/5 text-body-sm leading-relaxed">
+                            Hello! I've indexed your **System Design Notes**. How can I assist your prep today?
+                        </div>
+<span class="text-[10px] text-on-surface-variant/50 ml-1">AI Assistant • Just now</span>
+</div>
+<!-- User Message -->
+<div class="flex flex-col gap-2 max-w-[85%] self-end">
+<div class="p-3 bg-primary/20 rounded-2xl rounded-tr-none border border-primary/30 text-body-sm leading-relaxed text-on-surface">
+                            Can you explain the difference between horizontal and vertical scaling as mentioned in the text?
+                        </div>
+<span class="text-[10px] text-on-surface-variant/50 mr-1 text-right">You • 2m ago</span>
+</div>
+</div>
+<!-- Suggested Actions -->
+<div class="px-4 py-3 flex flex-wrap gap-2"><button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] hover:border-primary/50 hover:bg-primary/5 transition-all text-on-surface-variant hover:text-primary whitespace-nowrap">Summarize this document</button><button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] hover:border-primary/50 hover:bg-primary/5 transition-all text-on-surface-variant hover:text-primary whitespace-nowrap">Generate interview questions</button><button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] hover:border-primary/50 hover:bg-primary/5 transition-all text-on-surface-variant hover:text-primary whitespace-nowrap">Explain key concepts</button><button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] hover:border-primary/50 hover:bg-primary/5 transition-all text-on-surface-variant hover:text-primary whitespace-nowrap">Identify potential weak spots</button><button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] hover:border-primary/50 hover:bg-primary/5 transition-all text-on-surface-variant hover:text-primary whitespace-nowrap">Rewrite for a recruiter</button><button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] hover:border-primary/50 hover:bg-primary/5 transition-all text-on-surface-variant hover:text-primary whitespace-nowrap">List required prerequisites</button><button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] hover:border-primary/50 hover:bg-primary/5 transition-all text-on-surface-variant hover:text-primary whitespace-nowrap">Compare with industry standards</button></div>
+<!-- Input Area -->
+<div class="p-4 bg-surface-container-high/50">
+<div class="relative">
+<input class="w-full bg-background/50 border-0 border-b-2 border-primary/20 focus:border-primary focus:ring-0 rounded-t-xl py-3 pl-4 pr-12 text-body-sm transition-all outline-none" placeholder="Ask anything..." type="text">
+<button class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">send</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<script>
+        // Micro-interaction for Progress Simulation
+        let progress = 0;
+        const bar = document.getElementById('progress-bar');
+        const text = document.getElementById('progress-text');
+
+        function simulateUpload() {
+            if (progress < 100) {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                bar.style.width = progress + '%';
+                text.innerText = progress === 100 ? 'Analysis Complete' : 'Uploading & Indexing... ' + Math.floor(progress) + '%';
+                setTimeout(simulateUpload, 600);
+            }
+        }
+
+        // Trigger on page load for demo
+        setTimeout(simulateUpload, 1500);
+
+        // Simple scroll bottom for chat
+        const chatContainer = document.getElementById('chat-container');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    </script>
+
+
+</body></html>
