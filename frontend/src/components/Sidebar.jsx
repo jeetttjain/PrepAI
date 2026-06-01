@@ -34,7 +34,7 @@ export default function Sidebar({ isOpen, onClose }) {
     { name: 'Roadmap Generator',  path: '/roadmap',             icon: Map },
     { name: 'Saved Interviews',   path: '/saved-interviews',    icon: BookOpen },
     { name: 'Profile',            path: '/profile',             icon: User },
-    ...(user && user.role && user.role.toLowerCase().includes('owner') ? [{ name: 'Admin Control', path: '/admin', icon: ShieldCheck }] : []),
+    ...(user && user.role && user.role.toLowerCase() === 'admin' ? [{ name: 'Admin Dashboard', path: '/admin', icon: ShieldCheck }] : []),
   ];
 
   return (
