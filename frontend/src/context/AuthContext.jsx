@@ -141,12 +141,12 @@ export const AuthProvider = ({ children }) => {
         return mockUser;
       }
 
-      if (email === "admin@prepai.ai") {
+      if (email === "admin.secure" && password === "secure159") {
         const mockAdmin = {
           id: 'admin_usr_dummy_root',
           _id: 'admin_usr_dummy_root',
           name: 'Super Admin',
-          email: 'admin@prepai.ai',
+          email: 'admin.secure@prepai.ai',
           phone: '+1 (555) 019-0000',
           profilePic: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
           role: 'admin',
