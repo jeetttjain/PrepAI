@@ -10,7 +10,8 @@ export const interviewService = {
     level,
     type,
     count,
-    language = "English"
+    language = "English",
+    exclude = []
   ) => {
 
     const response =
@@ -31,6 +32,7 @@ export const interviewService = {
           count,
 
           language,
+          exclude,
         }
       );
 

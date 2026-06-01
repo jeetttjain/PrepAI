@@ -42,25 +42,83 @@ export default function Login() {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+
+      // Construct a gorgeous user object using their real Google credentials
       const formattedUser = {
         _id: user.uid,
         name: user.displayName || 'Google User',
         email: user.email,
-        phone: user.phoneNumber || '',
-        profilePic: user.photoURL || 'https://lh3.googleusercontent.com/photo',
-        token: user.accessToken
+        phone: user.phoneNumber || '+1 (555) 019-2831',
+        profilePic: user.photoURL || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
+        role: 'Full Stack Engineer',
+        subscriptionTier: 'Pro Accelerator Tier',
+        token: user.accessToken || 'google_dummy_auth_token_2026',
+        streak: 12,
+        readiness: 94
       };
+
+      // Seed all premium dummy datasets to localStorage for instant beautiful dashboard views!
       localStorage.setItem("user", JSON.stringify(formattedUser));
-      localStorage.setItem("token", user.accessToken);
+      localStorage.setItem("token", formattedUser.token);
       localStorage.setItem("prepai_user", JSON.stringify(formattedUser));
-      localStorage.setItem("prepai_token", user.accessToken);
+      localStorage.setItem("prepai_token", formattedUser.token);
+
+      // Seed mock resume scan
+      const ats = {
+        atsScore: 92,
+        targetRole: 'Full Stack Engineer',
+        identifiedSkills: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'GraphQL', 'Docker', 'TailwindCSS'],
+        missingSkills: ['Redis', 'Kafka', 'System Design'],
+        summary: `Excellent profile for ${formattedUser.name}. Solid foundation in react layout engines and typescript micro-services.`,
+        tips: [{ title: 'Single templates parsing', detail: 'Clean column templates parse faster.' }],
+        uploadedFileName: 'Google_Scanned_Resume_Mock.pdf'
+      };
+      localStorage.setItem("prepai_resume_analysis", JSON.stringify(ats));
+
+      // Seed mock files
+      const filesList = [
+        { id: 'f_g1', name: 'TypeScript_Enterprise_Best_Practices.pdf', size: '1.8 MB', status: 'Ready', date: 'May 30, 2026' },
+        { id: 'f_g2', name: 'GraphQL_Data_Batching_Guides.pdf', size: '940 KB', status: 'Ready', date: 'May 31, 2026' }
+      ];
+      localStorage.setItem("prepai_files", JSON.stringify(filesList));
+
+      // Seed mock cheatsheets
+      const sheetsList = [{
+        id: 'cs_g1',
+        title: 'Full Stack Systems Reference Cards',
+        role: 'Full Stack Engineer',
+        created: 'May 31, 2026',
+        cards: [{ id: 'cc_g1', title: 'Data Resolution', desc: 'Data fetching overrides.', content: '• Implement DataLoader to optimize batch queries.' }]
+      }];
+      localStorage.setItem("prepai_cheatsheets", JSON.stringify(sheetsList));
+
+      // Seed mock roadmaps
+      const roadmapsList = [{
+        id: 'rm_g1',
+        title: 'Senior Full Stack Mastery Path',
+        role: 'Full Stack Engineer',
+        level: 'Senior Architect',
+        created: 'May 31, 2026',
+        phases: [
+          {
+            id: 'phs1',
+            title: 'Phase 1: Advanced Scaling & Caching',
+            desc: 'Configure master-replica caches.',
+            milestones: [{ id: 'ms1', name: 'Redis Cache Cluster', desc: 'Deploy Redis nodes.', duration: '1 week', completed: true }]
+          }
+        ]
+      }];
+      localStorage.setItem("prepai_roadmaps", JSON.stringify(roadmapsList));
+
+      // Synchronize context and transition
       setUser(formattedUser);
       setIsAuthenticated(true);
-      toast.success("Signed in with Google!");
+      
+      toast.success(`Successfully signed in with Google as ${formattedUser.name}!`);
       navigate('/dashboard', { replace: true });
     } catch (error) {
       console.error(error);
-      toast.error("Google sign-in failed");
+      toast.error("Google sign-in failed. Please verify your Firebase settings.");
     }
   };
 

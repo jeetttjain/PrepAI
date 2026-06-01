@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { downloadResumeReportPDF } from '../utils/pdfExport';
+import { resumeService } from '../services/resumeService';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { 
@@ -119,154 +120,33 @@ export default function ResumeAnalyzer() {
     }
 
     setLoading(true);
-    // Simulate real AI scanning progress
-    await new Promise(resolve => setTimeout(resolve, 2200));
-    
-    // Perform dynamic scan of the uploaded file!
-    let fileText = "";
+
     try {
-      if (uploadedFile.type === "text/plain") {
-        fileText = await uploadedFile.text();
-      } else {
-        // Read the first 25KB as text/binary to look for keywords in basic docx/pdf or txt
-        const buffer = await uploadedFile.arrayBuffer();
-        const decoder = new TextDecoder('utf-8');
-        fileText = decoder.decode(buffer.slice(0, 25000));
-      }
-    } catch (e) {
-      console.warn("Failed to read file contents directly, scanning metadata.", e);
-    }
+      // Call the backend service to perform high-fidelity ATS resume analysis
+      const result = await resumeService.analyze(uploadedFile, selectedRole, selectedLanguages);
 
-    const searchBlob = `${uploadedFile.name} ${fileText}`.toLowerCase();
-    
-    const roleKeywords = {
-      'Frontend Developer': ['react', 'typescript', 'javascript', 'html', 'css', 'tailwind', 'sass', 'next', 'vite', 'webpack', 'redux', 'jest', 'cypress', 'git', 'frontend', 'ui'],
-      'Backend Developer': ['node', 'express', 'python', 'django', 'flask', 'java', 'spring', 'go', 'rust', 'postgresql', 'mysql', 'mongodb', 'redis', 'docker', 'api', 'graphql', 'kubernetes', 'kafka', 'git', 'backend'],
-      'Full Stack Developer': ['react', 'node', 'express', 'typescript', 'javascript', 'postgresql', 'mongodb', 'docker', 'git', 'html', 'css', 'api', 'rest', 'aws', 'cicd', 'fullstack', 'full stack'],
-      'AI Engineer': ['python', 'pytorch', 'tensorflow', 'machine learning', 'ml', 'ai', 'langchain', 'llamaindex', 'openai', 'llm', 'rag', 'nlp', 'pinecone', 'chroma', 'pandas', 'numpy', 'scikit'],
-      'Product Designer': ['figma', 'sketch', 'ui', 'ux', 'wireframe', 'prototype', 'design system', 'typography', 'user research', 'ab testing', 'adobe', 'illustrator', 'designer'],
-      'Product Manager': ['agile', 'scrum', 'roadmap', 'backlog', 'jira', 'sql', 'user stories', 'strategy', 'metrics', 'product', 'manager'],
-      'Business Analyst': ['sql', 'excel', 'tableau', 'powerbi', 'python', 'data', 'requirements', 'agile', 'uml', 'jira', 'analyst']
-    };
-
-    const getKeywordsForRole = (roleName) => {
-      const normalized = roleName.toLowerCase();
-      const matchedKey = Object.keys(roleKeywords).find(k => 
-        normalized.includes(k.toLowerCase()) || k.toLowerCase().includes(normalized)
-      );
-      if (matchedKey) return roleKeywords[matchedKey];
-      
-      // Dynamic fallback based on role name words
-      const words = normalized.split(/\s+/).filter(w => w.length > 2);
-      if (words.length > 0) {
-        return [...words, 'git', 'agile', 'communication', 'problem solving', 'teamwork', 'analytics'];
-      }
-      return ['git', 'agile', 'communication', 'problem solving', 'teamwork', 'analytics', 'collaboration'];
-    };
-
-    const targetKeywords = getKeywordsForRole(selectedRole);
-    const identifiedSkills = [];
-    const missingSkills = [];
-
-    targetKeywords.forEach(kw => {
-      if (searchBlob.includes(kw.toLowerCase())) {
-        // Format word nicely
-        const displayKw = kw.charAt(0).toUpperCase() + kw.slice(1);
-        identifiedSkills.push(displayKw);
-      } else {
-        const displayKw = kw.charAt(0).toUpperCase() + kw.slice(1);
-        missingSkills.push(displayKw);
-      }
-    });
-
-    // Make sure we have a highly encouraging, perfect ATS friendly score!
-    const matchCount = identifiedSkills.length;
-    const totalCount = targetKeywords.length;
-    const matchRatio = matchCount / (totalCount || 1);
-    
-    // Scale between 85 and 98 to represent an excellent, premium ATS compatibility rate
-    let atsScore = Math.round(85 + matchRatio * 13); 
-    if (atsScore > 98) atsScore = 98;
-    
-    // Fallback if no matching keywords were found due to file encoding
-    if (matchCount === 0) {
-      const defaults = targetKeywords.slice(0, Math.min(5, targetKeywords.length));
-      defaults.forEach(kw => {
-        identifiedSkills.push(kw.charAt(0).toUpperCase() + kw.slice(1));
-      });
-      atsScore = 88;
-    }
-
-    const summary = `Your resume is highly optimized and ATS-friendly for this particular role. The scanner successfully matched your qualifications against standard applicant tracking metrics for a "${selectedRole}" position. We identified ${identifiedSkills.length} matching core skills, showing excellent compatibility with high-priority keyword requirements. Just a few minor optimization opportunities exist to elevate your resume to maximum parsing potential.`;
-
-    // Actionable optimization tips based on missing keywords
-    const tips = missingSkills.slice(0, 3).map((skill, index) => {
-      const titles = [
-        `Highlight your "${skill}" application`,
-        `Demonstrate hands-on "${skill}" outcomes`,
-        `Optimize your skills matrix for "${skill}"`
-      ];
-      const details = [
-        `ATS filters for a ${selectedRole} scan for "${skill}" to evaluate core alignment. We suggest drafting a concise bullet point showing how you leveraged "${skill}" to address operational challenges.`,
-        `Mention a specific project context where you implemented "${skill}". For example: "Utilized ${skill} to scale system capabilities, improving response speed by 18%."`,
-        `Ensure "${skill}" is listed in the technical competencies or tools section of your resume to increase target search density.`
-      ];
-      return {
-        title: titles[index % titles.length],
-        detail: details[index % details.length]
+      const analysisResult = {
+        atsScore: result.atsScore || 85,
+        targetRole: result.targetRole || selectedRole,
+        identifiedSkills: result.identifiedSkills || [],
+        missingSkills: result.missingSkills && result.missingSkills.length > 0 ? result.missingSkills : ['No critical gaps!'],
+        summary: result.summary || 'Resume analysis completed successfully.',
+        tips: result.tips || [],
+        foundLanguages: result.foundLanguages || [],
+        missingLanguages: result.missingLanguages || [],
+        configuredLanguages: result.configuredLanguages || selectedLanguages,
+        uploadedFileName: uploadedFile.name
       };
-    });
 
-    // Fallback tips if resume is a perfect 100% match!
-    if (tips.length === 0) {
-      tips.push(
-        { title: 'Resume is highly optimized!', detail: 'Your resume contains all core keywords for this role. No further keyword optimization is required.' },
-        { title: 'Ready for mock interview', detail: 'Since your resume is perfect for this role, we recommend launching an AI Mock Interview now to practice answering questions.' },
-        { title: 'Keep formatting simple', detail: 'Ensure your resume uses a single-column layout with standard fonts to maintain 100% parsing accuracy across all ATS systems.' }
-      );
+      setScannedData(analysisResult);
+      updateResumeAnalysis(analysisResult);
+      toast.success(`Resume scanned successfully for the ${selectedRole} role!`);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to analyze resume. Please verify the file format.");
+    } finally {
+      setLoading(false);
     }
-
-    // Check selected languages to verify they are mentioned in the resume!
-    const foundLanguages = [];
-    const missingLanguages = [];
-    
-    selectedLanguages.forEach(lang => {
-      if (searchBlob.includes(lang.toLowerCase())) {
-        foundLanguages.push(lang);
-      } else {
-        missingLanguages.push(lang);
-      }
-    });
-
-    // Add language specific advice to tips if any selected languages were missing
-    if (missingLanguages.length > 0) {
-      tips.unshift({
-        title: "Language Section Optimization Required",
-        detail: `The scan was configured to verify: ${selectedLanguages.join(', ')}. However, the following languages were not detected in your resume text: ${missingLanguages.join(', ')}. We highly recommend adding a dedicated "Languages" section to declare your multilingual alignment.`
-      });
-    } else if (foundLanguages.length > 0) {
-      tips.push({
-        title: "Language Section Fully Verified!",
-        detail: `Excellent work! Your resume successfully declared: ${foundLanguages.join(', ')}. This reinforces your candidacy for globally distributed and culturally diverse corporate environments.`
-      });
-    }
-
-    const analysisResult = {
-      atsScore,
-      targetRole: selectedRole,
-      identifiedSkills,
-      missingSkills: missingSkills.length > 0 ? missingSkills : ['No critical gaps!'],
-      summary,
-      tips,
-      foundLanguages,
-      missingLanguages,
-      configuredLanguages: selectedLanguages
-    };
-
-    setScannedData(analysisResult);
-    updateResumeAnalysis(analysisResult);
-    setLoading(false);
-    toast.success(`Resume scanned successfully for the ${selectedRole} role!`);
   };
 
   const handleReset = () => {

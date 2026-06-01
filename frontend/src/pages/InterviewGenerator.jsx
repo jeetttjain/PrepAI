@@ -335,16 +335,39 @@ export default function InterviewGenerator() {
     setRevealedAnswers({});
 
     try {
-      const result = await interviewService.generate(finalRole, level, type, count, language);
+      const existingQuestions = session ? session.questions.map(q => q.question) : [];
+      const result = await interviewService.generate(finalRole, level, type, count, language, existingQuestions);
 
       setSession(prev => {
         if (!prev) return result;
+        
+        // Merge and strictly deduplicate on the frontend
+        const seen = new Set();
+        const mergedQuestions = [];
+        
+        for (const q of [...prev.questions, ...result.questions]) {
+          const norm = q.question.toLowerCase().replace(/[^a-z0-9]/g, "");
+          if (!seen.has(norm)) {
+            seen.add(norm);
+            mergedQuestions.push(q);
+          }
+        }
+
+        // Limit the total queue size to max 25
+        const cappedQuestions = mergedQuestions.slice(0, 25);
+        if (mergedQuestions.length > 25) {
+          toast.success("Simulation queue capped at maximum 25 questions.");
+        }
+
+        // Re-index question numbers sequentially
+        const sequentialQuestions = cappedQuestions.map((q, idx) => ({
+          ...q,
+          number: `Q${idx + 1}`
+        }));
+
         return {
           ...result,
-          questions: [
-            ...prev.questions,
-            ...result.questions,
-          ],
+          questions: sequentialQuestions,
         };
       });
 
