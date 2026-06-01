@@ -19,16 +19,32 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
+        let profileData = null;
         try {
           // Fetch user profile from Firestore users collection
           const userDocRef = doc(db, 'users', firebaseUser.uid);
           const userDoc = await getDoc(userDocRef);
 
-          let profileData = {};
           if (userDoc.exists()) {
             profileData = userDoc.data();
-          } else {
-            // Create user document if it doesn't exist (e.g. Google sign-in first-time)
+          }
+        } catch (err) {
+          console.error("Firestore user doc fetch failed, trying local fallback:", err);
+        }
+
+        // Resilient fallback logic
+        if (!profileData) {
+          const cachedUser = localStorage.getItem('prepai_user');
+          if (cachedUser) {
+            try {
+              const parsed = JSON.parse(cachedUser);
+              if (parsed.id === firebaseUser.uid || parsed._id === firebaseUser.uid) {
+                profileData = parsed;
+              }
+            } catch (e) {}
+          }
+          
+          if (!profileData) {
             profileData = {
               _id: firebaseUser.uid,
               name: firebaseUser.displayName || 'Google User',
@@ -42,40 +58,32 @@ export const AuthProvider = ({ children }) => {
               atsScore: 0,
               createdAt: new Date().toISOString()
             };
-            await setDoc(userDocRef, profileData);
+            
+            // Try setting doc in background
+            try {
+              const userDocRef = doc(db, 'users', firebaseUser.uid);
+              await setDoc(userDocRef, profileData);
+            } catch (e) {
+              console.warn("Background Firestore user doc creation bypassed:", e);
+            }
           }
-
-          const completeUser = {
-            id: firebaseUser.uid,
-            _id: firebaseUser.uid,
-            token: firebaseUser.accessToken || 'firebase_token_' + firebaseUser.uid,
-            ...profileData
-          };
-
-          // Cache in localStorage for state persistence
-          localStorage.setItem('token', completeUser.token);
-          localStorage.setItem('prepai_token', completeUser.token);
-          localStorage.setItem('user', JSON.stringify(completeUser));
-          localStorage.setItem('prepai_user', JSON.stringify(completeUser));
-
-          setUser(completeUser);
-          setIsAuthenticated(true);
-        } catch (err) {
-          console.error("Firestore user doc fetch failed:", err);
-          // Fallback to basic firebase metadata
-          const fallbackUser = {
-            id: firebaseUser.uid,
-            _id: firebaseUser.uid,
-            name: firebaseUser.displayName || 'PrepAI Member',
-            email: firebaseUser.email,
-            profilePic: firebaseUser.photoURL || '',
-            streak: 1,
-            readiness: 0,
-            atsScore: 0
-          };
-          setUser(fallbackUser);
-          setIsAuthenticated(true);
         }
+
+        const completeUser = {
+          id: firebaseUser.uid,
+          _id: firebaseUser.uid,
+          token: firebaseUser.accessToken || 'firebase_token_' + firebaseUser.uid,
+          ...profileData
+        };
+
+        // Cache in localStorage for state persistence
+        localStorage.setItem('token', completeUser.token);
+        localStorage.setItem('prepai_token', completeUser.token);
+        localStorage.setItem('user', JSON.stringify(completeUser));
+        localStorage.setItem('prepai_user', JSON.stringify(completeUser));
+
+        setUser(completeUser);
+        setIsAuthenticated(true);
       } else {
         setUser(null);
         setIsAuthenticated(false);
@@ -150,9 +158,13 @@ export const AuthProvider = ({ children }) => {
       const firebaseUser = credential.user;
 
       // Update basic display name in Firebase Auth
-      await updateFirebaseProfile(firebaseUser, {
-        displayName: `${firstName} ${lastName}`
-      });
+      try {
+        await updateFirebaseProfile(firebaseUser, {
+          displayName: `${firstName} ${lastName}`
+        });
+      } catch (e) {
+        console.warn("Firebase Auth display name update bypassed:", e);
+      }
 
       // Construct and set Firestore users collection document
       const userProfile = {
@@ -169,8 +181,26 @@ export const AuthProvider = ({ children }) => {
         createdAt: new Date().toISOString()
       };
 
-      await setDoc(doc(db, 'users', firebaseUser.uid), userProfile);
+      try {
+        await setDoc(doc(db, 'users', firebaseUser.uid), userProfile);
+      } catch (err) {
+        console.warn("Firestore user profile seeding bypassed (offline mode):", err);
+      }
 
+      // Cache locally to ensure immediate seamless visual restoration
+      const completeUser = {
+        id: firebaseUser.uid,
+        _id: firebaseUser.uid,
+        token: firebaseUser.accessToken || 'firebase_token_' + firebaseUser.uid,
+        ...userProfile
+      };
+      localStorage.setItem('token', completeUser.token);
+      localStorage.setItem('prepai_token', completeUser.token);
+      localStorage.setItem('user', JSON.stringify(completeUser));
+      localStorage.setItem('prepai_user', JSON.stringify(completeUser));
+
+      setUser(completeUser);
+      setIsAuthenticated(true);
       setLoading(false);
       return firebaseUser;
     } catch (error) {
@@ -191,19 +221,18 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = async (data) => {
     if (!user || !user.id) return;
+    
+    // Update local state and localStorage cache immediately (optimistic update)
+    const updated = { ...user, ...data };
+    localStorage.setItem('user', JSON.stringify(updated));
+    localStorage.setItem('prepai_user', JSON.stringify(updated));
+    setUser(updated);
+
     try {
       const userDocRef = doc(db, 'users', user.id);
       await updateDoc(userDocRef, data);
-
-      const updated = { ...user, ...data };
-      localStorage.setItem('user', JSON.stringify(updated));
-      localStorage.setItem('prepai_user', JSON.stringify(updated));
-      setUser(updated);
     } catch (err) {
-      console.error("Firestore user profile update failed:", err);
-      // Local fallback
-      const updated = { ...user, ...data };
-      setUser(updated);
+      console.warn("Firestore user profile update bypassed (offline mode):", err);
     }
   };
 

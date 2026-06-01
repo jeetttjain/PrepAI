@@ -119,6 +119,21 @@ export default function FileAssistant() {
     }
 
     const fetchChats = async () => {
+      // Optimistic load from localStorage cache first
+      const saved = localStorage.getItem(`prepai_file_chats_${user.id}`);
+      if (saved) {
+        try {
+          const loaded = JSON.parse(saved);
+          setChats(loaded);
+          const savedActive = localStorage.getItem(`prepai_active_file_chat_id_${user.id}`);
+          if (savedActive && loaded.some(c => c.id === savedActive)) {
+            setActiveChatId(savedActive);
+          } else if (loaded[0]) {
+            setActiveChatId(loaded[0].id);
+          }
+        } catch (e) {}
+      }
+
       try {
         const q = query(
           collection(db, 'file_assistant_chats'),
@@ -140,8 +155,8 @@ export default function FileAssistant() {
           } else {
             setActiveChatId(loadedChats[0].id);
           }
-        } else {
-          // Initialize first chat
+        } else if (!saved) {
+          // Initialize first chat only if local is empty
           const initialId = "chat_" + Date.now();
           const initialChat = {
             id: initialId,
@@ -151,19 +166,17 @@ export default function FileAssistant() {
             createdAt: new Date().toISOString(),
             messages: []
           };
-          await setDoc(doc(db, 'file_assistant_chats', initialId), initialChat);
+          try {
+            await setDoc(doc(db, 'file_assistant_chats', initialId), initialChat);
+          } catch (e) {
+            console.warn("Background initial chat seeding bypassed:", e);
+          }
           setChats([initialChat]);
           setActiveChatId(initialId);
           localStorage.setItem(`prepai_active_file_chat_id_${user.id}`, initialId);
         }
       } catch (err) {
-        console.error("Firestore chats load failed, using local storage cache:", err);
-        const saved = localStorage.getItem(`prepai_file_chats_${user.id}`);
-        if (saved) {
-          const loaded = JSON.parse(saved);
-          setChats(loaded);
-          setActiveChatId(loaded[0]?.id || "chat_default");
-        }
+        console.warn("Firestore chats load failed, using local storage cache:", err);
       }
     };
 
