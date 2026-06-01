@@ -76,7 +76,7 @@ export default function Profile() {
   // Synchronize on mounts
   React.useEffect(() => {
     const savedTheme = localStorage.getItem('prepai_theme') || user?.theme || 'dark';
-    setThemePref(savedTheme === 'oled' ? 'OLED Pure Black' : 'Dark (Default)');
+    setThemePref(savedTheme === 'oled' ? 'OLED Pure Black' : savedTheme === 'light' ? 'Light Mode' : 'Dark (Default)');
     if (user) {
       setName(user.name || 'Alex Rivera');
       setEmail(user.email || 'alex@prepai.ai');
@@ -105,13 +105,20 @@ export default function Profile() {
 
   const handleSavePrefs = (e) => {
     e.preventDefault();
-    const updatedTheme = themePref === 'OLED Pure Black' ? 'oled' : 'dark';
+    const updatedTheme = themePref === 'OLED Pure Black' ? 'oled' : themePref === 'Light Mode' ? 'light' : 'dark';
     if (updatedTheme === 'oled') {
       document.documentElement.classList.add('oled-theme');
       document.body.classList.add('oled-theme');
-    } else {
+      document.documentElement.classList.remove('light-theme');
+      document.body.classList.remove('light-theme');
+    } else if (updatedTheme === 'light') {
+      document.documentElement.classList.add('light-theme');
+      document.body.classList.add('light-theme');
       document.documentElement.classList.remove('oled-theme');
       document.body.classList.remove('oled-theme');
+    } else {
+      document.documentElement.classList.remove('oled-theme', 'light-theme');
+      document.body.classList.remove('oled-theme', 'light-theme');
     }
     localStorage.setItem('prepai_theme', updatedTheme);
     updateProfile({ theme: updatedTheme, emailNotifications: notifyPref, languages: selectedLangs });
@@ -456,6 +463,7 @@ export default function Profile() {
                     >
                       <option>Dark (Default)</option>
                       <option>OLED Pure Black</option>
+                      <option>Light Mode</option>
                     </select>
                   </div>
 
