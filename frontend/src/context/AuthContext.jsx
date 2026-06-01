@@ -141,6 +141,33 @@ export const AuthProvider = ({ children }) => {
         return mockUser;
       }
 
+      if (email === "admin@prepai.ai") {
+        const mockAdmin = {
+          id: 'admin_usr_dummy_root',
+          _id: 'admin_usr_dummy_root',
+          name: 'Super Admin',
+          email: 'admin@prepai.ai',
+          phone: '+1 (555) 019-0000',
+          profilePic: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
+          role: 'admin',
+          subscriptionTier: 'Premium Tier',
+          token: 'mock_admin_jwt_token',
+          streak: 100,
+          readiness: 100,
+          atsScore: 100,
+          languages: ['English', 'Spanish', 'German']
+        };
+
+        localStorage.setItem('token', mockAdmin.token);
+        localStorage.setItem('prepai_token', mockAdmin.token);
+        localStorage.setItem('user', JSON.stringify(mockAdmin));
+        localStorage.setItem('prepai_user', JSON.stringify(mockAdmin));
+        setUser(mockAdmin);
+        setIsAuthenticated(true);
+        setLoading(false);
+        return mockAdmin;
+      }
+
       const credential = await signInWithEmailAndPassword(auth, email, password);
       // Profile load is handled by onAuthStateChanged listener
       setLoading(false);
