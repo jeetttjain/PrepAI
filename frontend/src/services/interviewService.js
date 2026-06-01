@@ -1,7 +1,5 @@
 import axios from "axios";
-
-const API_HOST = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-const API = `${API_HOST}/ai`;
+import { getFunctionUrl } from "./functionUrls";
 
 export const interviewService = {
 
@@ -14,9 +12,10 @@ export const interviewService = {
     exclude = []
   ) => {
 
+    const url = getFunctionUrl("generateQuestions");
     const response =
       await axios.post(
-        `${API}/generate-interview`,
+        url,
         {
           role,
 

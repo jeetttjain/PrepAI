@@ -1,61 +1,81 @@
-# 🚀 PrepAI — Production Deployment Guide
+# 🚀 PrepAI — Serverless Production Deployment Guide
 
-This guide outlines the steps required to deploy the **PrepAI** web application (Frontend + Backend) to production.
+This guide outlines the steps required to deploy the **PrepAI** application securely to production using **Firebase Hosting** and **Firebase Cloud Functions**. 
 
----
-
-## 🗄️ 1. Database Setup (MongoDB Atlas)
-PrepAI uses MongoDB for storing user accounts, interview logs, roadmaps, and cheatsheets.
-1. Sign up/log in to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
-2. Create a new cluster (Shared/Free tier is sufficient for launch).
-3. Under **Database Access**, create a user with read/write access.
-4. Under **Network Access**, add `0.0.0.0/0` (or your backend's static IP) to allow connections.
-5. Copy your cluster's **Connection String** (e.g., `mongodb+srv://...`).
+By transitioning to a serverless model, **no local terminal, backend server, or active computer is required** to keep the platform online!
 
 ---
 
-## 💻 2. Backend Deployment
-The Node/Express backend is ready to run on any cloud provider supporting Node.js (e.g., **Render**, **Railway**, **Heroku**, or a **Linux VPS**).
+## 🔐 1. Groq API Secret Security Configuration
 
-### Deployment Environment Variables
-Set the following environment variables in your server's hosting panel:
-| Key | Example Value | Description |
-|---|---|---|
-| `PORT` | `5000` | Port for Express server |
-| `NODE_ENV` | `production` | Enables optimized logging & error hiding |
-| `MONGO_URI` | `mongodb+srv://...` | Secure connection string from MongoDB Atlas |
-| `JWT_SECRET` | `your-random-32char-secret` | Cryptographic secret for signing tokens |
-| `GROQ_API_KEY` | `gsk_...` | Groq console key for fast content generation |
-| `FRONTEND_URL` | `https://prepai-app.com` | Production URL of your frontend (protects CORS) |
+All AI interactions (questions, resume analysis, cheatsheets, learning roadmaps, and document RAG chats) are securely executed in isolated Cloud Environments. The browser has 0% access to any credentials.
 
-### Start Scripts
-Configure your hosting platform's start command to execute:
+Before deploying your Cloud Functions, configure your **Groq API Key** securely inside your Firebase project:
+
 ```bash
-npm install --omit=dev
-npm start
+# Set your Groq API secret key securely in Firebase Functions config
+firebase functions:secrets:set GROQ_API_KEY=gsk_your_real_groq_key_here
 ```
 
 ---
 
-## 🎨 3. Frontend Deployment
-The React client is built with Vite and can be hosted for **free** on platforms like **Vercel**, **Netlify**, or **GitHub Pages**.
+## ⚙️ 2. Backend Cloud Functions Deployment
 
-### Deployment Environment Variables
-Set this single variable in your frontend project dashboard:
-| Key | Example Value | Description |
-|---|---|---|
-| `VITE_API_URL` | `https://api.prepai-app.com/api` | The hosted URL of your backend server API |
+The secure serverless layer is fully declared inside the `functions/` directory.
 
-### Build Configurations
-*   **Build Command:** `npm run build`
-*   **Output Directory:** `dist`
-*   **Node Version:** `18.x` or higher
+### Local Emulation (Optional)
+To test the Cloud Functions locally before deploying:
+1. Navigate to the `functions/` directory and install dependencies:
+   ```bash
+   cd functions
+   npm install
+   ```
+2. Verify that `functions/.env` contains your `GROQ_API_KEY`.
+3. Start the local emulators:
+   ```bash
+   firebase emulators:start --only functions
+   ```
+
+### Deploy to Cloud Environment
+Deploy your isolated API endpoints to Google Cloud Servers:
+```bash
+firebase deploy --only functions
+```
+
+Deployed serverless endpoints will be active at:
+`https://us-central1-<your-project-id>.cloudfunctions.net/<functionName>`
 
 ---
 
-## 🔐 4. Post-Deployment Security Checks
-Once both environments are live:
-1. Try accessing the frontend right-click context menu or pressing `F12` — verify they trigger custom security toasts.
-2. Confirm console output remains clean and the background debugger pauses runtime if inspection tools are opened in production.
-3. Access `https://prepai-app.com/admin` to set up your admin parameters (Uses Master Password: `admin_prepai_2026_secure` + 2FA rolling code).
-4. Verify backend routes respond with standard `404 Resource not found` when accessed with invalid paths.
+## 🎨 3. Frontend Hosting Deployment
+
+The React client compiles into optimized, static HTML/JS/CSS, perfect for secure hosting on **Firebase Hosting**.
+
+### Build Optimized Payload
+1. Navigate to the `frontend/` directory and install client dependencies:
+   ```bash
+   cd frontend
+   npm install
+   ```
+2. Generate the production-grade static build:
+   ```bash
+   npm run build
+   ```
+   *This compiles client code and bundle layers into the `frontend/dist/` directory.*
+
+### Deploy to Firebase Hosting
+Deploy your static assets directly:
+```bash
+firebase deploy --only hosting
+```
+
+Your application is now live at:
+`https://<your-project-id>.web.app` or `https://<your-project-id>.firebaseapp.com`
+
+---
+
+## 🔍 4. Post-Deployment Verification
+
+1. **2FA Gate Access**: Navigate to `https://<your-project-id>.web.app/admin` and verify that the 2FA passcode overlay prompts securely. Enter `159753` to access active Firestore telemetry.
+2. **Developer Inspect Blockers**: Press `F12` or right-click to inspect. Verify that custom security block overlays intercept key calls and the background debugger pauses runtime execution.
+3. **No Local Terminals**: Close all local terminal instances on your computer. Navigate to your deployed hosting URL and confirm that resume scanners, interview simulators, cheatsheets, roadmaps, and file chats operate flawlessly!

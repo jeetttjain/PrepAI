@@ -1,16 +1,15 @@
 import axios from "axios";
-
-const API_HOST = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-const API = `${API_HOST}/ai`;
+import { getFunctionUrl } from "./functionUrls";
 
 export const resumeService = {
   analyze: async (file, role, languages = []) => {
+    const url = getFunctionUrl("analyzeResume");
     const formData = new FormData();
     formData.append("resume", file);
     formData.append("role", role);
     formData.append("languages", JSON.stringify(languages));
 
-    const response = await axios.post(`${API}/analyze-resume`, formData, {
+    const response = await axios.post(url, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

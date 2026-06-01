@@ -1,23 +1,13 @@
 import axios from "axios";
-
-const API_HOST = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-const API = `${API_HOST}/cheatsheet`;
+import { getFunctionUrl } from "./functionUrls";
 
 export const cheatsheetService = {
-
-  generate: async (
-    topic,
-    difficulty
-  ) => {
-
-    const response =
-      await axios.post(
-        `${API}/generate`,
-        {
-          topic,
-          difficulty,
-        }
-      );
+  generate: async (topic, difficulty) => {
+    const url = getFunctionUrl("generateCheatSheet");
+    const response = await axios.post(url, {
+      topic,
+      difficulty,
+    });
 
     return response.data.data;
   },

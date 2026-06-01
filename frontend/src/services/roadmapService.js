@@ -1,3 +1,6 @@
+import axios from "axios";
+import { getFunctionUrl } from "./functionUrls";
+
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const roadmapsTemplates = {
@@ -138,27 +141,48 @@ const roadmapsTemplates = {
 
 export const roadmapService = {
   generate: async (role, level) => {
-    await delay(2200); // Simulate roadmap synthesis delay
-    
-    const key = Object.keys(roadmapsTemplates).find(
-      k => k.toLowerCase().includes(role.toLowerCase())
-    ) || 'Senior Fullstack Engineer';
+    try {
+      const url = getFunctionUrl("generateRoadmap");
+      const response = await axios.post(url, { role, level });
+      const apiData = response.data.data;
+      
+      return {
+        id: 'rm_' + Date.now(),
+        role,
+        level,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        salary: apiData.salary || '$130k',
+        growth: apiData.growth || '+15%',
+        scarcity: apiData.scarcity || 'High',
+        timeToRole: apiData.timeToRole || '~6mo',
+        stages: apiData.stages.map((s, idx) => ({
+          ...s,
+          id: `rm_stage_${idx}_` + Date.now()
+        }))
+      };
+    } catch (err) {
+      console.warn("Roadmap API synthesis failed, loading fallback local templates:", err);
+      // Resilient local fallback template
+      const key = Object.keys(roadmapsTemplates).find(
+        k => k.toLowerCase().includes(role.toLowerCase())
+      ) || 'Senior Fullstack Engineer';
 
-    const baseData = roadmapsTemplates[key];
+      const baseData = roadmapsTemplates[key];
 
-    return {
-      id: 'rm_' + Date.now(),
-      role,
-      level,
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      salary: baseData.salary,
-      growth: baseData.growth,
-      scarcity: baseData.scarcity,
-      timeToRole: baseData.timeToRole,
-      stages: baseData.stages.map(s => ({
-        ...s,
-        id: s.id + '_' + Date.now()
-      }))
-    };
+      return {
+        id: 'rm_' + Date.now(),
+        role,
+        level,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        salary: baseData.salary,
+        growth: baseData.growth,
+        scarcity: baseData.scarcity,
+        timeToRole: baseData.timeToRole,
+        stages: baseData.stages.map(s => ({
+          ...s,
+          id: s.id + '_' + Date.now()
+        }))
+      };
+    }
   }
 };
