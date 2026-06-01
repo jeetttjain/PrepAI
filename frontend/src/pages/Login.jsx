@@ -9,7 +9,7 @@ import { auth } from "../firebase";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
-  const { setUser, setIsAuthenticated } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formLoading, setFormLoading] = useState(false);
@@ -21,17 +21,11 @@ export default function Login() {
 
     setFormLoading(true);
     try {
-      const data = await loginUser({ email, password });
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data));
-      localStorage.setItem("prepai_token", data.token);
-      localStorage.setItem("prepai_user", JSON.stringify(data));
-      setUser(data);
-      setIsAuthenticated(true);
-      toast.success("Logged in!");
+      await login(email, password);
+      toast.success("Logged in successfully!");
       navigate('/dashboard', { replace: true });
     } catch (err) {
-      toast.error(err.response?.data?.message || "Invalid email or password");
+      toast.error(err.message || "Invalid email or password");
     } finally {
       setFormLoading(false);
     }

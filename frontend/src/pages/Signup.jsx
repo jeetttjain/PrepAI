@@ -28,7 +28,7 @@ function Field({ label, icon: Icon, ...props }) {
 }
 
 export default function Signup() {
-  const { setUser, setIsAuthenticated } = useAuth();
+  const { signup } = useAuth();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -50,23 +50,11 @@ export default function Signup() {
 
     setFormLoading(true);
     try {
-      const data = await registerUser({ name: `${firstName} ${lastName}`, email, phone, password });
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data));
-      localStorage.setItem("prepai_token", data.token);
-      localStorage.setItem("prepai_user", JSON.stringify(data));
-      setUser(data);
-      setIsAuthenticated(true);
-      toast.success("Account created!");
+      await signup(firstName, lastName, email, password, phone);
+      toast.success("Account created successfully!");
       navigate("/dashboard", { replace: true });
     } catch (err) {
-      // Show detailed validation errors if provided by backend
-      if (err.response?.data?.errors && Array.isArray(err.response.data.errors)) {
-        const messages = err.response.data.errors.map(e => e.message).join(' | ');
-        toast.error(messages);
-      } else {
-        toast.error(err.response?.data?.message || "Registration failed");
-      }
+      toast.error(err.message || "Registration failed");
       console.error('Registration error:', err);
     } finally {
       setFormLoading(false);

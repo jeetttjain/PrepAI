@@ -11,20 +11,20 @@ import {
   Bot, 
   User, 
   Loader2, 
-  File,
-  Plus,
-  History,
-  MoreVertical,
-  Pencil,
-  Check,
-  Trash2,
-  Sparkles,
-  BookOpen,
+  Plus, 
+  History, 
+  Pencil, 
+  Check, 
+  Trash2, 
   FolderOpen
 } from 'lucide-react';
+import { db } from '../firebase';
+import { useAuth } from '../context/AuthContext';
+import { collection, query, where, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
 
 export default function FileAssistant() {
   const { addFile } = useApp();
+  const { user } = useAuth();
   const chatEndRef = useRef(null);
 
   const [uploading, setUploading] = useState(false);
@@ -33,22 +33,23 @@ export default function FileAssistant() {
   const [chatLoading, setChatLoading] = useState(false);
   const [showHistoryDrawer, setShowHistoryDrawer] = useState(false);
 
+  // Independent chats stored in localStorage & synchronized with Firestore
+  const [chats, setChats] = useState([]);
+  const [activeChatId, setActiveChatId] = useState('');
+  const [editingChatId, setEditingChatId] = useState(null);
+  const [editingTitle, setEditingTitle] = useState("");
+
   // Helper to parse bold markdown tags and render nicely, sanitizing raw markdown list markers
   const renderFormattedText = (text) => {
     if (!text) return '';
-    
-    // Split text into lines
     const lines = text.split('\n');
-    
     return lines.map((line, lineIdx) => {
       let content = line.trim();
       let isBullet = false;
       let isNumbered = false;
       let numberPrefix = '';
 
-      // Check if line is a bullet point (starts with '-' or '*' or '•' with optional spaces)
       const bulletMatch = content.match(/^[-*•]\s+(.*)/);
-      // Check if line is a numbered list (starts with '1.', '2.', '1)', etc.)
       const numberMatch = content.match(/^(\d+[.)])\s+(.*)/);
 
       if (bulletMatch) {
@@ -60,10 +61,8 @@ export default function FileAssistant() {
         content = numberMatch[2];
       }
 
-      // Clean up stray single asterisks
       content = content.replace(/\*(?!\*)/g, '');
 
-      // Helper to parse bold markdown **text** inside the line content
       const parseBold = (str) => {
         const parts = str.split(/\*\*([^*]+)\*\*/g);
         return parts.map((part, idx) => {
@@ -86,13 +85,12 @@ export default function FileAssistant() {
       if (isNumbered) {
         return (
           <div key={lineIdx} className="flex items-start gap-2.5 pl-2 mt-1.5 first:mt-0">
-            <span className="text-secondary font-mono-data font-extrabold shrink-0 select-none">{numberPrefix}</span>
+            <span className="text-primary font-mono-data font-extrabold shrink-0 select-none">{numberPrefix}</span>
             <span className="text-left leading-relaxed text-[#adc6ff]">{parseBold(content)}</span>
           </div>
         );
       }
 
-      // Regular line
       return (
         <p key={lineIdx} className="mt-1 first:mt-0 leading-relaxed text-[#adc6ff] min-h-[1.2em]">
           {parseBold(content)}
@@ -100,36 +98,92 @@ export default function FileAssistant() {
       );
     });
   };
-  
-  // Independent chats stored in localStorage
-  const [chats, setChats] = useState(() => {
-    const saved = localStorage.getItem("prepai_file_chats");
-    return saved ? JSON.parse(saved) : [
-      {
-        id: "chat_default",
-        title: "New Study Session",
-        file: null,
-        messages: []
+
+  // 1. Fetch user's chats from Firestore on mount or user change
+  useEffect(() => {
+    if (!user || !user.id) {
+      // Offline / guest fallback chats
+      const saved = localStorage.getItem("prepai_file_chats_guest");
+      const loaded = saved ? JSON.parse(saved) : [
+        {
+          id: "chat_default",
+          title: "New Study Session",
+          fileName: "",
+          createdAt: new Date().toISOString(),
+          messages: []
+        }
+      ];
+      setChats(loaded);
+      setActiveChatId(loaded[0].id);
+      return;
+    }
+
+    const fetchChats = async () => {
+      try {
+        const q = query(
+          collection(db, 'file_assistant_chats'),
+          where('userId', '==', user.id)
+        );
+        const snapshot = await getDocs(q);
+        const loadedChats = [];
+        snapshot.forEach((doc) => {
+          loadedChats.push(doc.data());
+        });
+
+        if (loadedChats.length > 0) {
+          loadedChats.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          setChats(loadedChats);
+
+          const savedActive = localStorage.getItem(`prepai_active_file_chat_id_${user.id}`);
+          if (savedActive && loadedChats.some(c => c.id === savedActive)) {
+            setActiveChatId(savedActive);
+          } else {
+            setActiveChatId(loadedChats[0].id);
+          }
+        } else {
+          // Initialize first chat
+          const initialId = "chat_" + Date.now();
+          const initialChat = {
+            id: initialId,
+            userId: user.id,
+            title: "New Study Session",
+            fileName: "",
+            createdAt: new Date().toISOString(),
+            messages: []
+          };
+          await setDoc(doc(db, 'file_assistant_chats', initialId), initialChat);
+          setChats([initialChat]);
+          setActiveChatId(initialId);
+          localStorage.setItem(`prepai_active_file_chat_id_${user.id}`, initialId);
+        }
+      } catch (err) {
+        console.error("Firestore chats load failed, using local storage cache:", err);
+        const saved = localStorage.getItem(`prepai_file_chats_${user.id}`);
+        if (saved) {
+          const loaded = JSON.parse(saved);
+          setChats(loaded);
+          setActiveChatId(loaded[0]?.id || "chat_default");
+        }
       }
-    ];
-  });
+    };
 
-  const [activeChatId, setActiveChatId] = useState(() => {
-    const savedActive = localStorage.getItem("prepai_active_file_chat_id");
-    return savedActive || (chats[0]?.id || "chat_default");
-  });
+    fetchChats();
+  }, [user]);
 
-  const [editingChatId, setEditingChatId] = useState(null);
-  const [editingTitle, setEditingTitle] = useState("");
-
-  // Sync state to localStorage
+  // Sync state to localstorage for local resiliency
   useEffect(() => {
-    localStorage.setItem("prepai_file_chats", JSON.stringify(chats));
-  }, [chats]);
+    if (user && user.id && chats.length > 0) {
+      localStorage.setItem(`prepai_file_chats_${user.id}`, JSON.stringify(chats));
+    } else if (!user && chats.length > 0) {
+      localStorage.setItem("prepai_file_chats_guest", JSON.stringify(chats));
+    }
+  }, [chats, user]);
 
   useEffect(() => {
-    localStorage.setItem("prepai_active_file_chat_id", activeChatId);
-  }, [activeChatId]);
+    if (user && user.id && activeChatId) {
+      localStorage.setItem(`prepai_active_file_chat_id_${user.id}`, activeChatId);
+    }
+  }, [activeChatId, user]);
 
   // Find active chat
   const activeChat = chats.find(c => c.id === activeChatId) || chats[0] || null;
@@ -139,17 +193,36 @@ export default function FileAssistant() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [activeChat?.messages, chatLoading]);
 
+  // Sync a single chat session to Firestore
+  const syncChatToFirestore = async (chatToSync) => {
+    if (!user || !user.id || !chatToSync) return;
+    try {
+      await setDoc(doc(db, 'file_assistant_chats', chatToSync.id), {
+        ...chatToSync,
+        userId: user.id
+      }, { merge: true });
+    } catch (err) {
+      console.error("Failed to sync chat session to Firestore:", err);
+    }
+  };
+
   // Create New Chat session
-  const createNewChat = () => {
+  const createNewChat = async () => {
     const newChatId = "chat_" + Date.now();
     const newChat = {
       id: newChatId,
+      userId: user?.id || 'guest',
       title: "New Study Session",
-      file: null,
+      fileName: "",
+      createdAt: new Date().toISOString(),
       messages: []
     };
     setChats(prev => [newChat, ...prev]);
     setActiveChatId(newChatId);
+    
+    if (user && user.id) {
+      await syncChatToFirestore(newChat);
+    }
     toast.success("New chat session launched");
   };
 
@@ -160,30 +233,57 @@ export default function FileAssistant() {
     setEditingTitle(chat.title);
   };
 
-  const saveRename = (chatId, e) => {
+  const saveRename = async (chatId, e) => {
     e?.stopPropagation();
     if (!editingTitle.trim()) return;
-    setChats(prev => prev.map(chat => 
+    
+    const updatedChats = chats.map(chat => 
       chat.id === chatId ? { ...chat, title: editingTitle } : chat
-    ));
+    );
+    setChats(updatedChats);
+
+    const targetChat = updatedChats.find(c => c.id === chatId);
+    if (user && user.id && targetChat) {
+      await syncChatToFirestore(targetChat);
+    }
+
     setEditingChatId(null);
     setEditingTitle("");
     toast.success("Session renamed");
   };
 
   // Delete session
-  const handleDeleteChat = (chatId, e) => {
+  const handleDeleteChat = async (chatId, e) => {
     e.stopPropagation();
     const remaining = chats.filter(c => c.id !== chatId);
     setChats(remaining);
+    
+    if (user && user.id) {
+      try {
+        await deleteDoc(doc(db, 'file_assistant_chats', chatId));
+      } catch (err) {
+        console.error("Firestore chat delete failed:", err);
+      }
+    }
     
     if (activeChatId === chatId) {
       if (remaining.length > 0) {
         setActiveChatId(remaining[0].id);
       } else {
         const fallbackId = "chat_" + Date.now();
-        setChats([{ id: fallbackId, title: "New Study Session", file: null, messages: [] }]);
+        const fallbackChat = { 
+          id: fallbackId, 
+          userId: user?.id || 'guest',
+          title: "New Study Session", 
+          fileName: "", 
+          createdAt: new Date().toISOString(),
+          messages: [] 
+        };
+        setChats([fallbackChat]);
         setActiveChatId(fallbackId);
+        if (user && user.id) {
+          await syncChatToFirestore(fallbackChat);
+        }
       }
     }
     toast.success("Chat deleted successfully");
@@ -205,28 +305,35 @@ export default function FileAssistant() {
       // Update global context files
       addFile(uploaded.name, uploaded.size);
       
-      // Save file inside the active chat session!
+      // Save file inside the active chat session
       const formattedSize = file.size > 1024 * 1024 
         ? `${(file.size / (1024 * 1024)).toFixed(1)} MB` 
         : `${(file.size / 1024).toFixed(0)} KB`;
-        
-      setChats(prev => prev.map(chat => 
+      
+      const welcomeMessage = { 
+        id: 'init_' + Date.now(), 
+        sender: 'ai', 
+        text: `I've successfully uploaded and indexed **${file.name}**. I'm ready to explain concepts, extract keywords, or generate cheat sheets for you!`, 
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+      };
+
+      const updatedChats = chats.map(chat => 
         chat.id === activeChatId 
           ? { 
               ...chat, 
               title: file.name.substring(0, 24),
-              file: { name: file.name, size: formattedSize },
-              messages: [
-                { 
-                  id: 'init_' + Date.now(), 
-                  sender: 'ai', 
-                  text: `I've successfully uploaded and indexed **${file.name}**. I'm ready to explain concepts, extract keywords, or generate cheat sheets for you!`, 
-                  time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
-                }
-              ]
+              fileName: file.name,
+              fileSize: formattedSize,
+              messages: [welcomeMessage]
             }
           : chat
-      ));
+      );
+      setChats(updatedChats);
+
+      const targetChat = updatedChats.find(c => c.id === activeChatId);
+      if (user && user.id && targetChat) {
+        await syncChatToFirestore(targetChat);
+      }
       
       toast.success(`${file.name} uploaded & indexed successfully!`);
     } catch (err) {
@@ -253,7 +360,7 @@ export default function FileAssistant() {
     const msg = textToSend || inputText;
     if (!msg.trim()) return;
     
-    if (!activeChat || !activeChat.file) {
+    if (!activeChat || !activeChat.fileName) {
       toast.error('Please upload a document to begin chatting.');
       return;
     }
@@ -268,17 +375,18 @@ export default function FileAssistant() {
       time: timestamp
     };
     
-    // Optimistically update messages in chat session
-    setChats(prev => prev.map(chat => 
+    // Optimistically update messages in active chat session
+    const updatedChatsWithUser = chats.map(chat => 
       chat.id === activeChatId 
         ? { ...chat, messages: [...chat.messages, userMessage] }
         : chat
-    ));
+    );
+    setChats(updatedChatsWithUser);
     
     setChatLoading(true);
 
     try {
-      const response = await fileService.getChatResponse(activeChat.file.name, msg);
+      const response = await fileService.getChatResponse(activeChat.fileName, msg);
       
       const aiMessage = {
         id: 'ai_' + Date.now(),
@@ -287,13 +395,20 @@ export default function FileAssistant() {
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       
-      setChats(prev => prev.map(chat => 
+      const finalChats = chats.map(chat => 
         chat.id === activeChatId 
-          ? { ...chat, messages: [...chat.messages, aiMessage] }
+          ? { ...chat, messages: [...chat.messages, userMessage, aiMessage] }
           : chat
-      ));
+      );
+      setChats(finalChats);
+
+      const targetChat = finalChats.find(c => c.id === activeChatId);
+      if (user && user.id && targetChat) {
+        await syncChatToFirestore(targetChat);
+      }
     } catch (err) {
-      toast.error('AI scan failed. Please check backend connection.');
+      console.error(err);
+      toast.error('AI response generation failed. Please verify API server status.');
     } finally {
       setChatLoading(false);
     }
@@ -315,12 +430,12 @@ export default function FileAssistant() {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto flex flex-col gap-5 text-left relative min-h-[calc(100vh-140px)] pb-10">
+    <div className="w-full mx-auto flex flex-col gap-6 text-left relative min-h-[calc(100vh-140px)] pb-6 px-2 sm:px-4 md:px-6">
       
       {/* Top Header of PrepAI Workspace */}
-      <header className="glass-card rounded-2xl p-4 border border-white/10 flex flex-wrap items-center justify-between gap-4">
+      <header className="glass-card rounded-2xl p-4 border border-white/10 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+          <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
             <FolderOpen className="w-5 h-5" />
           </div>
           <div>
@@ -332,7 +447,7 @@ export default function FileAssistant() {
         <div className="flex items-center gap-2">
           <button 
             onClick={createNewChat}
-            className="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all"
+            className="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all active:scale-95"
           >
             <Plus className="w-3.5 h-3.5" />
             New Chat
@@ -340,7 +455,7 @@ export default function FileAssistant() {
           
           <button 
             onClick={() => setShowHistoryDrawer(true)}
-            className="px-4 py-2 border border-white/10 hover:bg-white/5 text-[#8e9bb8] hover:text-white rounded-xl text-xs flex items-center gap-1.5 transition-all"
+            className="px-4 py-2 border border-white/10 hover:bg-white/5 text-[#8e9bb8] hover:text-white rounded-xl text-xs flex items-center gap-1.5 transition-all active:scale-95"
           >
             <History className="w-3.5 h-3.5" />
             History
@@ -349,15 +464,15 @@ export default function FileAssistant() {
       </header>
 
       {/* Main Flow Grid */}
-      <div className="flex-1 flex flex-col items-center justify-center">
+      <div className="flex-1 flex flex-col items-center justify-center w-full">
         
         {/* IF NO DOCUMENT ASSOCIATED WITH THE ACTIVE CHAT SESSION */}
-        {(!activeChat || !activeChat.file) ? (
+        {(!activeChat || !activeChat.fileName) ? (
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             {...getRootProps()}
-            className={`w-full max-w-2xl glass-card rounded-3xl border-dashed border-2 flex flex-col items-center justify-center p-12 text-center group transition-all relative overflow-hidden cursor-pointer min-h-[400px] ${
+            className={`w-full max-w-2xl glass-card rounded-3xl border-dashed border-2 flex flex-col items-center justify-center p-8 sm:p-12 text-center group transition-all relative overflow-hidden cursor-pointer min-h-[400px] ${
               isDragActive ? "border-primary bg-primary/5" : "border-primary/20 hover:border-primary/50"
             }`}
           >
@@ -382,44 +497,44 @@ export default function FileAssistant() {
                 <span className="text-[10px] text-primary font-mono-data">Indexing database: {uploadProgress}%</span>
               </div>
             ) : (
-              <span className="px-5 py-2.5 bg-primary text-black font-extrabold rounded-xl text-xs transition-transform group-hover:scale-105">
+              <span className="px-5 py-2.5 bg-primary text-black font-extrabold rounded-xl text-xs transition-transform group-hover:scale-105 shadow-md">
                 Browse Files
               </span>
             )}
           </motion.div>
         ) : (
           
-          /* CHAT VIEW - Primary Layout takes up 80% weight */
-          <div className="w-full max-w-4xl flex flex-col gap-4 min-h-[500px]">
+          /* CHAT VIEW - Primary Layout takes up full workspace width */
+          <div className="w-full flex flex-col gap-4 flex-1">
             
             {/* Active Document Card at top */}
             <div className="glass-card rounded-2xl p-4 border border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+                <div className="p-2.5 rounded-xl bg-primary/10 text-primary shrink-0">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
                   <p className="text-[9px] uppercase tracking-wider text-primary font-bold">Indexed Document</p>
-                  <h4 className="text-xs font-bold text-white line-clamp-1">{activeChat.file.name}</h4>
-                  <p className="text-[9px] text-on-surface-variant mt-0.5">{activeChat.file.size} • Readiness: Ready</p>
+                  <h4 className="text-xs font-bold text-white line-clamp-1">{activeChat.fileName}</h4>
+                  {activeChat.fileSize && <p className="text-[9px] text-on-surface-variant mt-0.5">{activeChat.fileSize} • Status: Indexed</p>}
                 </div>
               </div>
 
               <div {...getRootProps()} className="shrink-0 self-stretch sm:self-auto">
                 <input {...getInputProps()} />
-                <button className="w-full px-4 py-2 border border-white/10 hover:border-primary/40 hover:bg-white/5 rounded-xl text-xs font-bold text-[#8e9bb8] hover:text-white transition-all">
+                <button className="w-full px-4 py-2 border border-white/10 hover:border-primary/45 hover:bg-white/5 rounded-xl text-xs font-bold text-[#8e9bb8] hover:text-white transition-all active:scale-95">
                   Upload More
                 </button>
               </div>
             </div>
 
-            {/* Chat Conversation area */}
-            <div className="glass-card rounded-3xl border border-white/5 overflow-hidden flex flex-col h-[520px]">
+            {/* Chat Conversation area - Occupies most of the screen */}
+            <div className="glass-card rounded-3xl border border-white/5 overflow-hidden flex flex-col min-h-[550px] flex-1">
               
               {/* Message History Feed */}
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4 flex flex-col">
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-5 space-y-4 flex flex-col h-[400px]">
                 {activeChat.messages.length === 0 ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
+                  <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 my-10">
                     <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-on-surface-variant/40">
                       <Bot className="w-6 h-6 animate-pulse" />
                     </div>
@@ -471,8 +586,8 @@ export default function FileAssistant() {
                 <div ref={chatEndRef} />
               </div>
 
-              {/* Inline AI suggested Prompt Shortcuts */}
-              <div className="px-4 py-2.5 border-t border-white/5 flex flex-wrap gap-1.5 bg-surface-container/20 overflow-x-auto whitespace-nowrap">
+              {/* Suggested Actions Prompt Shortcuts inside chat */}
+              <div className="px-4 py-2.5 border-t border-white/5 flex flex-wrap gap-1.5 bg-surface-container/20 overflow-x-auto whitespace-nowrap scrollbar-none">
                 {suggestedPrompts.map((prompt, i) => (
                   <button 
                     key={i}
@@ -601,9 +716,9 @@ export default function FileAssistant() {
                         ) : (
                           <>
                             <button 
-                              onClick={(e) => startRename(chat, e)}
-                              className="p-1 rounded hover:bg-white/10 text-[#8e9bb8] hover:text-white"
-                              title="Rename session"
+                               onClick={(e) => startRename(chat, e)}
+                               className="p-1 rounded hover:bg-white/10 text-[#8e9bb8] hover:text-white"
+                               title="Rename session"
                             >
                               <Pencil className="w-3 h-3" />
                             </button>

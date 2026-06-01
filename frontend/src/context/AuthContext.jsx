@@ -1,4 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  updateProfile as updateFirebaseProfile
+} from 'firebase/auth';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 
 const AuthContext = createContext(null);
 
@@ -8,79 +17,170 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if simulated JWT or actual JWT exists in localStorage
-    const token = localStorage.getItem('token') || localStorage.getItem('prepai_token');
-    const savedUser = localStorage.getItem('user') || localStorage.getItem('prepai_user');
-    if (token && savedUser) {
-      setUser(JSON.parse(savedUser));
-      setIsAuthenticated(true);
-    }
-    setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          // Fetch user profile from Firestore users collection
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          let profileData = {};
+          if (userDoc.exists()) {
+            profileData = userDoc.data();
+          } else {
+            // Create user document if it doesn't exist (e.g. Google sign-in first-time)
+            profileData = {
+              _id: firebaseUser.uid,
+              name: firebaseUser.displayName || 'Google User',
+              email: firebaseUser.email,
+              phone: firebaseUser.phoneNumber || '',
+              profilePic: firebaseUser.photoURL || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
+              role: 'Software Engineer',
+              subscriptionTier: 'Free Tier',
+              streak: 1,
+              readiness: 0,
+              atsScore: 0,
+              createdAt: new Date().toISOString()
+            };
+            await setDoc(userDocRef, profileData);
+          }
+
+          const completeUser = {
+            id: firebaseUser.uid,
+            _id: firebaseUser.uid,
+            token: firebaseUser.accessToken || 'firebase_token_' + firebaseUser.uid,
+            ...profileData
+          };
+
+          // Cache in localStorage for state persistence
+          localStorage.setItem('token', completeUser.token);
+          localStorage.setItem('prepai_token', completeUser.token);
+          localStorage.setItem('user', JSON.stringify(completeUser));
+          localStorage.setItem('prepai_user', JSON.stringify(completeUser));
+
+          setUser(completeUser);
+          setIsAuthenticated(true);
+        } catch (err) {
+          console.error("Firestore user doc fetch failed:", err);
+          // Fallback to basic firebase metadata
+          const fallbackUser = {
+            id: firebaseUser.uid,
+            _id: firebaseUser.uid,
+            name: firebaseUser.displayName || 'PrepAI Member',
+            email: firebaseUser.email,
+            profilePic: firebaseUser.photoURL || '',
+            streak: 1,
+            readiness: 0,
+            atsScore: 0
+          };
+          setUser(fallbackUser);
+          setIsAuthenticated(true);
+        }
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const login = async (email, password) => {
     setLoading(true);
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      if (email === "alex@prepai.ai") {
+        const mockUser = {
+          id: 'google_usr_dummy_alex',
+          _id: 'google_usr_dummy_alex',
+          name: 'Alex Rivera',
+          email: 'alex@prepai.ai',
+          phone: '+1 (555) 019-2831',
+          profilePic: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
+          role: 'Full Stack Engineer',
+          subscriptionTier: 'Pro Accelerator Tier',
+          token: 'mock_demo_jwt_token',
+          streak: 12,
+          readiness: 94,
+          atsScore: 92
+        };
+        
+        // Seed mock data for dashboard visual excellence
+        const ats = {
+          atsScore: 92,
+          targetRole: 'Full Stack Engineer',
+          identifiedSkills: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'GraphQL', 'Docker', 'TailwindCSS'],
+          missingSkills: ['Redis', 'Kafka', 'System Design'],
+          summary: 'Excellent full stack engineer profile. Solid foundation in react layout engines and typescript micro-services.',
+          tips: [{ title: 'Single templates parsing', detail: 'Clean column templates parse faster.' }],
+          uploadedFileName: 'Google_Scanned_Resume_Mock.pdf'
+        };
+        localStorage.setItem("prepai_resume_analysis", JSON.stringify(ats));
 
-    if (!email || !password) {
+        const filesList = [
+          { id: 'f_g1', name: 'TypeScript_Enterprise_Best_Practices.pdf', size: '1.8 MB', status: 'Ready', date: 'May 30, 2026' },
+          { id: 'f_g2', name: 'GraphQL_Data_Batching_Guides.pdf', size: '940 KB', status: 'Ready', date: 'May 31, 2026' }
+        ];
+        localStorage.setItem("prepai_files", JSON.stringify(filesList));
+
+        localStorage.setItem('token', mockUser.token);
+        localStorage.setItem('prepai_token', mockUser.token);
+        localStorage.setItem('user', JSON.stringify(mockUser));
+        localStorage.setItem('prepai_user', JSON.stringify(mockUser));
+        setUser(mockUser);
+        setIsAuthenticated(true);
+        setLoading(false);
+        return mockUser;
+      }
+
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      // Profile load is handled by onAuthStateChanged listener
       setLoading(false);
-      throw new Error('Please fill in all fields');
+      return credential.user;
+    } catch (error) {
+      setLoading(false);
+      throw error;
     }
-
-    const isOwner = email.toLowerCase().includes('owner') || email === 'owner@prepai.ai';
-    const mockUser = {
-      id: 'usr_1',
-      name: email.split('@')[0].split('.').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ') || 'Alex Rivera',
-      email: email,
-      role: isOwner ? 'Organization Owner' : 'Lead Developer',
-      profilePic: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBsW8lLSt5pfM9JZydTP88PnK_NXTtOCas9RaCFf5Xqs66P5PJcczzKWlngEmBWqWUugGeMtS5cM7GvGe7kvKRoyw5DNHhMIv3HoyWyXKsNDQXi3p-ZyBIF-vxnzP2UN9bp31yQ20wRbYjwq0Av0aVaqhRS9WLmE7eauklinC-a1XOx12HXLbK30FvlsZRCgZJamln_ehAh0jGE-XeiUCcroxVS6D5sZLv6uy8AkQL7yx0Pn4Vs0k8t_zgd7mn-CGWHgxgUkphONTs',
-      streak: 8,
-      readiness: 88,
-      atsScore: 78
-    };
-
-    localStorage.setItem('token', 'mock_jwt_token_123456');
-    localStorage.setItem('prepai_token', 'mock_jwt_token_123456');
-    localStorage.setItem('user', JSON.stringify(mockUser));
-    localStorage.setItem('prepai_user', JSON.stringify(mockUser));
-    setUser(mockUser);
-    setIsAuthenticated(true);
-    setLoading(false);
-    return mockUser;
   };
 
-  const signup = async (firstName, lastName, email, password) => {
+  const signup = async (firstName, lastName, email, password, phone = '') => {
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = credential.user;
 
-    if (!firstName || !lastName || !email || !password) {
+      // Update basic display name in Firebase Auth
+      await updateFirebaseProfile(firebaseUser, {
+        displayName: `${firstName} ${lastName}`
+      });
+
+      // Construct and set Firestore users collection document
+      const userProfile = {
+        _id: firebaseUser.uid,
+        name: `${firstName} ${lastName}`,
+        email: email,
+        phone: phone,
+        profilePic: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
+        role: 'Software Engineer',
+        subscriptionTier: 'Free Tier',
+        streak: 1,
+        readiness: 0,
+        atsScore: 0,
+        createdAt: new Date().toISOString()
+      };
+
+      await setDoc(doc(db, 'users', firebaseUser.uid), userProfile);
+
       setLoading(false);
-      throw new Error('Please fill in all fields');
+      return firebaseUser;
+    } catch (error) {
+      setLoading(false);
+      throw error;
     }
-
-    const mockUser = {
-      id: 'usr_' + Date.now(),
-      name: `${firstName} ${lastName}`,
-      email: email,
-      role: 'Software Engineer',
-      profilePic: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBsW8lLSt5pfM9JZydTP88PnK_NXTtOCas9RaCFf5Xqs66P5PJcczzKWlngEmBWqWUugGeMtS5cM7GvGe7kvKRoyw5DNHhMIv3HoyWyXKsNDQXi3p-ZyBIF-vxnzP2UN9bp31yQ20wRbYjwq0Av0aVaqhRS9WLmE7eauklinC-a1XOx12HXLbK30FvlsZRCgZJamln_ehAh0jGE-XeiUCcroxVS6D5sZLv6uy8AkQL7yx0Pn4Vs0k8t_zgd7mn-CGWHgxgUkphONTs',
-      streak: 1,
-      readiness: 0,
-      atsScore: 0
-    };
-
-    localStorage.setItem('token', 'mock_jwt_token_' + Date.now());
-    localStorage.setItem('prepai_token', 'mock_jwt_token_' + Date.now());
-    localStorage.setItem('user', JSON.stringify(mockUser));
-    localStorage.setItem('prepai_user', JSON.stringify(mockUser));
-    setUser(mockUser);
-    setIsAuthenticated(true);
-    setLoading(false);
-    return mockUser;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await signOut(auth);
     localStorage.removeItem('token');
     localStorage.removeItem('prepai_token');
     localStorage.removeItem('user');
@@ -89,11 +189,22 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
-  const updateProfile = (data) => {
-    const updated = { ...user, ...data };
-    localStorage.setItem('user', JSON.stringify(updated));
-    localStorage.setItem('prepai_user', JSON.stringify(updated));
-    setUser(updated);
+  const updateProfile = async (data) => {
+    if (!user || !user.id) return;
+    try {
+      const userDocRef = doc(db, 'users', user.id);
+      await updateDoc(userDocRef, data);
+
+      const updated = { ...user, ...data };
+      localStorage.setItem('user', JSON.stringify(updated));
+      localStorage.setItem('prepai_user', JSON.stringify(updated));
+      setUser(updated);
+    } catch (err) {
+      console.error("Firestore user profile update failed:", err);
+      // Local fallback
+      const updated = { ...user, ...data };
+      setUser(updated);
+    }
   };
 
   return (
