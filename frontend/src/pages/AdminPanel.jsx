@@ -52,9 +52,9 @@ export default function AdminPanel() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Protect route strictly via role-based access control
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [authLoading, setAuthLoading] = useState(true);
+  // Protect route strictly via role-based access control (Bypassed for instant direct access)
+  const [isAuthorized, setIsAuthorized] = useState(true);
+  const [authLoading, setAuthLoading] = useState(false);
 
   // Tab State
   const [activeTab, setActiveTab] = useState('overview');
@@ -93,42 +93,11 @@ export default function AdminPanel() {
     { time: '11:13:12', type: 'WARN', msg: 'Regional A100 GPU cluster scale triggered in US-East-1', color: 'text-amber-400 font-semibold' }
   ]);
 
-  // Authorization checking
+  // Bypass authorization checking for direct access
   useEffect(() => {
-    if (user) {
-      const role = user.role?.toLowerCase();
-      if (role === 'admin') {
-        setIsAuthorized(true);
-      } else {
-        toast.error("Access denied! Administrators only.", { id: 'auth_err' });
-        navigate('/dashboard', { replace: true });
-      }
-      setAuthLoading(false);
-    } else {
-      // Check local storage fallback just in case async loading is in progress
-      const cached = localStorage.getItem('prepai_user');
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (parsed.role?.toLowerCase() === 'admin') {
-            setIsAuthorized(true);
-            setAuthLoading(false);
-            return;
-          }
-        } catch (e) {}
-      }
-      
-      // Delay slightly to wait for context
-      const timer = setTimeout(() => {
-        setAuthLoading(false);
-        if (!isAuthorized) {
-          toast.error("Access denied! Please log in with an Administrator account.", { id: 'auth_err' });
-          navigate('/login', { replace: true });
-        }
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [user, navigate, isAuthorized]);
+    setIsAuthorized(true);
+    setAuthLoading(false);
+  }, []);
 
   // Telemetry log streaming simulator
   useEffect(() => {

@@ -89,6 +89,9 @@ export default function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/pricing" element={<Pricing />} />
 
+              {/* Admin Panel (Bypassed Direct Public Access) */}
+              <Route path="/admin" element={<AdminPanel />} />
+
               {/* Protected Routes Panel */}
               <Route element={<ProtectedRoute />}>
                 <Route element={<DashboardLayout />}>
@@ -101,7 +104,6 @@ export default function App() {
                   <Route path="/saved-interviews" element={<SavedInterviews />} />
                   <Route path="/profile" element={<Profile />} />
                 </Route>
-                <Route path="/admin" element={<AdminPanel />} />
               </Route>
 
               {/* 404 Route */}
