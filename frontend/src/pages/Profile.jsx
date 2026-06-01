@@ -18,7 +18,8 @@ import {
   Cpu,
   Sparkles,
   Upload,
-  Camera
+  Camera,
+  Globe
 } from 'lucide-react';
 
 export default function Profile() {
@@ -65,6 +66,7 @@ export default function Profile() {
   // Preference inputs
   const [themePref, setThemePref] = useState('Dark (Default)');
   const [notifyPref, setNotifyPref] = useState(user?.emailNotifications !== false);
+  const [selectedLangs, setSelectedLangs] = useState(user?.languages || ['English']);
 
   // Security inputs
   const [currentPassword, setCurrentPassword] = useState('');
@@ -82,6 +84,7 @@ export default function Profile() {
       setProfilePic(user.profilePic || avatarPresets[0].url);
       setNotifyPref(user.emailNotifications !== false);
       setTfaEnabled(user.tfaEnabled || false);
+      setSelectedLangs(user.languages || ['English']);
     }
   }, [user]);
 
@@ -111,7 +114,8 @@ export default function Profile() {
       document.body.classList.remove('oled-theme');
     }
     localStorage.setItem('prepai_theme', updatedTheme);
-    updateProfile({ theme: updatedTheme, emailNotifications: notifyPref });
+    updateProfile({ theme: updatedTheme, emailNotifications: notifyPref, languages: selectedLangs });
+    toast.success('Preferences updated globally!');
   };
 
   const handleUpdatePassword = (e) => {
@@ -467,6 +471,41 @@ export default function Profile() {
                       onChange={(e) => setNotifyPref(e.target.checked)}
                       className="w-4.5 h-4.5 rounded border-white/10 text-primary bg-surface-container focus:ring-0 focus:ring-offset-0 cursor-pointer"
                     />
+                  </div>
+
+                  {/* GLOBAL LANGUAGE PREFERENCES */}
+                  <div className="space-y-3 sm:col-span-2 border-t border-white/5 pt-4">
+                    <label className="text-[10px] text-[#8e9bb8] uppercase tracking-widest font-extrabold block px-1 flex items-center gap-1">
+                      <Globe className="w-3.5 h-3.5 text-primary" /> Global Language Preferences
+                    </label>
+                    <p className="text-[10px] text-on-surface-variant mb-2">
+                      Select languages to verify in your resumes and use for interview simulations automatically across the platform.
+                    </p>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      {['English', 'Hindi', 'Spanish', 'French', 'German', 'Japanese'].map((lang) => {
+                        const isSelected = selectedLangs.includes(lang);
+                        return (
+                          <button
+                            key={lang}
+                            type="button"
+                            onClick={() => {
+                              setSelectedLangs(prev => 
+                                prev.includes(lang)
+                                  ? (prev.length > 1 ? prev.filter(l => l !== lang) : prev) // Keep at least one
+                                  : [...prev, lang]
+                              );
+                            }}
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                              isSelected
+                                ? 'bg-primary/10 text-primary border-primary'
+                                : 'bg-white/2 text-[#8e9bb8] border-white/5 hover:border-white/10 hover:text-white'
+                            } cursor-pointer`}
+                          >
+                            {lang}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
 

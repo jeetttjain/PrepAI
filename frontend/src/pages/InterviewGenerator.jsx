@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { interviewService } from '../services/interviewService';
 import { downloadInterviewPDF } from '../utils/pdfExport';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,14 +31,26 @@ import {
 
 export default function InterviewGenerator() {
   const { addInterview, savedInterviews } = useApp();
+  const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [category, setCategory] = useState('');
   const [role, setRole] = useState('');
   const [customRole, setCustomRole] = useState('');
   const [level, setLevel] = useState('Fresher / Internship');
   const [type, setType] = useState('');
-  const [language, setLanguage] = useState('English');
+  
+  const userLanguages = user?.languages || ['English'];
+  const primaryLanguage = userLanguages[0] || 'English';
+  const [language, setLanguage] = useState(primaryLanguage);
+
+  useEffect(() => {
+    if (user?.languages && user.languages.length > 0) {
+      setLanguage(user.languages[0]);
+    }
+  }, [user]);
+
   const [count, setCount] = useState(5);
   const [loading, setLoading] = useState(false);
   const [session, setSession] = useState(null);
@@ -538,25 +551,26 @@ export default function InterviewGenerator() {
             </div>
           </div>
 
-          {/* INTERVIEW LANGUAGE */}
+          {/* INTERVIEW LANGUAGE (Global Preference) */}
           <div className="space-y-1.5">
-            <label className="text-[10px] text-primary uppercase tracking-widest font-extrabold block px-1">
-              Interview Language
-            </label>
-            <div className="relative">
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="w-full bg-surface-container border border-white/10 rounded-xl px-4 py-3.5 pr-10 appearance-none text-xs text-white focus:ring-1 focus:ring-primary focus:border-transparent outline-none cursor-pointer"
+            <div className="flex justify-between items-center px-1">
+              <label className="text-[10px] text-primary uppercase tracking-widest font-extrabold block">
+                Interview Language
+              </label>
+              <button
+                type="button"
+                onClick={() => navigate('/profile')}
+                className="text-[9px] text-[#8e9bb8] hover:text-primary transition-colors uppercase font-bold tracking-wider"
               >
-                <option value="English">English</option>
-                <option value="Hindi">Hindi (हिंदी)</option>
-                <option value="Spanish">Spanish (Español)</option>
-                <option value="French">French (Français)</option>
-                <option value="German">German (Deutsch)</option>
-                <option value="Japanese">Japanese (日本語)</option>
-              </select>
-              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-50 pointer-events-none text-white" />
+                Configure Settings →
+              </button>
+            </div>
+            <div className="w-full bg-surface-container/40 border border-white/5 rounded-xl px-4 py-3.5 text-xs text-white flex items-center justify-between select-none">
+              <span className="font-bold flex items-center gap-1.5">
+                <Languages className="w-4 h-4 text-primary animate-pulse" />
+                {language}
+              </span>
+              <span className="text-[9px] text-zinc-500 uppercase tracking-widest font-extrabold bg-[#1f1f1f] px-2 py-0.5 rounded-md border border-white/5">Active</span>
             </div>
           </div>
 

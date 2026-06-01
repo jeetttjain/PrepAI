@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { downloadResumeReportPDF } from '../utils/pdfExport';
 import { resumeService } from '../services/resumeService';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,6 +26,7 @@ import {
 
 export default function ResumeAnalyzer() {
   const { resumeAnalysis, updateResumeAnalysis } = useApp();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -53,16 +55,7 @@ export default function ResumeAnalyzer() {
   const [targetRole, setTargetRole] = useState('Full Stack Developer');
   const [customRole, setCustomRole] = useState('');
 
-  const [selectedLanguages, setSelectedLanguages] = useState(['English']);
-  
-  const availableLanguages = [
-    'English',
-    'Hindi',
-    'Spanish',
-    'French',
-    'German',
-    'Japanese'
-  ];
+  const selectedLanguages = user?.languages || ['English'];
 
   const targetRoles = [
     'Frontend Developer',
@@ -285,40 +278,32 @@ export default function ResumeAnalyzer() {
             )}
           </div>
 
-          {/* Languages selection Section */}
+          {/* Languages selection Section (Global Preferences) */}
           <div className="space-y-2.5 md:col-span-2 border-t border-white/5 pt-4">
-            <label className="text-[10px] text-primary uppercase tracking-widest font-extrabold block px-1">
-              Verify Languages Section in Resume
-            </label>
-            <div className="flex flex-wrap gap-2.5">
-              {availableLanguages.map((lang) => {
-                const isSelected = selectedLanguages.includes(lang);
-                return (
-                  <button
-                    key={lang}
-                    type="button"
-                    onClick={() => {
-                      if (hasScannedData) return;
-                      setSelectedLanguages(prev => 
-                        prev.includes(lang) 
-                          ? prev.filter(l => l !== lang) 
-                          : [...prev, lang]
-                      );
-                    }}
-                    disabled={loading || hasScannedData}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
-                      isSelected
-                        ? 'bg-primary/10 text-primary border-primary'
-                        : 'bg-white/2 text-[#8e9bb8] border-white/5 hover:border-white/10 hover:text-white'
-                    } ${hasScannedData ? 'cursor-default' : 'cursor-pointer'}`}
-                  >
-                    {lang}
-                  </button>
-                );
-              })}
+            <div className="flex justify-between items-center px-1">
+              <label className="text-[10px] text-primary uppercase tracking-widest font-extrabold block">
+                Verify Languages Section in Resume
+              </label>
+              <button
+                type="button"
+                onClick={() => navigate('/profile')}
+                className="text-[9px] text-[#8e9bb8] hover:text-primary transition-colors uppercase font-bold tracking-wider"
+              >
+                Configure Preferences →
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2.5 pt-1">
+              {selectedLanguages.map((lang) => (
+                <span
+                  key={lang}
+                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary/10 text-primary border border-primary/20 select-none"
+                >
+                  {lang}
+                </span>
+              ))}
             </div>
             <p className="text-[9.5px] text-on-surface-variant/70 leading-relaxed italic">
-              * The scanner will inspect your resume to verify if the selected languages are declared, adding to your overall ATS compatibility.
+              * Languages verified are configured globally in your Profile settings. Click "Configure Preferences" to update them.
             </p>
           </div>
         </div>
