@@ -20,6 +20,30 @@
     ],
     "rewrites": [
       {
+        "source": "/api/aiChat",
+        "function": "aiChat"
+      },
+      {
+        "source": "/api/uploadDocument",
+        "function": "uploadDocument"
+      },
+      {
+        "source": "/api/analyzeResume",
+        "function": "analyzeResume"
+      },
+      {
+        "source": "/api/generateQuestions",
+        "function": "generateQuestions"
+      },
+      {
+        "source": "/api/generateCheatSheet",
+        "function": "generateCheatSheet"
+      },
+      {
+        "source": "/api/generateRoadmap",
+        "function": "generateRoadmap"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
