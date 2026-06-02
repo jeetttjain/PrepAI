@@ -1,33 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
-  <!-- Shield boundary - Premium Indigo brand color -->
+  <!-- Shield boundary - Luminous White for high-contrast visibility -->
   <path 
     d="M50 12 C68 12, 76 12, 81 20 C81 42, 78 59, 50 82 C22 59, 19 42, 19 20 C24 12, 32 12, 50 12 Z" 
-    stroke="#6366f1" 
-    stroke-width="7" 
+    stroke="#ffffff" 
+    stroke-width="7.5" 
     stroke-linecap="round" 
     stroke-linejoin="round" 
   />
   
-  <!-- Letter P shape - Modern Sky Blue accent color -->
+  <!-- Letter P shape - Luminous White -->
   <path 
     d="M45 28v32 M45 30h10c5 0 9 4 9 9s-4 9-9 9h-10" 
-    stroke="#38bdf8" 
-    stroke-width="7" 
+    stroke="#ffffff" 
+    stroke-width="7.5" 
     stroke-linecap="round" 
     stroke-linejoin="round" 
   />
   
-  <!-- Up-Right pointing Arrow cutting through P - Sky Blue accent -->
+  <!-- Up-Right pointing Arrow cutting through P - Luminous White -->
   <path 
     d="M32 58 L54 36" 
-    stroke="#38bdf8" 
-    stroke-width="7" 
+    stroke="#ffffff" 
+    stroke-width="7.5" 
     stroke-linecap="round" 
   />
   <path 
     d="M44 35 H55 V46" 
-    stroke="#38bdf8" 
-    stroke-width="7" 
+    stroke="#ffffff" 
+    stroke-width="7.5" 
     stroke-linecap="round" 
     stroke-linejoin="round" 
   />
