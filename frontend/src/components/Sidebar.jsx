@@ -137,7 +137,7 @@ export default function Sidebar({ isOpen, onClose }) {
             >
               <img
                 className="w-8 h-8 rounded-full object-cover shrink-0"
-                src={user.profilePic || "https://lh3.googleusercontent.com/aida-public/AB6AXuCI3zdPwDhhDhH9XFJ1yvVOj0YrXYqeFrNCqWbowDIP-K7gOM_j2tSXZfp7nngPtc6HcmlQGi0K8O776Yb__9_LUD8kKufNrixqdWwIdeY2ruyzVssZAZoPbooQnSulGIV9Yiik_Z7JzP9tl6vMrRh1-Zm8STnY2CAFzr_iSL5h6xS-JDKnY6rNv1BLh5mZm3asgs7MC0TuG6RFnT0DqcW2SF72R4p_gf8G7h5WdzD_opevtqjiGt6jx4GcK6__5rCqUiuQfObYon8"}
+                src={user.profilePic || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80"}
                 alt="Avatar"
               />
               <div className="min-w-0">

@@ -147,7 +147,7 @@ export default function Login() {
                 <img
                   alt="Google"
                   className="w-4 h-4"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDNVaOEzVUtEozwmX5F-bdBRxgYaKto_Y0nirYfV6qu1aj-yD_2KWbVtJL0Kf63s0-OTN8S2W4mYNtjVP5p-kVP8KXmwpwbYRsy7UEFU_60LeF5Zefg3DwGgTULa0x1kPK4FwIWCSkxR0GW3Hg-WUUhljW8Trr10JpC46JP5lJ-OaoMmANQGs9oqMiU8coSXG8Zn2ECeIsr0NvhhbuidZtpiPldMdlgP94VPZJ42D9CjkSIEtmIYwpSEfF-ZMjYtCzsWlLkEVxB8g"
+                  src="https://www.svgrepo.com/show/355037/google-icon.svg"
                 />
                 Continue with Google
               </button>

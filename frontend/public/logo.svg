@@ -1,34 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
-  <!-- Shield boundary - Luminous White for high-contrast visibility -->
-  <path 
-    d="M50 12 C68 12, 76 12, 81 20 C81 42, 78 59, 50 82 C22 59, 19 42, 19 20 C24 12, 32 12, 50 12 Z" 
-    stroke="#ffffff" 
-    stroke-width="7.5" 
-    stroke-linecap="round" 
-    stroke-linejoin="round" 
-  />
+  <!-- Main letter 'P' shape with smooth rounded joints - Solid Indigo -->
+  <path d="M30 18v64" stroke="#6366f1" stroke-width="8.5" stroke-linecap="round" />
+  <path d="M30 20h28c11.5 0 21 9.5 21 21s-9.5 21-21 21H30" stroke="#6366f1" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round" />
   
-  <!-- Letter P shape - Luminous White -->
-  <path 
-    d="M45 28v32 M45 30h10c5 0 9 4 9 9s-4 9-9 9h-10" 
-    stroke="#ffffff" 
-    stroke-width="7.5" 
-    stroke-linecap="round" 
-    stroke-linejoin="round" 
-  />
+  <!-- Sleek four-point sparkle overlay on the loop's outer edge - Solid Violet/Purple -->
+  <circle cx="70" cy="45" r="4.5" fill="#8b5cf6" />
+  <path d="M70 33v24 M58 45h24" stroke="#8b5cf6" stroke-width="3.5" stroke-linecap="round" />
   
-  <!-- Up-Right pointing Arrow cutting through P - Luminous White -->
-  <path 
-    d="M32 58 L54 36" 
-    stroke="#ffffff" 
-    stroke-width="7.5" 
-    stroke-linecap="round" 
-  />
-  <path 
-    d="M44 35 H55 V46" 
-    stroke="#ffffff" 
-    stroke-width="7.5" 
-    stroke-linecap="round" 
-    stroke-linejoin="round" 
-  />
+  <!-- Dynamic checkmark beneath the loop, completing the success theme - Solid Indigo -->
+  <path d="M54 60l12 12 16-16" stroke="#6366f1" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round" />
 </svg>
