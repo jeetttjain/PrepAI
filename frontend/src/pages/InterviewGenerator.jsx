@@ -551,28 +551,7 @@ export default function InterviewGenerator() {
             </div>
           </div>
 
-          {/* INTERVIEW LANGUAGE (Global Preference) */}
-          <div className="space-y-1.5">
-            <div className="flex justify-between items-center px-1">
-              <label className="text-[10px] text-primary uppercase tracking-widest font-extrabold block">
-                Interview Language
-              </label>
-              <button
-                type="button"
-                onClick={() => navigate('/profile')}
-                className="text-[9px] text-[#8e9bb8] hover:text-primary transition-colors uppercase font-bold tracking-wider"
-              >
-                Configure Settings →
-              </button>
-            </div>
-            <div className="w-full bg-surface-container/40 border border-white/5 rounded-xl px-4 py-3.5 text-xs text-white flex items-center justify-between select-none">
-              <span className="font-bold flex items-center gap-1.5">
-                <Languages className="w-4 h-4 text-primary animate-pulse" />
-                {language}
-              </span>
-              <span className="text-[9px] text-zinc-500 uppercase tracking-widest font-extrabold bg-[#1f1f1f] px-2 py-0.5 rounded-md border border-white/5">Active</span>
-            </div>
-          </div>
+
 
           {/* QUESTION VOLUME */}
           <div className="space-y-1.5 md:col-span-2">
@@ -606,12 +585,21 @@ export default function InterviewGenerator() {
           {session && (
             <button 
               onClick={handleReset}
-              className="px-5 rounded-xl border border-white/10 hover:bg-white/5 hover:text-error text-xs uppercase font-extrabold tracking-wider transition-all flex items-center gap-1.5 shrink-0"
+              className="px-5 py-3.5 rounded-xl border border-white/10 hover:bg-white/5 hover:text-error text-xs uppercase font-extrabold tracking-wider transition-all flex items-center gap-1.5 shrink-0"
               title="Reset Workspace"
             >
               <Trash2 className="w-4 h-4" />
             </button>
           )}
+          <button
+            onClick={() => downloadInterviewPDF(session)}
+            disabled={loading || !session}
+            className="px-5 py-3.5 rounded-xl border border-white/10 hover:bg-white/5 hover:text-primary text-xs uppercase font-extrabold tracking-wider transition-all flex items-center gap-1.5 shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+            title="Export interview session to PDF"
+          >
+            <Download className="w-4 h-4 text-primary" />
+            <span>Export PDF</span>
+          </button>
           <button
             onClick={handleGenerate}
             disabled={loading || !category || !(role || customRole)}
@@ -720,7 +708,7 @@ export default function InterviewGenerator() {
                   </div>
 
                   {/* Interactive Practice & Evaluation Suite */}
-                  <div className="space-y-4 pt-2 border-t border-white/5">
+                  <div className="space-y-4 pt-2 border-t border-white/5 bg-gray-900 p-4 rounded-xl">
                     {/* Practice Header */}
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                       <span className="text-[9px] font-extrabold uppercase tracking-widest text-[#8e9bb8] flex items-center gap-1">
@@ -740,7 +728,7 @@ export default function InterviewGenerator() {
                         onChange={(e) => setUserAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
                         placeholder="Type your response here, or click the mic button on the right to practice speaking your answer out loud!"
                         rows={3}
-                        className="w-full bg-white/2 border border-white/5 rounded-xl px-4 py-3 text-xs text-white placeholder-white/20 focus:ring-1 focus:ring-primary focus:border-transparent outline-none resize-none transition-all pr-12 leading-relaxed"
+                                                className="w-full bg-gray-800 border border-gray-600 rounded-xl px-4 py-3 text-xs text-white placeholder-gray-400 focus:ring-1 focus:ring-primary focus:border-transparent outline-none resize-none transition-all pr-12 leading-relaxed"
                       />
                       <button
                         onClick={() => handleToggleVoice(q.id)}
@@ -920,7 +908,7 @@ export default function InterviewGenerator() {
                   });
                   toast.success("PDF exported successfully!");
                 }}
-                className="px-4.5 py-2.5 bg-primary text-white font-bold rounded-xl text-xs flex items-center gap-1.5 hover:bg-indigo-500 active:scale-100 transition-all shadow-md"
+                className="px-5 py-2.5 bg-primary text-white font-bold rounded-xl text-xs flex items-center gap-1.5 hover:bg-indigo-500 active:scale-95 transition-all shadow-md shadow-primary/20 border border-primary/20"
               >
                 <Download className="w-3.5 h-3.5" />
                 Export PDF

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import Logo from '../components/Logo';
 import { Mail, Lock, Shield, Loader2 } from 'lucide-react';
 import { loginUser } from "../services/authService";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -34,154 +35,16 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      // Construct a gorgeous user object using their real Google credentials
-      const formattedUser = {
-        _id: user.uid,
-        id: user.uid,
-        name: user.displayName || 'Google User',
-        email: user.email,
-        phone: user.phoneNumber || '+1 (555) 019-2831',
-        profilePic: user.photoURL || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
-        role: 'Full Stack Engineer',
-        subscriptionTier: 'Pro Accelerator Tier',
-        token: user.accessToken || 'google_dummy_auth_token_2026',
-        streak: 12,
-        readiness: 94
-      };
-
-      // Seed all premium dummy datasets to localStorage for instant beautiful dashboard views!
-      localStorage.setItem("user", JSON.stringify(formattedUser));
-      localStorage.setItem("token", formattedUser.token);
-      localStorage.setItem("prepai_user", JSON.stringify(formattedUser));
-      localStorage.setItem("prepai_token", formattedUser.token);
-
-      // Seed mock resume scan
-      const ats = {
-        atsScore: 92,
-        targetRole: 'Full Stack Engineer',
-        identifiedSkills: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'GraphQL', 'Docker', 'TailwindCSS'],
-        missingSkills: ['Redis', 'Kafka', 'System Design'],
-        summary: `Excellent profile for ${formattedUser.name}. Solid foundation in react layout engines and typescript micro-services.`,
-        tips: [{ title: 'Single templates parsing', detail: 'Clean column templates parse faster.' }],
-        uploadedFileName: 'Google_Scanned_Resume_Mock.pdf'
-      };
-      localStorage.setItem("prepai_resume_analysis", JSON.stringify(ats));
-
-      // Seed mock files
-      const filesList = [
-        { id: 'f_g1', name: 'TypeScript_Enterprise_Best_Practices.pdf', size: '1.8 MB', status: 'Ready', date: 'May 30, 2026' },
-        { id: 'f_g2', name: 'GraphQL_Data_Batching_Guides.pdf', size: '940 KB', status: 'Ready', date: 'May 31, 2026' }
-      ];
-      localStorage.setItem("prepai_files", JSON.stringify(filesList));
-
-      // Seed mock cheatsheets
-      const sheetsList = [{
-        id: 'cs_g1',
-        title: 'Full Stack Systems Reference Cards',
-        role: 'Full Stack Engineer',
-        created: 'May 31, 2026',
-        cards: [{ id: 'cc_g1', title: 'Data Resolution', desc: 'Data fetching overrides.', content: '• Implement DataLoader to optimize batch queries.' }]
-      }];
-      localStorage.setItem("prepai_cheatsheets", JSON.stringify(sheetsList));
-
-      // Seed mock roadmaps
-      const roadmapsList = [{
-        id: 'rm_g1',
-        title: 'Senior Full Stack Mastery Path',
-        role: 'Full Stack Engineer',
-        level: 'Senior Architect',
-        created: 'May 31, 2026',
-        phases: [
-          {
-            id: 'phs1',
-            title: 'Phase 1: Advanced Scaling & Caching',
-            desc: 'Configure master-replica caches.',
-            milestones: [{ id: 'ms1', name: 'Redis Cache Cluster', desc: 'Deploy Redis nodes.', duration: '1 week', completed: true }]
-          }
-        ]
-      }];
-      localStorage.setItem("prepai_roadmaps", JSON.stringify(roadmapsList));
-
-      // Synchronize context and transition
-      setUser(formattedUser);
-      setIsAuthenticated(true);
-      
-      toast.success(`Successfully signed in with Google as ${formattedUser.name}!`);
+      await signInWithPopup(auth, provider);
+      toast.success("Successfully signed in with Google!");
       navigate('/dashboard', { replace: true });
     } catch (error) {
-      console.warn("Real Firebase Google Sign-In failed, falling back to pre-seeded simulated Google session for testing:", error);
+      const errDetail = error?.message || String(error);
+      const sanitizedErr = errDetail.replace(/AIzaSy[A-Za-z0-9_-]+/g, "[SECURED_API_KEY]");
+      console.warn("Real Firebase Google Sign-In failed. Detail: " + sanitizedErr);
       
-      // Resilient Fallback - Ensures Continue with Google works perfectly under all settings
-      const fallbackUser = {
-        _id: 'google_usr_dummy_fallback',
-        id: 'google_usr_dummy_fallback',
-        name: 'Google Candidate',
-        email: 'candidate@prepai.ai',
-        phone: '+1 (555) 019-2831',
-        profilePic: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
-        role: 'Full Stack Engineer',
-        subscriptionTier: 'Pro Accelerator Tier',
-        token: 'google_fallback_auth_token_2026',
-        streak: 12,
-        readiness: 94
-      };
-
-      // Seed localStorage
-      localStorage.setItem("user", JSON.stringify(fallbackUser));
-      localStorage.setItem("token", fallbackUser.token);
-      localStorage.setItem("prepai_user", JSON.stringify(fallbackUser));
-      localStorage.setItem("prepai_token", fallbackUser.token);
-
-      const ats = {
-        atsScore: 92,
-        targetRole: 'Full Stack Engineer',
-        identifiedSkills: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'GraphQL', 'Docker', 'TailwindCSS'],
-        missingSkills: ['Redis', 'Kafka', 'System Design'],
-        summary: 'Excellent profile. Solid foundation in react layout engines and typescript micro-services.',
-        tips: [{ title: 'Single templates parsing', detail: 'Clean column templates parse faster.' }],
-        uploadedFileName: 'Google_Scanned_Resume_Mock.pdf'
-      };
-      localStorage.setItem("prepai_resume_analysis", JSON.stringify(ats));
-
-      const filesList = [
-        { id: 'f_g1', name: 'TypeScript_Enterprise_Best_Practices.pdf', size: '1.8 MB', status: 'Ready', date: 'May 30, 2026' },
-        { id: 'f_g2', name: 'GraphQL_Data_Batching_Guides.pdf', size: '940 KB', status: 'Ready', date: 'May 31, 2026' }
-      ];
-      localStorage.setItem("prepai_files", JSON.stringify(filesList));
-
-      const sheetsList = [{
-        id: 'cs_g1',
-        title: 'Full Stack Systems Reference Cards',
-        role: 'Full Stack Engineer',
-        created: 'May 31, 2026',
-        cards: [{ id: 'cc_g1', title: 'Data Resolution', desc: 'Data fetching overrides.', content: '• Implement DataLoader to optimize batch queries.' }]
-      }];
-      localStorage.setItem("prepai_cheatsheets", JSON.stringify(sheetsList));
-
-      const roadmapsList = [{
-        id: 'rm_g1',
-        title: 'Senior Full Stack Mastery Path',
-        role: 'Full Stack Engineer',
-        level: 'Senior Architect',
-        created: 'May 31, 2026',
-        phases: [
-          {
-            id: 'phs1',
-            title: 'Phase 1: Advanced Scaling & Caching',
-            desc: 'Configure master-replica caches.',
-            milestones: [{ id: 'ms1', name: 'Redis Cache Cluster', desc: 'Deploy Redis nodes.', duration: '1 week', completed: true }]
-          }
-        ]
-      }];
-      localStorage.setItem("prepai_roadmaps", JSON.stringify(roadmapsList));
-
-      setUser(fallbackUser);
-      setIsAuthenticated(true);
-      toast.success("Successfully logged in with Google!");
-      navigate('/dashboard', { replace: true });
+      // Notify the user securely and professionally about the authentic sign-in error
+      toast.error("Google Sign-In failed: " + (error?.code ? error.code.replace("auth/", "").replace(/-/g, " ") : "Unable to establish popup handshake"));
     }
   };
 
@@ -193,8 +56,7 @@ export default function Login() {
       {/* Header */}
       <header className="w-full px-6 py-5 flex justify-between items-center" style={{ borderBottom: '1px solid #1a1a1a' }}>
         <Link to="/" className="text-white font-bold text-lg flex items-center gap-2">
-          <span className="w-6 h-6 rounded-md bg-primary flex items-center justify-center text-white text-xs font-black">P</span>
-          PrepAI
+          <Logo showText={true} size={26} textClassName="text-lg" />
         </Link>
         <Link to="/signup" className="text-sm text-zinc-400 hover:text-white transition-colors">
           New? <span className="text-primary font-semibold">Create account →</span>

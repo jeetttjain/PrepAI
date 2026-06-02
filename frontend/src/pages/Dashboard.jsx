@@ -202,7 +202,7 @@ export default function Dashboard() {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
           <div className="space-y-2 max-w-xl">
             <p className="text-xs text-primary font-semibold">
-              Welcome back, {user?.name?.split(' ')[0] || 'Alex'}
+              Welcome back, {user?.displayName?.split(' ')[0] || user?.name?.split(' ')[0] || 'Developer'}
             </p>
             <h1 className="text-xl md:text-2xl font-bold text-white leading-snug">
               Ready to accelerate your learning?
@@ -572,7 +572,7 @@ export default function Dashboard() {
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-bold text-white truncate">Resume Alignment</p>
                 <p className="text-[10px] text-on-surface-variant leading-snug mt-1 truncate">
-                  Target: {user?.role || 'Lead Developer'}
+                  Target: {user?.role || 'Software Engineer'}
                 </p>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="text-[8px] font-mono bg-primary/10 text-primary border border-primary/10 px-1.5 py-0.5 rounded font-bold uppercase">Passed Scans</span>

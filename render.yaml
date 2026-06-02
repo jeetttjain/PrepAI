@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: prepai-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: MONGO_URI
+        fromSecret: MONGO_URI
+      - key: JWT_SECRET
+        fromSecret: JWT_SECRET
+      - key: GROQ_API_KEY
+        fromSecret: GROQ_API_KEY
+    rootDir: backend

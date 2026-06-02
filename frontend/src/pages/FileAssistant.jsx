@@ -303,9 +303,25 @@ export default function FileAssistant() {
   };
 
   // File Upload handling
-  const onDrop = async (acceptedFiles) => {
+  const onDrop = async (acceptedFiles, fileRejections) => {
+    if (fileRejections && fileRejections.length > 0) {
+      const error = fileRejections[0].errors[0];
+      if (error.code === "file-too-large") {
+        toast.error("File exceeds maximum size of 20MB");
+      } else if (error.code === "file-invalid-type") {
+        toast.error("Unsupported file type");
+      } else {
+        toast.error(error.message);
+      }
+      return;
+    }
     if (acceptedFiles.length === 0) return;
     const file = acceptedFiles[0];
+    
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("File exceeds maximum size of 20MB");
+      return;
+    }
     
     setUploading(true);
     setUploadProgress(0);
@@ -337,6 +353,7 @@ export default function FileAssistant() {
               title: file.name.substring(0, 24),
               fileName: file.name,
               fileSize: formattedSize,
+              fileContent: uploaded.fileContent,
               messages: [welcomeMessage]
             }
           : chat
@@ -362,7 +379,11 @@ export default function FileAssistant() {
     onDrop,
     accept: {
       'application/pdf': ['.pdf'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+      'application/msword': ['.doc'],
+      'text/plain': ['.txt', '.md'],
+      'application/rtf': ['.rtf'],
+      'text/rtf': ['.rtf']
     },
     maxFiles: 1,
     disabled: uploading
@@ -399,7 +420,7 @@ export default function FileAssistant() {
     setChatLoading(true);
 
     try {
-      const response = await fileService.getChatResponse(activeChat.fileName, msg);
+      const response = await fileService.getChatResponse(activeChat.fileName, msg, activeChat.fileContent);
       
       const aiMessage = {
         id: 'ai_' + Date.now(),

@@ -11,67 +11,71 @@ export const interviewService = {
     language = "English",
     exclude = []
   ) => {
+    try {
+      const url = getFunctionUrl("generateQuestions");
+      const response =
+        await axios.post(
+          url,
+          {
+            role,
 
-    const url = getFunctionUrl("generateQuestions");
-    const response =
-      await axios.post(
-        url,
-        {
-          role,
+            experience:
+              level,
 
-          experience:
-            level,
+            techstack:
+              type,
 
-          techstack:
-            type,
+            difficulty:
+              type,
 
-          difficulty:
-            type,
+            count,
 
-          count,
+            language,
+            exclude,
+          }
+        );
 
-          language,
-          exclude,
-        }
-      );
+      const questions =
+        response.data.data.map(
+          (item, index) => ({
 
-    const questions =
-      response.data.data.map(
-        (item, index) => ({
+            id:
+              crypto.randomUUID(),
 
-          id:
-            crypto.randomUUID(),
+            number:
+              `Q${index + 1}`,
 
-          number:
-            `Q${index + 1}`,
+            difficulty:
+              item.difficulty ||
+              "Medium",
 
-          difficulty:
-            item.difficulty ||
-            "Medium",
+            question:
+              item.question,
 
-          question:
-            item.question,
+            answer:
+              item.answer,
 
-          answer:
-            item.answer,
+            context:
+              `${type} Interview Question`,
+          })
+        );
 
-          context:
-            `${type} Interview Question`,
-        })
-      );
+      return {
 
-    return {
+        id:
+          crypto.randomUUID(),
 
-      id:
-        crypto.randomUUID(),
+        role,
 
-      role,
+        level,
 
-      level,
+        questions,
 
-      questions,
-
-      language,
-    };
+        language,
+      };
+    } catch (error) {
+      console.error("Interview API synthesis failed:", error);
+      throw error;
+    }
   },
 };

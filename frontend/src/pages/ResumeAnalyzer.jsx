@@ -85,11 +85,15 @@ export default function ResumeAnalyzer() {
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
-      if (file.type === "application/pdf" || file.name.endsWith('.docx') || file.name.endsWith('.pdf') || file.type === "text/plain") {
+      if (file.size > 20 * 1024 * 1024) {
+        return toast.error("File exceeds maximum size of 20MB");
+      }
+      const lowerName = file.name.toLowerCase();
+      if (file.type === "application/pdf" || lowerName.endsWith('.docx') || lowerName.endsWith('.pdf') || file.type === "text/plain" || lowerName.endsWith('.doc') || lowerName.endsWith('.txt')) {
         setUploadedFile(file);
         toast.success(`${file.name} ready for scan!`);
       } else {
-        toast.error('Only PDF, DOCX or TXT files are allowed.');
+        toast.error('Only PDF, DOCX, DOC or TXT files are allowed.');
       }
     }
   };
@@ -97,6 +101,9 @@ export default function ResumeAnalyzer() {
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      if (file.size > 20 * 1024 * 1024) {
+        return toast.error("File exceeds maximum size of 20MB");
+      }
       setUploadedFile(file);
       toast.success(`${file.name} ready for scan!`);
     }
@@ -265,47 +272,20 @@ export default function ResumeAnalyzer() {
                 <input 
                   type="file" 
                   id="resume-upload" 
-                  accept=".pdf,.docx,.txt" 
+                  accept=".pdf,.docx,.doc,.txt" 
                   onChange={handleFileChange}
                   className="absolute inset-0 opacity-0 cursor-pointer"
                   disabled={loading}
                 />
                 <UploadCloud className="w-8 h-8 mb-2 text-on-surface-variant/40 group-hover:text-primary transition-colors" />
                 <p className="text-[11px] font-bold text-white text-center">
-                  {uploadedFile ? uploadedFile.name : 'Drag & drop PDF / DOCX / TXT'}
+                  {uploadedFile ? uploadedFile.name : 'Drag & drop PDF / DOCX / DOC / TXT (Max 20MB)'}
                 </p>
               </div>
             )}
           </div>
 
-          {/* Languages selection Section (Global Preferences) */}
-          <div className="space-y-2.5 md:col-span-2 border-t border-white/5 pt-4">
-            <div className="flex justify-between items-center px-1">
-              <label className="text-[10px] text-primary uppercase tracking-widest font-extrabold block">
-                Verify Languages Section in Resume
-              </label>
-              <button
-                type="button"
-                onClick={() => navigate('/profile')}
-                className="text-[9px] text-[#8e9bb8] hover:text-primary transition-colors uppercase font-bold tracking-wider"
-              >
-                Configure Preferences →
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2.5 pt-1">
-              {selectedLanguages.map((lang) => (
-                <span
-                  key={lang}
-                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary/10 text-primary border border-primary/20 select-none"
-                >
-                  {lang}
-                </span>
-              ))}
-            </div>
-            <p className="text-[9.5px] text-on-surface-variant/70 leading-relaxed italic">
-              * Languages verified are configured globally in your Profile settings. Click "Configure Preferences" to update them.
-            </p>
-          </div>
+
         </div>
 
         {/* SCAN BUTTONS */}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Logo from './Logo';
 import { Menu, Bell, Settings, HelpCircle, Zap, BookOpen, ShieldCheck, X, User, Sun, Moon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -17,8 +18,9 @@ export default function Header({ onMenuClick }) {
   const [isLightMode, setIsLightMode] = useState(localStorage.getItem('prepai_theme') === 'light');
 
   const toggleTheme = () => {
-    const nextTheme = isLightMode ? 'dark' : 'light';
-    setIsLightMode(!isLightMode);
+    const currentTheme = localStorage.getItem('prepai_theme') || 'dark';
+    const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+    setIsLightMode(nextTheme === 'light');
     localStorage.setItem('prepai_theme', nextTheme);
     if (nextTheme === 'light') {
       document.documentElement.classList.add('light-theme');
@@ -29,7 +31,16 @@ export default function Header({ onMenuClick }) {
       document.documentElement.classList.remove('light-theme', 'oled-theme');
       document.body.classList.remove('light-theme', 'oled-theme');
     }
+    window.dispatchEvent(new CustomEvent('prepai_theme_changed', { detail: nextTheme }));
   };
+
+  React.useEffect(() => {
+    const handleThemeChange = (e) => {
+      setIsLightMode(e.detail === 'light');
+    };
+    window.addEventListener('prepai_theme_changed', handleThemeChange);
+    return () => window.removeEventListener('prepai_theme_changed', handleThemeChange);
+  }, []);
 
   const notifications = [
     { id: 1, title: 'Welcome to PrepAI Pro!', desc: 'Enjoy unlimited AI mock simulations, roadmaps, and cheat sheets.', time: 'Just now', unread: true },
@@ -174,9 +185,7 @@ export default function Header({ onMenuClick }) {
                 {/* Header */}
                 <div className="flex justify-between items-center pb-3 border-b border-white/5">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Zap className="w-3.5 h-3.5 text-primary" />
-                    </div>
+                    <Logo size={22} showText={false} />
                     <span className="text-xs font-black text-white uppercase tracking-wider">PrepAI Support & Tour</span>
                   </div>
                   <button onClick={() => setShowHelpCenter(false)} className="text-zinc-500 hover:text-white transition-colors">

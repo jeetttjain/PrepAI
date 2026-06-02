@@ -8,11 +8,8 @@ const AppContext = createContext(null);
 export const AppProvider = ({ children }) => {
   const { user } = useAuth();
 
-  // Pre-seed files
-  const [files, setFiles] = useState(() => {
-    const saved = localStorage.getItem('prepai_files');
-    return saved ? JSON.parse(saved) : [];
-  });
+  // Scoped files
+  const [files, setFiles] = useState([]);
 
   // Pre-seed interviews
   const [savedInterviews, setSavedInterviews] = useState([]);
@@ -32,19 +29,18 @@ export const AppProvider = ({ children }) => {
   // Pre-seed roadmap
   const [roadmaps, setRoadmaps] = useState([]);
 
-  // Pre-seed chat logs
-  const [chatHistory, setChatHistory] = useState(() => {
-    const saved = localStorage.getItem('prepai_chat_history');
-    return saved ? JSON.parse(saved) : [];
-  });
+  // Scoped chat logs
+  const [chatHistory, setChatHistory] = useState([]);
 
   // Load user data from Firestore when active user session changes
   useEffect(() => {
     if (!user || !user.id) {
       // Clear data or load guest defaults
+      setFiles([]);
       setSavedInterviews([]);
       setCheatsheets([]);
       setRoadmaps([]);
+      setChatHistory([]);
       setResumeAnalysis({
         atsScore: 0,
         identifiedSkills: [],
@@ -57,6 +53,14 @@ export const AppProvider = ({ children }) => {
 
     const loadUserData = async () => {
       try {
+        // Load user-scoped files from localStorage
+        const savedFiles = localStorage.getItem(`prepai_files_${user.id}`);
+        setFiles(savedFiles ? JSON.parse(savedFiles) : []);
+
+        // Load user-scoped chat logs from localStorage
+        const savedChat = localStorage.getItem(`prepai_chat_history_${user.id}`);
+        setChatHistory(savedChat ? JSON.parse(savedChat) : []);
+
         // 1. Fetch saved interviews
         const qInts = query(collection(db, 'interviews'), where('userId', '==', user.id));
         const snapInts = await getDocs(qInts);
@@ -103,8 +107,10 @@ export const AppProvider = ({ children }) => {
 
   // Sync general telemetry to local storage for caching
   useEffect(() => {
-    localStorage.setItem('prepai_files', JSON.stringify(files));
-  }, [files]);
+    if (user && user.id) {
+      localStorage.setItem(`prepai_files_${user.id}`, JSON.stringify(files));
+    }
+  }, [files, user]);
 
   useEffect(() => {
     if (user && user.id) {
@@ -119,8 +125,10 @@ export const AppProvider = ({ children }) => {
   }, [cheatsheets, user]);
 
   useEffect(() => {
-    localStorage.setItem('prepai_chat_history', JSON.stringify(chatHistory));
-  }, [chatHistory]);
+    if (user && user.id) {
+      localStorage.setItem(`prepai_chat_history_${user.id}`, JSON.stringify(chatHistory));
+    }
+  }, [chatHistory, user]);
 
   // Context Mutation Actions (Firestore persistence + Local State updates)
   const addFile = (name, size) => {

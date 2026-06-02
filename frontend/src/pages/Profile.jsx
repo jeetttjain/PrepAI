@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { 
-  User, 
-  Mail, 
-  Briefcase, 
-  Crown, 
+import {
+  User,
+  Mail,
+  Briefcase,
+  Crown,
   CheckCircle,
   Settings,
   ShieldAlert,
@@ -39,10 +39,10 @@ export default function Profile() {
   const [isSaved, setIsSaved] = useState(false);
 
   // Account inputs
-  const [name, setName] = useState(user?.name || 'Alex Rivera');
-  const [email, setEmail] = useState(user?.email || 'alex@prepai.ai');
-  const [role, setRole] = useState(user?.role || 'Lead Developer');
-  const [profilePic, setProfilePic] = useState(user?.profilePic || avatarPresets[0].url);
+  const [name, setName] = useState(user?.displayName || user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [role, setRole] = useState(user?.role || '');
+  const [profilePic, setProfilePic] = useState(user?.photoURL || user?.profilePic || avatarPresets[0].url);
   const [loading, setLoading] = useState(false);
 
   const handleFileUpload = (e) => {
@@ -78,15 +78,25 @@ export default function Profile() {
     const savedTheme = localStorage.getItem('prepai_theme') || user?.theme || 'dark';
     setThemePref(savedTheme === 'oled' ? 'OLED Pure Black' : savedTheme === 'light' ? 'Light Mode' : 'Dark (Default)');
     if (user) {
-      setName(user.name || 'Alex Rivera');
-      setEmail(user.email || 'alex@prepai.ai');
-      setRole(user.role || 'Lead Developer');
-      setProfilePic(user.profilePic || avatarPresets[0].url);
+      setName(user.displayName || user.name || '');
+      setEmail(user.email || '');
+      setRole(user.role || '');
+      setProfilePic(user.photoURL || user.profilePic || avatarPresets[0].url);
       setNotifyPref(user.emailNotifications !== false);
       setTfaEnabled(user.tfaEnabled || false);
       setSelectedLangs(user.languages || ['English']);
     }
   }, [user]);
+
+  // Synchronize theme changes from header or other components
+  React.useEffect(() => {
+    const handleThemeChange = (e) => {
+      const nextTheme = e.detail;
+      setThemePref(nextTheme === 'oled' ? 'OLED Pure Black' : nextTheme === 'light' ? 'Light Mode' : 'Dark (Default)');
+    };
+    window.addEventListener('prepai_theme_changed', handleThemeChange);
+    return () => window.removeEventListener('prepai_theme_changed', handleThemeChange);
+  }, []);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -161,7 +171,7 @@ export default function Profile() {
           <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.2)] animate-bounce mt-4">
             <Cpu className="w-9 h-9 text-amber-400 animate-pulse" />
           </div>
-          
+
           <div className="space-y-2 max-w-md">
             <h3 className="text-lg font-black text-white">Structural Upgrades in Progress</h3>
             <p className="text-xs text-on-surface-variant leading-relaxed">
@@ -209,11 +219,10 @@ export default function Profile() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                isActive 
-                  ? 'bg-primary text-black shadow-md ' 
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${isActive
+                  ? 'bg-primary text-black shadow-md '
                   : 'text-[#8e9bb8] hover:bg-white/5 hover:text-white'
-              }`}
+                }`}
             >
               <TabIcon className="w-4 h-4 shrink-0" />
               <span>{tab.name}</span>
@@ -226,7 +235,7 @@ export default function Profile() {
       <div className="min-h-[300px]">
         <AnimatePresence mode="wait">
           {activeTab === 'account' && (
-            <motion.section 
+            <motion.section
               key="account"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -236,7 +245,7 @@ export default function Profile() {
               <h3 className="text-base font-extrabold text-white flex items-center gap-2 border-b border-white/5 pb-2">
                 <User className="w-4.5 h-4.5 text-primary" /> Personal Information
               </h3>
-              
+
               <form onSubmit={handleSave} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* PROFILE AVATAR SELECTOR */}
@@ -244,21 +253,21 @@ export default function Profile() {
                     <label className="text-[10px] text-[#8e9bb8] uppercase tracking-widest font-extrabold block text-center">
                       Profile Picture
                     </label>
-                    
-                    <div 
+
+                    <div
                       onClick={() => fileInputRef.current?.click()}
                       className="relative group w-24 h-24 rounded-full cursor-pointer overflow-visible select-none shrink-0"
                     >
                       {/* Premium pulsing backdrop glow on hover */}
                       <div className="absolute inset-0 bg-primary/25 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse" />
                       <div className="absolute inset-[-4px] rounded-full border-2 border-dashed border-[#2a2a2a] group-hover:border-primary transition-colors duration-300" />
-                      
+
                       {/* Main avatar wrapper */}
                       <div className="w-full h-full rounded-full overflow-hidden border-2 border-primary relative z-10 shadow-lg shadow-black/80 bg-zinc-950">
-                        <img 
-                          src={profilePic} 
-                          alt="Active avatar preview" 
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+                        <img
+                          src={profilePic}
+                          alt="Active avatar preview"
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                         {/* Hover change overlay */}
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex flex-col items-center justify-center gap-1">
@@ -266,7 +275,7 @@ export default function Profile() {
                           <span className="text-[8px] font-bold text-white uppercase tracking-widest">Change</span>
                         </div>
                       </div>
-                      
+
                       {/* Camera badge overlay bottom-right */}
                       <button
                         type="button"
@@ -280,7 +289,7 @@ export default function Profile() {
                         <Camera className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    
+
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -297,10 +306,10 @@ export default function Profile() {
                     <label className="text-[10px] text-[#8e9bb8] uppercase tracking-widest font-extrabold block px-1">Full Name</label>
                     <div className="relative">
                       <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
-                      <input 
+                      <input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-surface-container border border-white/10 focus:border-primary/50 rounded-xl py-3 pl-11 pr-4 text-xs text-white outline-none transition-all" 
+                        className="w-full bg-surface-container border border-white/10 focus:border-primary/50 rounded-xl py-3 pl-11 pr-4 text-xs text-white outline-none transition-all"
                         type="text" required
                       />
                     </div>
@@ -310,10 +319,10 @@ export default function Profile() {
                     <label className="text-[10px] text-[#8e9bb8] uppercase tracking-widest font-extrabold block px-1">Email Address</label>
                     <div className="relative">
                       <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
-                      <input 
+                      <input
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-surface-container border border-white/10 focus:border-primary/50 rounded-xl py-3 pl-11 pr-4 text-xs text-white outline-none transition-all" 
+                        className="w-full bg-surface-container border border-white/10 focus:border-primary/50 rounded-xl py-3 pl-11 pr-4 text-xs text-white outline-none transition-all"
                         type="email" required
                       />
                     </div>
@@ -323,24 +332,23 @@ export default function Profile() {
                     <label className="text-[10px] text-[#8e9bb8] uppercase tracking-widest font-extrabold block px-1">Target Role / Career Goal</label>
                     <div className="relative">
                       <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
-                      <input 
+                      <input
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
-                        className="w-full bg-surface-container border border-white/10 focus:border-primary/50 rounded-xl py-3 pl-11 pr-4 text-xs text-white outline-none transition-all" 
+                        className="w-full bg-surface-container border border-white/10 focus:border-primary/50 rounded-xl py-3 pl-11 pr-4 text-xs text-white outline-none transition-all"
                         type="text" required
                       />
                     </div>
                   </div>
                 </div>
 
-                <button 
+                <button
                   type="submit"
                   disabled={loading}
-                  className={`px-5 py-2.5 font-semibold text-sm rounded-xl active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5 shadow-md ${
-                    isSaved 
-                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white font-bold' 
+                  className={`px-5 py-2.5 font-semibold text-sm rounded-xl active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5 shadow-md ${isSaved
+                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white font-bold'
                       : 'bg-primary text-black hover:bg-indigo-500'
-                  }`}
+                    }`}
                 >
                   {loading ? (
                     'Saving Changes...'
@@ -358,7 +366,7 @@ export default function Profile() {
           )}
 
           {activeTab === 'subscription' && (
-            <motion.section 
+            <motion.section
               key="subscription"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -377,14 +385,14 @@ export default function Profile() {
                 const tierColor = isEnterprise
                   ? 'text-tertiary border-tertiary/20 bg-tertiary/10'
                   : isPro
-                  ? 'text-secondary border-secondary/20 bg-secondary/10'
-                  : 'text-primary border-primary/20 bg-primary/10';
+                    ? 'text-secondary border-secondary/20 bg-secondary/10'
+                    : 'text-primary border-primary/20 bg-primary/10';
                 const tierLabel = isEnterprise ? 'Enterprise Hub' : isPro ? 'Pro Accelerator' : 'Starter Free';
                 const tierDesc = isEnterprise
                   ? 'Full enterprise-grade access: unlimited simulations, dedicated AI advisor, priority support, and team analytics.'
                   : isPro
-                  ? 'Pro access: unlimited interview simulations, AI file workspace, ATS synced keyword scanner, and PDF exports.'
-                  : 'Basic access with monthly token limits on simulations. Upgrade to unlock unlimited AI capabilities.';
+                    ? 'Pro access: unlimited interview simulations, AI file workspace, ATS synced keyword scanner, and PDF exports.'
+                    : 'Basic access with monthly token limits on simulations. Upgrade to unlock unlimited AI capabilities.';
                 return (
                   <div className="p-5 bg-white/2 rounded-2xl border border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div className="text-left space-y-2">
@@ -395,13 +403,19 @@ export default function Profile() {
                       <p className="text-[10px] text-on-surface-variant leading-relaxed max-w-sm">{tierDesc}</p>
                     </div>
                     {!isEnterprise && !isPro && (
-                      <button onClick={handleUpgrade} className="px-4.5 py-3 bg-primary text-white font-semibold text-sm rounded-xl hover:bg-indigo-500 active:scale-100 transition-all shrink-0 w-full sm:w-auto text-center">
+                      <button
+                        onClick={handleUpgrade}
+                        className="px-6 py-3 bg-primary text-black font-bold text-sm rounded-xl hover:bg-indigo-400 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shrink-0 w-full sm:w-auto text-center shadow-[0_4px_15px_rgba(99,102,241,0.25)] hover:shadow-[0_4px_25px_rgba(99,102,241,0.45)]"
+                      >
                         Upgrade to Pro ($15/mo)
                       </button>
                     )}
                     {isPro && !isEnterprise && (
-                      <button onClick={handleUpgrade} className="px-4.5 py-3 bg-tertiary/10 text-tertiary font-semibold text-sm rounded-xl border border-tertiary/20 hover:bg-tertiary/20 transition-all shrink-0 w-full sm:w-auto text-center">
-                        Upgrade to Enterprise
+                      <button
+                        onClick={handleUpgrade}
+                        className="px-6 py-3 bg-tertiary/10 text-tertiary font-bold text-sm rounded-xl border-2 border-tertiary/25 hover:bg-tertiary/20 hover:border-tertiary/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shrink-0 w-full sm:w-auto text-center shadow-[0_0_12px_rgba(56,189,248,0.1)] hover:shadow-[0_0_20px_rgba(56,189,248,0.25)]"
+                      >
+                        Upgrade Now
                       </button>
                     )}
                     {isEnterprise && (
@@ -438,7 +452,7 @@ export default function Profile() {
 
 
           {activeTab === 'preferences' && (
-            <motion.section 
+            <motion.section
               key="preferences"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -458,7 +472,29 @@ export default function Profile() {
                     </label>
                     <select
                       value={themePref}
-                      onChange={(e) => setThemePref(e.target.value)}
+                      onChange={(e) => {
+                        const newThemeLabel = e.target.value;
+                        setThemePref(newThemeLabel);
+
+                        const updatedTheme = newThemeLabel === 'OLED Pure Black' ? 'oled' : newThemeLabel === 'Light Mode' ? 'light' : 'dark';
+                        if (updatedTheme === 'oled') {
+                          document.documentElement.classList.add('oled-theme');
+                          document.body.classList.add('oled-theme');
+                          document.documentElement.classList.remove('light-theme');
+                          document.body.classList.remove('light-theme');
+                        } else if (updatedTheme === 'light') {
+                          document.documentElement.classList.add('light-theme');
+                          document.body.classList.add('light-theme');
+                          document.documentElement.classList.remove('oled-theme');
+                          document.body.classList.remove('oled-theme');
+                        } else {
+                          document.documentElement.classList.remove('oled-theme', 'light-theme');
+                          document.body.classList.remove('oled-theme', 'light-theme');
+                        }
+
+                        localStorage.setItem('prepai_theme', updatedTheme);
+                        window.dispatchEvent(new CustomEvent('prepai_theme_changed', { detail: updatedTheme }));
+                      }}
                       className="w-full bg-surface-container border border-white/10 rounded-xl px-3 py-3 text-xs text-white cursor-pointer focus:ring-1 focus:ring-primary"
                     >
                       <option>Dark (Default)</option>
@@ -473,7 +509,7 @@ export default function Profile() {
                       <p className="text-xs font-bold text-white">Email Sync Summaries</p>
                       <p className="text-[10px] text-on-surface-variant mt-0.5">Receive structured PDF summaries of your roadmap progress weekly.</p>
                     </div>
-                    <input 
+                    <input
                       type="checkbox"
                       checked={notifyPref}
                       onChange={(e) => setNotifyPref(e.target.checked)}
@@ -487,37 +523,24 @@ export default function Profile() {
                       <Globe className="w-3.5 h-3.5 text-primary" /> Global Language Preferences
                     </label>
                     <p className="text-[10px] text-on-surface-variant mb-2">
-                      Select languages to verify in your resumes and use for interview simulations automatically across the platform.
+                      Select a language to verify in your resumes and use for interview simulations automatically across the platform.
                     </p>
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      {['English', 'Hindi', 'Spanish', 'French', 'German', 'Japanese'].map((lang) => {
-                        const isSelected = selectedLangs.includes(lang);
-                        return (
-                          <button
-                            key={lang}
-                            type="button"
-                            onClick={() => {
-                              setSelectedLangs(prev => 
-                                prev.includes(lang)
-                                  ? (prev.length > 1 ? prev.filter(l => l !== lang) : prev) // Keep at least one
-                                  : [...prev, lang]
-                              );
-                            }}
-                            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border ${
-                              isSelected
-                                ? 'bg-primary/10 text-primary border-primary'
-                                : 'bg-white/2 text-[#8e9bb8] border-white/5 hover:border-white/10 hover:text-white'
-                            } cursor-pointer`}
-                          >
-                            {lang}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    <select
+                      value={selectedLangs[0] || 'English'}
+                      onChange={(e) => setSelectedLangs([e.target.value])}
+                      className="w-full bg-surface-container border border-white/10 rounded-xl px-3 py-3 text-xs text-white cursor-pointer focus:ring-1 focus:ring-primary"
+                    >
+                      <option value="English">English</option>
+                      <option value="Hindi">Hindi</option>
+                      <option value="Spanish">Spanish</option>
+                      <option value="French">French</option>
+                      <option value="German">German</option>
+                      <option value="Japanese">Japanese</option>
+                    </select>
                   </div>
                 </div>
 
-                <button 
+                <button
                   type="submit"
                   className="px-5 py-2.5 bg-primary text-black font-semibold text-sm rounded-xl hover:bg-indigo-500 active:scale-100 transition-all"
                 >
@@ -528,7 +551,7 @@ export default function Profile() {
           )}
 
           {activeTab === 'security' && (
-            <motion.section 
+            <motion.section
               key="security"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -543,21 +566,21 @@ export default function Profile() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-[10px] text-[#8e9bb8] uppercase tracking-widest font-extrabold block px-1">Current Password</label>
-                    <input 
+                    <input
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full bg-surface-container border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-primary/50 transition-all" 
+                      className="w-full bg-surface-container border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-primary/50 transition-all"
                       type="password"
                     />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[10px] text-[#8e9bb8] uppercase tracking-widest font-extrabold block px-1">New Password</label>
-                    <input 
+                    <input
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full bg-surface-container border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-primary/50 transition-all" 
+                      className="w-full bg-surface-container border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-primary/50 transition-all"
                       type="password"
                     />
                   </div>
@@ -570,7 +593,7 @@ export default function Profile() {
                     </h5>
                     <p className="text-[10px] text-on-surface-variant mt-0.5">Secure your developer profile analytics using authenticator apps.</p>
                   </div>
-                  <button 
+                  <button
                     type="button"
                     onClick={() => {
                       const nextState = !tfaEnabled;
@@ -578,9 +601,8 @@ export default function Profile() {
                       updateProfile({ tfaEnabled: nextState });
                       toast.success(nextState ? '2FA activated! Write down your backup key.' : '2FA disabled.');
                     }}
-                    className={`px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-                      tfaEnabled ? 'bg-error/10 text-error border border-error/20' : 'bg-primary text-black font-extrabold'
-                    }`}
+                    className={`px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${tfaEnabled ? 'bg-error/10 text-error border border-error/20' : 'bg-primary text-black font-extrabold'
+                      }`}
                   >
                     {tfaEnabled ? 'Disable' : 'Enable 2FA'}
                   </button>
@@ -593,7 +615,7 @@ export default function Profile() {
                   </div>
                 </div>
 
-                <button 
+                <button
                   type="submit"
                   className="px-5 py-2.5 bg-primary text-black font-semibold text-sm rounded-xl hover:bg-indigo-500 active:scale-100 transition-all"
                 >

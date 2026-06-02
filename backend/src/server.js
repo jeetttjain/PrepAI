@@ -12,6 +12,18 @@ import authRoutes from "./routes/authRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import cheatsheetRoutes from "./routes/cheatsheetRoutes.js";
 
+import multer from "multer";
+import { generateCheatsheet } from "./controllers/cheatsheetController.js";
+import { generateInterview, analyzeResume } from "./controllers/aiController.js";
+import { generateRoadmap } from "./controllers/roadmapController.js";
+import { uploadDocument } from "./controllers/fileController.js";
+import { aiChat } from "./controllers/aiChatController.js";
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 20 * 1024 * 1024 } // 20MB limit
+});
+
 connectDB();
 
 const app = express();
@@ -43,6 +55,8 @@ app.use(helmet({
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
+  "https://prepai-38233.web.app",
+  "https://prepai-38233.firebaseapp.com",
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
@@ -64,8 +78,8 @@ app.use(cors({
 // 3. BODY PARSING — Limit payload size to prevent
 //    denial-of-service via oversized bodies
 // ─────────────────────────────────────────────
-app.use(express.json({ limit: "10kb" }));
-app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // ─────────────────────────────────────────────
 // 4. NoSQL INJECTION PREVENTION — mongo-sanitize
@@ -159,6 +173,14 @@ app.use((req, _res, next) => {
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/ai", aiLimiter, aiRoutes);
 app.use("/api/cheatsheet", aiLimiter, cheatsheetRoutes);
+
+// Serverless Compatibility Endpoints (Universal AI Gateway)
+app.post("/api/generateCheatSheet", aiLimiter, generateCheatsheet);
+app.post("/api/generateQuestions", aiLimiter, generateInterview);
+app.post("/api/analyzeResume", upload.single("resume"), aiLimiter, analyzeResume);
+app.post("/api/generateRoadmap", aiLimiter, generateRoadmap);
+app.post("/api/uploadDocument", upload.single("file"), aiLimiter, uploadDocument);
+app.post("/api/aiChat", aiLimiter, aiChat);
 
 // Health check — never reveals stack info
 app.get("/", (_req, res) => {

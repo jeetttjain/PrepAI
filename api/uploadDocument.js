@@ -2,6 +2,28 @@ import mammoth from "mammoth";
 import pdfParse from "pdf-parse";
 import busboy from "busboy";
 
+const parseRTF = (rtfStr) => {
+  let text = rtfStr;
+  text = text.replace(/\\rtf1[\s\S]*?/g, "");
+  text = text.replace(/\{\*?\\[^{}]*\}/g, "");
+  text = text.replace(/\\([a-z]{1,32})(-?\d+)? ?/g, " ");
+  text = text.replace(/\\'/g, ""); 
+  text = text.replace(/[{}]/g, "");
+  return text.replace(/\s+/g, " ").trim();
+};
+
+const parseDOC = (buffer) => {
+  const rawText = buffer.toString("binary");
+  const matches = rawText.match(/[\x20-\x7E\x0A\x0D]{4,}/g);
+  if (matches) {
+    return matches
+      .map(m => m.trim())
+      .filter(m => m.length > 5 && !/^[0-9\s]+$/.test(m) && !/[{}<>\\|_^~]/.test(m))
+      .join("\n");
+  }
+  return buffer.toString("utf8").replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, " ").trim();
+};
+
 const parseMultipart = (req) => {
   return new Promise((resolve, reject) => {
     const fields = {};
@@ -9,7 +31,7 @@ const parseMultipart = (req) => {
     let fileName = "";
     let fileMime = "";
 
-    const bb = busboy({ headers: req.headers });
+    const bb = busboy({ headers: req.headers, limits: { fileSize: 20 * 1024 * 1024 } });
 
     bb.on("file", (name, file, info) => {
       const { filename, mimeType } = info;
@@ -83,6 +105,10 @@ export default async function handler(req, res) {
     ) {
       const parsed = await mammoth.extractRawText({ buffer: file.buffer });
       extractedText = parsed.value;
+    } else if (originalName.endsWith(".doc")) {
+      extractedText = parseDOC(file.buffer);
+    } else if (originalName.endsWith(".rtf")) {
+      extractedText = parseRTF(file.buffer.toString("utf8"));
     } else {
       extractedText = file.buffer.toString("utf8");
     }

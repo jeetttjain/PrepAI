@@ -9,9 +9,30 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+const parseRTF = (rtfStr) => {
+  let text = rtfStr;
+  text = text.replace(/\\rtf1[\s\S]*?/g, "");
+  text = text.replace(/\{\*?\\[^{}]*\}/g, "");
+  text = text.replace(/\\([a-z]{1,32})(-?\d+)? ?/g, " ");
+  text = text.replace(/\\'/g, ""); 
+  text = text.replace(/[{}]/g, "");
+  return text.replace(/\s+/g, " ").trim();
+};
 
-export const generateInterview =
-async (req, res) => {
+const parseDOC = (buffer) => {
+  const rawText = buffer.toString("binary");
+  const matches = rawText.match(/[\x20-\x7E\x0A\x0D]{4,}/g);
+  if (matches) {
+    return matches
+      .map(m => m.trim())
+      .filter(m => m.length > 5 && !/^[0-9\s]+$/.test(m) && !/[{}<>\\|_^~]/.test(m))
+      .join("\n");
+  }
+  return buffer.toString("utf8").replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, " ").trim();
+};
+
+
+export const generateInterview = async (req, res) => {
   try {
     const {
       role,
@@ -26,26 +47,40 @@ async (req, res) => {
     const targetLang = language || "English";
     // Strictly cap count at 25
     const parsedCount = Math.min(Math.max(parseInt(count) || 5, 1), 25);
-    
-    // Request a higher number of extra items to ensure we have enough unique ones after strict deduplication
-    const requestCount = Math.min(parsedCount + 10, 35); 
 
     const excludeList = Array.isArray(exclude) ? exclude.filter(Boolean) : [];
-    const excludedSet = new Set(
-      excludeList.map(q => q.toLowerCase().replace(/[^a-z0-9]/g, ""))
-    );
+    const seen = new Set();
+    const uniqueQuestions = [];
 
-    let excludeSection = "";
-    if (excludeList.length > 0) {
-      excludeSection = `
-CRITICAL: DO NOT generate any of the following questions or topics similar to them (they are already generated in the active session):
-${excludeList.map((q, i) => `- "${q}"`).join("\n")}
-Ensure all generated questions are COMPLETELY new, different, and do not repeat any themes or concepts from the list above.
-`;
+    // Pre-populate seen set with already excluded questions
+    for (const q of excludeList) {
+      seen.add(q.toLowerCase().replace(/[^a-z0-9]/g, ""));
     }
 
-    const prompt = `
-Generate EXACTLY ${requestCount} realistic, professional interview questions.
+    let attempts = 0;
+    while (uniqueQuestions.length < parsedCount && attempts < 3) {
+      attempts++;
+      const needed = parsedCount - uniqueQuestions.length;
+      
+      // Request more than needed in each batch to ensure we have a good pool
+      const batchRequestCount = Math.min(needed * 2, 25);
+
+      const currentExclusions = [
+        ...excludeList,
+        ...uniqueQuestions.map(q => q.question)
+      ];
+
+      let excludeSection = "";
+      if (currentExclusions.length > 0) {
+        excludeSection = `
+CRITICAL: DO NOT generate any of the following questions or topics similar to them (they are already generated in the active session):
+${currentExclusions.map((q, i) => `- "${q}"`).join("\n")}
+Ensure all generated questions are COMPLETELY new, different, and do not repeat any themes or concepts from the list above.
+`;
+      }
+
+      const prompt = `
+Generate EXACTLY ${batchRequestCount} realistic, professional technical interview questions.
 ${excludeSection}
 
 Return ONLY valid JSON array.
@@ -84,8 +119,7 @@ Requirements:
 - Answers should include a short direct explanation, detailed explanation, and real-world example if possible.
 `;
 
-    const completion =
-      await groq.chat.completions.create({
+      const completion = await groq.chat.completions.create({
         messages: [
           {
             role: "user",
@@ -95,47 +129,48 @@ Requirements:
         model: "llama-3.3-70b-versatile",
       });
 
-    const response =
-      completion.choices[0]
-      .message.content;
-
-    const cleaned =
-      response
+      const response = completion.choices[0].message.content;
+      const cleaned = response
         .replace(/```json/g, "")
         .replace(/```/g, "")
         .trim();
 
-    let parsed;
+      let parsed;
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch (err) {
+        console.warn(`Attempt ${attempts} failed to parse Groq response:`, err);
+        continue;
+      }
 
-    try {
-      parsed = JSON.parse(cleaned);
-    } catch {
-      console.log(cleaned);
-      return res.status(500).json({
-        success: false,
-        message: "Invalid AI response format",
-      });
-    }
-
-    // Programmatic Deduplication Logic (Alpha-numeric normalization comparison)
-    const seen = new Set();
-    const uniqueQuestions = [];
-    
-    for (const item of parsed) {
-      if (!item || !item.question) continue;
-      
-      // Strip punctuation and spacing to detect semantic duplicates
-      const normalized = item.question.toLowerCase().replace(/[^a-z0-9]/g, "");
-      
-      // Strict filter: Not in seen (in this batch) and not in excludedSet (previous batches)
-      if (!seen.has(normalized) && !excludedSet.has(normalized)) {
-        seen.add(normalized);
-        uniqueQuestions.push(item);
+      if (Array.isArray(parsed)) {
+        for (const item of parsed) {
+          if (!item || !item.question) continue;
+          
+          // Strip punctuation and spacing to detect semantic duplicates
+          const normalized = item.question.toLowerCase().replace(/[^a-z0-9]/g, "");
+          
+          if (!seen.has(normalized)) {
+            seen.add(normalized);
+            uniqueQuestions.push({
+              question: item.question,
+              answer: item.answer || "",
+              difficulty: item.difficulty || "Medium"
+            });
+          }
+        }
       }
     }
 
     // Slice down to requested count
     const finalQuestions = uniqueQuestions.slice(0, parsedCount);
+
+    if (finalQuestions.length === 0) {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to generate unique technical questions.",
+      });
+    }
 
     res.json({
       success: true,
@@ -143,7 +178,7 @@ Requirements:
     });
 
   } catch (error) {
-    console.log(error);
+    console.error("generateInterview controller error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -195,6 +230,10 @@ export const analyzeResume = async (req, res) => {
         console.error("Word parse error:", err);
         extractedText = file.buffer.toString("utf8");
       }
+    } else if (originalName.endsWith(".doc")) {
+      extractedText = parseDOC(file.buffer);
+    } else if (originalName.endsWith(".rtf")) {
+      extractedText = parseRTF(file.buffer.toString("utf8"));
     } else {
       // Plain text or other text-based format
       extractedText = file.buffer.toString("utf8");

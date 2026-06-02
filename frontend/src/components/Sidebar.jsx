@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Logo from './Logo';
 import { 
   LayoutDashboard, 
   HelpCircle, 
@@ -55,12 +56,7 @@ export default function Sidebar({ isOpen, onClose }) {
       >
         {/* Logo */}
         <div className="flex justify-between items-center px-5 py-5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center shrink-0">
-              <Zap className="w-3.5 h-3.5 text-white fill-white" />
-            </div>
-            <h1 className="text-white font-bold text-base tracking-tight">PrepAI</h1>
-          </div>
+          <Logo showText={true} size={28} textClassName="text-base" />
           {isOpen && (
             <button
               onClick={onClose}

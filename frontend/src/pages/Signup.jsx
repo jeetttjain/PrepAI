@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import Logo from '../components/Logo';
 import { Mail, Lock, Loader2, User, Phone, X, ShieldCheck } from 'lucide-react';
 import { registerUser } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
@@ -66,8 +67,7 @@ export default function Signup() {
       {/* Header */}
       <header className="w-full px-6 py-5 flex justify-between items-center" style={{ borderBottom: '1px solid #1a1a1a' }}>
         <Link to="/" className="text-white font-bold text-lg flex items-center gap-2">
-          <span className="w-6 h-6 rounded-md bg-primary flex items-center justify-center text-white text-xs font-black">P</span>
-          PrepAI
+          <Logo showText={true} size={26} textClassName="text-lg" />
         </Link>
         <Link to="/login" className="text-sm text-zinc-400 hover:text-white transition-colors">
           Have an account? <span className="text-primary font-semibold">Sign in →</span>

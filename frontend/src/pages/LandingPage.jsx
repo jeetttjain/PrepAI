@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Logo from '../components/Logo';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowRight, 
@@ -87,8 +88,8 @@ export default function LandingPage() {
       {/* TopNavBar */}
       <nav className="fixed top-0 w-full z-50 bg-zinc-950/40 backdrop-blur-xl border-b border-white/5 shadow-2xl transition-all duration-300">
         <div className="flex justify-between items-center px-6 md:px-12 py-4 max-w-7xl mx-auto">
-          <Link to="/" className="font-extrabold text-2xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-indigo-300 bg-[length:200%_auto] hover:opacity-90 transition-opacity">
-            PrepAI
+          <Link to="/" className="hover:opacity-90 transition-opacity flex items-center">
+            <Logo showText={true} size={28} textClassName="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-indigo-300 bg-[length:200%_auto]" />
           </Link>
           <div className="hidden md:flex items-center gap-8">
             <a className="text-zinc-400 hover:text-white font-medium text-sm transition-colors" href="#features">Features</a>
@@ -369,7 +370,7 @@ export default function LandingPage() {
       {/* Footer Section */}
       <footer className="w-full py-16 bg-zinc-950 border-t border-white/5 mt-10">
         <div className="flex flex-col items-center justify-center gap-8 px-6 max-w-7xl mx-auto">
-          <div className="font-extrabold text-xl text-white tracking-wide">PrepAI</div>
+          <Logo showText={true} size={24} textClassName="text-xl font-extrabold tracking-wide" />
           <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-xs md:text-sm text-zinc-400">
             <button onClick={() => setActiveModal('terms')} className="hover:text-white transition-colors bg-transparent border-none outline-none cursor-pointer">
               Terms of Service

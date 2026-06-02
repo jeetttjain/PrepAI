@@ -4,14 +4,14 @@ import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { 
-  CheckCircle2, 
-  Crown, 
-  Sparkles, 
-  Check, 
-  Loader2, 
-  CreditCard, 
-  Wallet, 
+import {
+  CheckCircle2,
+  Crown,
+  Sparkles,
+  Check,
+  Loader2,
+  CreditCard,
+  Wallet,
   ArrowRight,
   ShieldCheck,
   Zap,
@@ -28,7 +28,7 @@ export default function Pricing() {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone.toLowerCase();
       if (tz.includes('calcutta') || tz.includes('india') || tz.includes('asia/kolkata')) return 'INR';
       if (tz.includes('dubai') || tz.includes('asia/dubai') || tz.includes('gulf') || tz.includes('uae')) return 'AED';
-    } catch (e) {}
+    } catch (e) { }
     return 'USD';
   };
 
@@ -40,7 +40,7 @@ export default function Pricing() {
       if (billingCurrency === 'AED') return '0 AED';
       return '$0';
     }
-    
+
     if (billingCurrency === 'INR') {
       return '₹' + (usdPrice * 84).toLocaleString('en-IN');
     }
@@ -49,10 +49,10 @@ export default function Pricing() {
     }
     return '$' + usdPrice.toLocaleString('en-US');
   };
-  
+
   // Billing cycle state
   const [isAnnual, setIsAnnual] = useState(true);
-  
+
   // Checkout Modal State
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [processing, setProcessing] = useState(false);
@@ -122,32 +122,32 @@ export default function Pricing() {
     setProcessing(true);
     // Simulate payment transaction latency
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     if (user) {
       // Logged in user: update their tier role
       updateProfile({ role: `${selectedPlan.name} Tier` });
-      
+
       setProcessing(false);
       setSelectedPlan(null);
       toast.success(`Welcome to PrepAI ${selectedPlan.name}! Your account has been upgraded successfully.`, {
         icon: '🎉',
         duration: 4000
       });
-      
+
       navigate('/profile');
     } else {
       // Guest user: log them into a premium demo session directly
       try {
         await login("alex@prepai.ai", "demo1234");
         updateProfile({ role: `${selectedPlan.name} Tier` });
-        
+
         setProcessing(false);
         setSelectedPlan(null);
         toast.success(`Welcome to PrepAI ${selectedPlan.name}! Your premium demo session has been initialized.`, {
           icon: '🎉',
           duration: 4000
         });
-        
+
         navigate('/dashboard');
       } catch (err) {
         toast.error("Failed to initialize session");
@@ -199,7 +199,7 @@ export default function Pricing() {
         {/* Dynamic monthly/yearly toggle */}
         <div className="flex items-center justify-center gap-3.5 pt-4 select-none">
           <span className={`text-xs font-bold transition-all ${!isAnnual ? 'text-white' : 'text-on-surface-variant'}`}>Monthly Billing</span>
-          <button 
+          <button
             onClick={() => setIsAnnual(!isAnnual)}
             className="w-12 h-6 bg-surface-container-high border border-white/10 rounded-full p-1 transition-all relative flex items-center cursor-pointer"
           >
@@ -219,15 +219,14 @@ export default function Pricing() {
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch pt-4">
         {plans.map((plan, idx) => {
           const currentPrice = isAnnual ? plan.priceAnnual : plan.priceMonthly;
-          
+
           return (
-            <div 
+            <div
               key={idx}
-              className={`glass-panel border rounded-[2rem] p-6.5 md:p-8 flex flex-col justify-between transition-all duration-300 relative ${
-                plan.highlight 
-                  ? 'border-primary/40 shadow-[0_15px_35px_rgba(77,142,255,0.06)] scale-100 md:scale-[1.03] z-10 bg-primary/2' 
+              className={`glass-panel border rounded-[2rem] p-6.5 md:p-8 flex flex-col justify-between transition-all duration-300 relative ${plan.highlight
+                  ? 'border-primary/40 shadow-[0_15px_35px_rgba(77,142,255,0.06)] scale-100 md:scale-[1.03] z-10 bg-primary/2'
                   : 'border-white/5 hover:border-white/15'
-              }`}
+                }`}
             >
               {plan.highlight && (
                 <span className="absolute top-0 right-8 -translate-y-1/2 px-3 py-1 bg-primary text-white font-extrabold font-mono-data text-[8.5px] tracking-wider uppercase rounded-full shadow-lg">
@@ -278,20 +277,19 @@ export default function Pricing() {
               {/* CTA Action button with proper gaps */}
               <div className="pt-8">
                 {plan.priceMonthly === 0 ? (
-                  <button 
+                  <button
                     disabled
                     className="w-full py-3.5 border border-white/10 text-on-surface-variant font-bold text-xs uppercase tracking-wider rounded-xl cursor-default transition-all flex items-center justify-center gap-1.5"
                   >
                     Active Tier Starter
                   </button>
                 ) : (
-                  <button 
+                  <button
                     onClick={() => handleOpenCheckout(plan)}
-                    className={`w-full py-3.5 font-semibold text-sm rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md ${
-                      plan.highlight
+                    className={`w-full py-3.5 font-semibold text-sm rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md ${plan.highlight
                         ? 'bg-primary text-white hover:bg-indigo-500 active:scale-100 '
                         : 'bg-white/5 hover:bg-white/10 text-white border border-white/10'
-                    }`}
+                      }`}
                   >
                     <Zap className="w-3.5 h-3.5 fill-current shrink-0" />
                     {plan.cta}
@@ -361,7 +359,7 @@ export default function Pricing() {
         {selectedPlan && (
           <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
             {/* Backdrop */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -370,7 +368,7 @@ export default function Pricing() {
             />
 
             {/* Modal Box */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.96, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 10 }}
@@ -431,7 +429,7 @@ export default function Pricing() {
                       {getFormattedPrice(0)}
                     </span>
                   </div>
-                  
+
                   {/* Final Due price */}
                   <div className="flex justify-between text-xs font-extrabold text-white border-t border-white/5 pt-3">
                     <span>Total Amount Due</span>
@@ -447,24 +445,22 @@ export default function Pricing() {
               <div className="space-y-2.5 text-left pt-2">
                 <span className="text-[9px] text-[#8e9bb8] uppercase tracking-widest font-extrabold block">Select payment method</span>
                 <div className="grid grid-cols-2 gap-3">
-                  <button 
+                  <button
                     onClick={() => setPaymentMethod('card')}
-                    className={`p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all ${
-                      paymentMethod === 'card' 
-                        ? 'border-primary bg-primary/10 text-white' 
+                    className={`p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all ${paymentMethod === 'card'
+                        ? 'border-primary bg-primary/10 text-white'
                         : 'border-white/5 bg-white/2 text-[#8e9bb8] hover:text-white'
-                    }`}
+                      }`}
                   >
                     <CreditCard className="w-4 h-4 shrink-0" />
                     Credit Card
                   </button>
-                  <button 
+                  <button
                     onClick={() => setPaymentMethod('wallet')}
-                    className={`p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all ${
-                      paymentMethod === 'wallet' 
-                        ? 'border-primary bg-primary/10 text-white' 
+                    className={`p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all ${paymentMethod === 'wallet'
+                        ? 'border-primary bg-primary/10 text-white'
                         : 'border-white/5 bg-white/2 text-[#8e9bb8] hover:text-white'
-                    }`}
+                      }`}
                   >
                     <Wallet className="w-4 h-4 shrink-0" />
                     Digital Wallet
@@ -474,7 +470,7 @@ export default function Pricing() {
 
               {/* Action Simulation buttons */}
               <div className="space-y-3 pt-2">
-                <button 
+                <button
                   onClick={handleSimulatePayment}
                   disabled={processing}
                   className="w-full py-3.5 bg-primary text-white font-semibold text-sm rounded-xl hover:bg-indigo-500 active:scale-100 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
@@ -492,7 +488,7 @@ export default function Pricing() {
                   )}
                 </button>
 
-                <button 
+                <button
                   onClick={() => setSelectedPlan(null)}
                   disabled={processing}
                   className="w-full py-3 border border-white/10 hover:bg-white/5 text-[#8e9bb8] hover:text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all"

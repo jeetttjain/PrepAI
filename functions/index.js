@@ -75,7 +75,7 @@ export const generateQuestions = functions.https.onRequest(async (req, res) => {
 
       const targetLang = language || "English";
       const parsedCount = Math.min(Math.max(parseInt(count) || 5, 1), 25);
-      const requestCount = Math.min(parsedCount + 10, 35);
+      const requestCount = Math.min(parsedCount + 20, 45);
 
       const excludeList = Array.isArray(exclude) ? exclude.filter(Boolean) : [];
       const excludedSet = new Set(
